@@ -1,0 +1,11 @@
+# composer vendor dir
+vendor
+
+# Mac DS_Store Files
+.DS_Store
+
+# yii ide-helper
+ide-helper.php
+
+# phpstorm project files
+.idea
