@@ -1,10 +1,11 @@
 <?php
 
-namespace Dowte\Password\db;
+namespace Dowte\Password\db\file;
 
-use Dowte\Password\base\FileItemInterface;
+use Dowte\Password\pass\db\ActiveRecordInterface;
+use Dowte\Password\pass\db\QueryInterface;
 
-abstract class FileDB implements FileItemInterface
+class FileActiveRecord implements ActiveRecordInterface
 {
     public $separate = ';';
 
@@ -15,26 +16,37 @@ abstract class FileDB implements FileItemInterface
     public $db;
 
     /**
-     * FileDB constructor.
+     * FileActiveRecord constructor.
      */
     public function __construct()
     {
-        $this->db = (FileSystem::fp(['fileName' => $this->fileName()]));
+        $this->db = (FileSystem::fp(['fileName' => $this->name()]));
     }
 
-    public function find()
+    /**
+     * @return QueryInterface
+     */
+    public static function find()
     {
-        return $this;
+        return (new FileQuery());
     }
 
-    public function select()
+    public function attributeLabels()
     {
-        return $this;
+        // TODO: Implement attributeLabels() method.
     }
 
-    public function where()
+    /**
+     * @return string
+     */
+    public function name()
     {
-        return $this;
+        // TODO: Implement name() method.
+    }
+
+    public function rules()
+    {
+        // TODO: Implement rules() method.
     }
 
     public function one()
@@ -53,13 +65,13 @@ abstract class FileDB implements FileItemInterface
         return $this->data;
     }
 
-    public function save($model)
+    public function save()
     {
         $content = '';
         $this->data = $this->line2array($this->db->_fgets());
         foreach ($this->attributeLabels() as $k => $v) {
             if ($k === 'id') continue;
-            $content .= $model[$k] . $this->separate;
+            $content .= $this->$k . $this->separate;
         }
         $id = isset($this->data['id']) ? ++$this->data['id'] : 1;
         $content = $id . $this->separate . $content . $this->eof;
@@ -79,10 +91,4 @@ abstract class FileDB implements FileItemInterface
         }
         return $data;
     }
-
-    abstract public function attributeLabels();
-
-    abstract public function rules();
-
-    abstract public function fileName();
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Dowte\Password\base;
+namespace Dowte\Password\pass;
 
 class BaseController
 {

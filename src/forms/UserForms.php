@@ -1,7 +1,7 @@
 <?php
 namespace Dowte\Password\forms;
 
-use Dowte\Password\models\UserFileModel;
+use Dowte\Password\models\UserModel;
 
 class UserForms
 {
@@ -16,16 +16,16 @@ class UserForms
 
     public function findModels()
     {
-        $model = new UserFileModel();
-        return $model->all();
+        $model = new UserModel();
+        return $model::find()->all();
     }
 
     public function createUser($userName, $password)
     {
-        $model = new UserFileModel();
-        $data['username'] = $userName;
-        $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        $model = new UserModel();
+        $model->username = $userName;
+        $model->password = password_hash($password, PASSWORD_DEFAULT);
 
-        return $model->save($data);
+        return $model->save();
     }
 }

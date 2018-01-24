@@ -1,11 +1,18 @@
 <?php
 namespace Dowte\Password\models;
 
-use Dowte\Password\base\BaseFileModel;
+use Dowte\Password\pass\BaseModel;
 
-class UserFileModel extends BaseFileModel
+/**
+ * Class UserModel
+ * @property string $username
+ * @property integer $id
+ * @property string $password
+ * @package Dowte\Password\db\file\models
+ */
+class UserModel extends BaseModel
 {
-    public function fileName()
+    public function name()
     {
         return 'user';
     }

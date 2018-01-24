@@ -1,11 +1,11 @@
 <?php
 
-namespace Dowte\Password\db;
+namespace Dowte\Password\db\file;
 
 class FileSystem
 {
-    const DATA_PATH = __DIR__ . '/../data/';
-    const DATA_EXTENSION= '.data';
+    public $baseDir = __DIR__ . '/../../../../data/';
+    const DATA_EXTENSION = '.data';
 
     public static $fpr;
 
@@ -18,8 +18,8 @@ class FileSystem
         foreach ($config as $k => $value) {
             $this->$k = $value;
         }
-        self::$fpr = fopen(self::DATA_PATH . $this->fileName . self::DATA_EXTENSION, 'r');
-        self::$fpw = fopen(self::DATA_PATH . $this->fileName . self::DATA_EXTENSION, 'a');
+        self::$fpr = fopen($this->baseDir . $this->fileName . self::DATA_EXTENSION, 'r');
+        self::$fpw = fopen($this->baseDir . $this->fileName . self::DATA_EXTENSION, 'a');
     }
 
     public static function fp($config = [])

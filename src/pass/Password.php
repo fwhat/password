@@ -1,9 +1,11 @@
 <?php
-namespace Dowte\Password\base;
+namespace Dowte\Password\pass;
 
 class Password
 {
     public static $params = [];
+
+    public static $db;
 
     public function __construct($options = [])
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Dowte\Password\base;
+namespace Dowte\Password\pass;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 
