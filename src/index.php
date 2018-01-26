@@ -1,17 +1,19 @@
 #!/usr/bin/env php
 <?php
 
-use \Dowte\Password\base\Password;
+use Dowte\Password\pass\Password;
 use \Dowte\Password\controllers\UserCommand;
 use \Dowte\Password\controllers\InitCommand;
+use \Dowte\Password\controllers\PasswordCommand;
 // application.php
 
 require __DIR__.'/../vendor/autoload.php';
 
+defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
 
 use Symfony\Component\Console\Application;
 
-$config = require __DIR__ . '/config/params.php';
+$config = array_merge(require __DIR__ . '/config/params.php', require __DIR__ . '/config/main.php');
 $app = new Password($config);
 
 $console = new Application();
@@ -40,6 +42,7 @@ foreach ($_SERVER['argv'] as &$v) {
 }
 $console->add(new InitCommand());
 $console->add(new UserCommand());
+$console->add(new PasswordCommand());
 
-$console->run(null, (new \Dowte\Password\base\SymfonyConsoleOutput()));
+$console->run(null, (new \Dowte\Password\pass\SymfonyConsoleOutput()));
 

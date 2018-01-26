@@ -3,7 +3,7 @@ namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
 
-class UserForms
+class UserForm
 {
     private function __construct()
     {
@@ -14,10 +14,19 @@ class UserForms
         return (new self());
     }
 
-    public function findModels()
+    public function findUser($username, $password)
     {
-        $model = new UserModel();
-        return $model::find()->all();
+        $user = UserModel::find()
+            ->select('id, password')
+            ->where(['username' => $username])
+            ->one();
+
+        if (empty($user)) {
+            return null;
+
+        } else {
+            return password_verify($password, $user['password']) ? $user : null;
+        }
     }
 
     public function createUser($userName, $password)

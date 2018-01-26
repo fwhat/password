@@ -9,7 +9,12 @@ class SymfonyConsoleOutput extends ConsoleOutput
     public function writePaste($messages, $description = '复制剪切板成功')
     {
         openssl_private_decrypt(base64_decode($messages), $messages, Password::$params['private_key']);
-
+        $this->copy($messages);
         parent::write($description, true, self::OUTPUT_NORMAL);
+    }
+
+    protected function copy($messages)
+    {
+        shell_exec('echo "'. $messages. '" | pbcopy');
     }
 }

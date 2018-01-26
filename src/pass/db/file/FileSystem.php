@@ -1,33 +1,25 @@
 <?php
 
-namespace Dowte\Password\db\file;
+namespace Dowte\Password\pass\db\file;
 
 class FileSystem
 {
-    public $baseDir = __DIR__ . '/../../../../data/';
-    const DATA_EXTENSION = '.data';
+    public static $baseDir = __DIR__ . '/../../../../data/';
+    public static $dataExtension = '.data';
 
     public static $fpr;
 
     public static $fpw;
 
-    public $fileName;
+    public static $name;
 
-    private function __construct($config = [])
+    public function init()
     {
-        foreach ($config as $k => $value) {
-            $this->$k = $value;
-        }
-        self::$fpr = fopen($this->baseDir . $this->fileName . self::DATA_EXTENSION, 'r');
-        self::$fpw = fopen($this->baseDir . $this->fileName . self::DATA_EXTENSION, 'a');
+        self::$fpr = fopen(self::$baseDir . self::$name . self::$dataExtension, 'r');
+        self::$fpw = fopen(self::$baseDir . self::$name . self::$dataExtension, 'a');
     }
 
-    public static function fp($config = [])
-    {
-        return (new self($config));
-    }
-
-    public function _fgets()
+    public static function _fgets()
     {
         return fgets(self::$fpr);
     }

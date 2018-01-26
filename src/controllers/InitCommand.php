@@ -23,13 +23,13 @@ class InitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            '请选择储存密码文件的方式 (默认本地)',
-            array('本地', '服务器'),
-            0
-        );
-        $question->setErrorMessage('the way %s is invalid.');
-        $way = $helper->ask($input, $output, $question);
+//        $helper = $this->getHelper('question');
+//        $question = new ChoiceQuestion(
+//            '请选择储存密码文件的方式 (默认本地)',
+//            array('本地', '服务器'),
+//            0
+//        );
+//        $question->setErrorMessage('the way %s is invalid.');
+//        $way = $helper->ask($input, $output, $question);
     }
 }

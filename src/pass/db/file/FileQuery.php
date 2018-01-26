@@ -1,28 +1,19 @@
 <?php
 
-namespace Dowte\Password\db\file;
+namespace Dowte\Password\pass\db\file;
 
-use Dowte\Password\pass\db\QueryInterface;
+use Dowte\Password\pass\db\ActiveQuery;
 
-class FileQuery implements QueryInterface
+class FileQuery extends ActiveQuery
 {
-    public function where()
-    {
-        // TODO: Implement where() method.
-    }
-
-    public function select()
-    {
-        // TODO: Implement select() method.
-    }
 
     public function one()
     {
-        // TODO: Implement one() method.
+        return FileActiveRecord::findOne();
     }
 
     public function all()
     {
-        // TODO: Implement all() method.
+        return FileActiveRecord::findAll();
     }
 }

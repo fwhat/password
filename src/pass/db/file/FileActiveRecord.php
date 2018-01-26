@@ -1,94 +1,162 @@
 <?php
 
-namespace Dowte\Password\db\file;
+namespace Dowte\Password\pass\db\file;
 
+use Dowte\Password\pass\db\ActiveQuery;
 use Dowte\Password\pass\db\ActiveRecordInterface;
+use Dowte\Password\pass\db\BaseActiveRecordInterface;
 use Dowte\Password\pass\db\QueryInterface;
+use Dowte\Password\pass\exceptions\QueryException;
 
-class FileActiveRecord implements ActiveRecordInterface
+class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
 {
-    public $separate = ';';
+    public static $separate = ';';
 
     public $eof = "\n";
 
-    public $data;
+    public static $emptyData = null;
 
-    public $db;
+    public static $data;
 
     /**
+     * @var ActiveRecordInterface
+     */
+    public static $model;
+
+    /**
+     * @var ActiveQuery
+     */
+    public static $query;
+
+    /**
+     * @param $config
      * FileActiveRecord constructor.
      */
-    public function __construct()
+    public function __construct($config)
     {
-        $this->db = (FileSystem::fp(['fileName' => $this->name()]));
+        foreach ($config as $k => $value) {
+            ! property_exists(__CLASS__, $k) or static::$$k = $value;
+        }
+        parent::init();
     }
+
 
     /**
      * @return QueryInterface
      */
     public static function find()
     {
-        return (new FileQuery());
-    }
-
-    public function attributeLabels()
-    {
-        // TODO: Implement attributeLabels() method.
-    }
-
-    /**
-     * @return string
-     */
-    public function name()
-    {
-        // TODO: Implement name() method.
-    }
-
-    public function rules()
-    {
-        // TODO: Implement rules() method.
-    }
-
-    public function one()
-    {
-        return $this->all(true);
-    }
-
-    public function all($one = false)
-    {
-        $this->data;
-        while ($temp = $this->db->_fgets() !== false) {
-            $this->data = $this->line2array($this->db->_fgets());
-            if ($one == true) break;
-        }
-
-        return $this->data;
+        return self::$query = (new FileQuery());
     }
 
     public function save()
     {
         $content = '';
-        $this->data = $this->line2array($this->db->_fgets());
-        foreach ($this->attributeLabels() as $k => $v) {
+        self::$data = self::_fgets();
+        foreach (self::$model->attributeLabels() as $k => $v) {
             if ($k === 'id') continue;
-            $content .= $this->$k . $this->separate;
+            $content .= self::$model->$k . self::$separate;
         }
-        $id = isset($this->data['id']) ? ++$this->data['id'] : 1;
-        $content = $id . $this->separate . $content . $this->eof;
-        $this->db->_fwrite($content);
+        $id = isset(self::$data['id']) ? ++self::$data['id'] : 1;
+        $content = $id . self::$separate . $content . $this->eof;
+        $this->_fwrite($content);
 
         return $id;
     }
 
-    private function line2array($temp)
+    private static function line2array($temp)
     {
         $data = [];
         if (empty($temp)) return $data;
-        $arr = explode($this->separate, $temp);
+        $arr = explode(self::$separate, $temp);
         $index = 0;
-        foreach ($this->attributeLabels() as $k => $v) {
+        foreach (self::$model->attributeLabels() as $k => $v) {
             $data[$k] = $arr[$index++];
         }
         return $data;
+    }
+
+    public static function _fgets()
+    {
+        $line = parent::_fgets();
+        if ($line === false) return false;
+        $array =  self::line2array($line);
+        $fileWhere = ! empty(self::$query->where) ? self::buildWhere(self::$query->where) : [];
+        if ($fileWhere) {
+            foreach ($fileWhere as $kWhere => $vWhere) {
+                if (isset($array[$kWhere])) {
+                    $kWhere != 'password' or die($array[$kWhere] . ' ' . $vWhere);
+                    if ($array[$kWhere] != $vWhere) {
+                        return self::$emptyData;
+                    }
+                } else {
+                    throw new QueryException('Where param error: ' . $kWhere);
+                }
+            }
+        }
+        foreach (self::$model->attributeLabels() as $k => $v){
+            if (! empty(self::$query->select)) {
+                if (array_search($k, self::$query->select) === false) {
+                    unset($array[$k]);
+                }
+            }
+        }
+        if (array_diff(array_keys($array), self::$query->select)) {
+            throw new QueryException('Select param error: ' . implode(',', array_diff(array_keys($array), self::$query->select)));
+        }
+
+
+        return $array;
+    }
+
+    private static function buildWhere($where)
+    {
+        $fileWhere = [];
+        $items = explode('AND', $where);
+        foreach ($items as $item) {
+            if (preg_match('/`(.*)`/', $item, $kMatch) && preg_match('/\'(.*)\'/', $item, $vMatch)) {
+                $fileWhere[trim($kMatch[0], '`')] = trim($vMatch[0], '\'"');
+                continue;
+            }
+            if (($index = mb_strpos($item, '=')) !== false) {
+                $fileWhere[trim(trim(mb_substr($item, 0, $index), '`'))] = trim(trim(mb_substr($item, $index, mb_strlen($item)), '\'"'));
+
+            } else {
+                break;
+            }
+//            $temp = explode('=', $item);
+//            if (! isset($temp[0]) || ! isset($temp[1])) {
+//                throw new QueryException('Where param error: ');
+//            }
+//            $fileWhere[trim($temp[0], '`')] = trim($temp[1], '\'"');
+        }
+        return $fileWhere;
+    }
+
+    /**
+     * @return array
+     */
+    public static function findOne()
+    {
+        return self::findAll(true);
+    }
+
+    /**
+     * @param $one
+     * @return array
+     */
+    public static function findAll($one = false)
+    {
+        self::$data = [];
+        while (($temp = self::_fgets()) !== false) {
+            if (empty($temp)) continue;
+            $temp === self::$emptyData or self::$data[] = $temp;
+            if ($one == true && self::$data) {
+                self::$data = self::$data[0];
+                break;
+            }
+        }
+
+        return self::$data;
     }
 }

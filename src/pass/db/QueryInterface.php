@@ -6,14 +6,16 @@ namespace Dowte\Password\pass\db;
 interface QueryInterface
 {
     /**
+     * @param $select
      * @return QueryInterface
      */
-    public function select();
+    public function select($select);
 
     /**
+     * @param $where
      * @return QueryInterface
      */
-    public function where();
+    public function where($where);
 
     /**
      * @return array
