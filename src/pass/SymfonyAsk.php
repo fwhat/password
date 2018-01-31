@@ -13,7 +13,8 @@ class SymfonyAsk
     public static function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, Question $question)
     {
         $messages = $helper->ask($input, $output, $question);
-        openssl_private_decrypt(base64_decode($messages), $messages, Password::$params['private_key']);
-        return $messages;
+        openssl_public_encrypt($messages, $encrypted, Password::getPublicKey());
+//        openssl_private_decrypt(base64_decode($messages), $messages, Password::$params['private_key']);
+        return base64_encode($encrypted);
     }
 }

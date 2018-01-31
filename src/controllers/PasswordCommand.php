@@ -3,7 +3,8 @@
 namespace Dowte\Password\controllers;
 
 
-use Dowte\Password\forms\UserForm;
+use Dowte\Password\forms\PasswordForm;
+use Dowte\Password\models\PasswordModel;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\SymfonyAsk;
 use Symfony\Component\Console\Command\Command;
@@ -17,7 +18,7 @@ class PasswordCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('pass:create-pass')
+            ->setName('create-pass')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new password.')
@@ -29,14 +30,23 @@ class PasswordCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('question');
-        $question = new Question('What is the database password?');
-        $question->setHidden(true);
-        $question->setHiddenFallback(false);
-        $password = SymfonyAsk::ask($helper, $input, $output, $question);
-        $user = UserForm::user()->findUser(Password::getUser(), $password);
-        if (! $user) {
-            //todo User Error
+        $user = Password::askPassword($this, $input, $output);
+        if ($user) {
+            $helper = $this->getHelper('question');
+            $question = new Question('Set a name for new password:' . PHP_EOL);
+            $name = $helper->ask($input, $output, $question);
+
+            $helper = $this->getHelper('question');
+            $question = new Question('Set description for new password' . PHP_EOL);
+            $description = $helper->ask($input, $output, $question);
+
+            $helper = $this->getHelper('question');
+            $question = new Question('Set the password' . PHP_EOL);
+            $question->setHidden(true);
+            $question->setHiddenFallback(false);
+            $password = SymfonyAsk::ask($helper, $input, $output, $question);
+
+            PasswordForm::pass()->createPass($user['id'], $password, $name, $description);
         }
     }
 }

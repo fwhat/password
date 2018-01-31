@@ -2,6 +2,7 @@
 namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
+use Dowte\Password\pass\Password;
 
 class UserForm
 {
@@ -18,22 +19,22 @@ class UserForm
     {
         $user = UserModel::find()
             ->select('id, password')
-            ->where(['username' => $username])
+            ->where(['username' => sha1($username)])
             ->one();
 
         if (empty($user)) {
             return null;
 
         } else {
-            return password_verify($password, $user['password']) ? $user : null;
+            return Password::validPassword($password, $user['password']) ? $user : null;
         }
     }
 
     public function createUser($userName, $password)
     {
         $model = new UserModel();
-        $model->username = $userName;
-        $model->password = password_hash($password, PASSWORD_DEFAULT);
+        $model->username = sha1($userName);
+        $model->password = $password;
 
         return $model->save();
     }

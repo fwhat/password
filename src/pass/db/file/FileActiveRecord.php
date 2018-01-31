@@ -8,7 +8,7 @@ use Dowte\Password\pass\db\BaseActiveRecordInterface;
 use Dowte\Password\pass\db\QueryInterface;
 use Dowte\Password\pass\exceptions\QueryException;
 
-class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
+class FileActiveRecord extends File implements BaseActiveRecordInterface
 {
     public static $separate = ';';
 
@@ -28,9 +28,11 @@ class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
      */
     public static $query;
 
+    private static $_one = false;
+
     /**
-     * @param $config
      * FileActiveRecord constructor.
+     * @param $config
      */
     public function __construct($config)
     {
@@ -39,7 +41,6 @@ class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
         }
         parent::init();
     }
-
 
     /**
      * @return QueryInterface
@@ -64,19 +65,7 @@ class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
         return $id;
     }
 
-    private static function line2array($temp)
-    {
-        $data = [];
-        if (empty($temp)) return $data;
-        $arr = explode(self::$separate, $temp);
-        $index = 0;
-        foreach (self::$model->attributeLabels() as $k => $v) {
-            $data[$k] = $arr[$index++];
-        }
-        return $data;
-    }
-
-    public static function _fgets()
+    protected static function _fgets()
     {
         $line = parent::_fgets();
         if ($line === false) return false;
@@ -109,6 +98,33 @@ class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
         return $array;
     }
 
+    /**
+     * @return array
+     */
+    public static function findOne()
+    {
+        self::$_one = true;
+        return self::findAll();
+    }
+
+    /**
+     * @return array
+     */
+    public static function findAll()
+    {
+        self::$data = [];
+        while (($temp = self::_fgets()) !== false) {
+            if (empty($temp)) continue;
+            $temp === self::$emptyData or self::$data[] = $temp;
+            if (self::$_one == true && self::$data) {
+                self::$data = self::$data[0];
+                break;
+            }
+        }
+
+        return self::$data;
+    }
+
     private static function buildWhere($where)
     {
         $fileWhere = [];
@@ -133,30 +149,15 @@ class FileActiveRecord extends FileSystem implements BaseActiveRecordInterface
         return $fileWhere;
     }
 
-    /**
-     * @return array
-     */
-    public static function findOne()
+    private static function line2array($temp)
     {
-        return self::findAll(true);
-    }
-
-    /**
-     * @param $one
-     * @return array
-     */
-    public static function findAll($one = false)
-    {
-        self::$data = [];
-        while (($temp = self::_fgets()) !== false) {
-            if (empty($temp)) continue;
-            $temp === self::$emptyData or self::$data[] = $temp;
-            if ($one == true && self::$data) {
-                self::$data = self::$data[0];
-                break;
-            }
+        $data = [];
+        if (empty($temp)) return $data;
+        $arr = explode(self::$separate, $temp);
+        $index = 0;
+        foreach (self::$model->attributeLabels() as $k => $v) {
+            $data[$k] = $arr[$index++];
         }
-
-        return self::$data;
+        return $data;
     }
 }

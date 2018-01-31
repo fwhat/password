@@ -2,7 +2,8 @@
 
 namespace Dowte\Password\pass\db\file;
 
-class FileSystem
+
+abstract class File
 {
     public static $baseDir = __DIR__ . '/../../../../data/';
     public static $dataExtension = '.data';
@@ -19,7 +20,7 @@ class FileSystem
         self::$fpw = fopen(self::$baseDir . self::$name . self::$dataExtension, 'a');
     }
 
-    public static function _fgets()
+    protected static function _fgets()
     {
         return fgets(self::$fpr);
     }

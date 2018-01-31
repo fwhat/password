@@ -25,6 +25,11 @@ class ActiveRecord implements ActiveRecordInterface
      */
     protected static $model;
 
+    public function __construct()
+    {
+        self::setDb($this);
+    }
+
     public function attributeLabels()
     {
     }
@@ -89,9 +94,9 @@ class ActiveRecord implements ActiveRecordInterface
         }
     }
 
-    public static function setDb()
+    public static function setDb($model = null)
     {
-        self::$model = new self::$className();
+        self::$model = $model ?: new self::$className();
         self::$db = new Password::$dbClass(array_merge(Password::$dbConfig,
             ['name' => self::$model->name(), 'model' => self::$model]));
     }

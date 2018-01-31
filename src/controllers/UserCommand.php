@@ -17,7 +17,7 @@ class UserCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('pass:create-user')
+            ->setName('create-user')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new user.')
@@ -32,11 +32,10 @@ class UserCommand extends Command
     {
         $userName = $input->getArgument('username');
         $helper = $this->getHelper('question');
-        $question = new Question('What is the database password?');
+        $question = new Question('Set a password for Pass?');
         $question->setHidden(true);
         $question->setHiddenFallback(false);
         $password = SymfonyAsk::ask($helper, $input, $output, $question);
-        // outputs a message followed by a "\n"
         $output->writeln([
             'User Creator',
             '============',
