@@ -15,7 +15,7 @@ class BaseModel extends ActiveRecord
 
     public function init()
     {
-        self::$db = new Password::$dbClass(array_merge(Password::$dbConfig,
+        self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
             ['name' => $this->name(), 'model' => $this]));
     }
 }

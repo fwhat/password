@@ -3,10 +3,13 @@ namespace Dowte\Password\pass;
 
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\db\ActiveRecordInterface;
+use Dowte\Password\pass\db\ConnectionInterface;
+use Dowte\Password\pass\db\DbClear;
 use Dowte\Password\pass\db\DbInit;
 use Dowte\Password\pass\db\DbInitInterface;
 use Dowte\Password\pass\exceptions\UserException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,17 +40,30 @@ class Password
                 $this->loadComponents($value);
                 continue;
             }
-            self::$params[$name] = $value;
+            if ($name === 'params') {
+                $this->loadParams($value);
+            }
         }
     }
 
-    protected function loadComponents($configs)
+    protected function loadParams(array $value)
     {
-        foreach ($configs as $name => $config) {
-            if ($name === 'db') {
-                if (isset($config['class'])) {
-                    (self::BASE_NAMESPACE . $config['class'])::init($config);
+        foreach ((array) $value as $name => $item) {
+            self::$params[$name] = $item;
+        }
+    }
 
+    protected function loadComponents(array $configs)
+    {
+        foreach ((array) $configs as $name => $config) {
+            if ($name === 'db') {
+                if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
+                    $className = self::BASE_NAMESPACE . $config['class'];
+                    $instance = new $className();
+                    if ($instance instanceof ConnectionInterface) {
+                        return $instance->init($config);
+                    }
+                    die('Connection db error!');
                 } else {
                     die('Connection db error!');
                 }
@@ -55,11 +71,15 @@ class Password
         }
     }
 
+    public static function getUserConfFile()
+    {
+        return PASS_USER_CONF_DIR . '.user';
+    }
+
+
     public static function getUser()
     {
-        defined(PASS_USER_CONF_DIR) or define(PASS_USER_CONF_DIR, __DIR__ . '/../../data/');
-
-        $user = @file_get_contents(PASS_USER_CONF_DIR . 'user.conf');
+        $user = @file_get_contents(self::getUserConfFile());
         if (! $user) {
             throw new UserException('Please create user at first! ');
         }
@@ -68,9 +88,9 @@ class Password
 
     public static function userConf($userName)
     {
-        defined(PASS_USER_CONF_DIR) or define(PASS_USER_CONF_DIR, __DIR__ . '/../../data/');
-
-        file_put_contents(PASS_USER_CONF_DIR . 'user.conf', $userName);
+        $filename = self::getUserConfFile();
+        file_put_contents($filename, $userName);
+        return chmod($filename, 0400);
     }
 
     /**
@@ -85,7 +105,7 @@ class Password
         $question = new Question('What is the database password?');
         $question->setHidden(true);
         $question->setHiddenFallback(false);
-        $password = SymfonyAsk::ask($helper, $input, $output, $question);
+        $password = self::ask($helper, $input, $output, $question);
         $user = UserForm::user()->findUser(Password::getUser(), $password);
         if (! $user) {
             $command->getIO()->error('Please check the password is right!');
@@ -151,7 +171,10 @@ class Password
 
     public static function clear()
     {
-        return (new DbInit())->exec();
+        //clear db
+        (new DbClear())->exec();
+        //clear user file
+        return unlink(self::getUserConfFile());
     }
 
     /**
@@ -174,4 +197,9 @@ class Password
         return shell_exec('echo "'. $messages. '" | pbcopy');
     }
 
+    public static function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, Question $question)
+    {
+        $messages = $helper->ask($input, $output, $question);
+        return self::encryptData($messages);
+    }
 }

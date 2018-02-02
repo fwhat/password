@@ -13,19 +13,17 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
     /**
      * @var ActiveQuery
      */
-    public static $query;
+    protected static $_query;
 
     /**
      * @var ActiveRecordInterface
      */
-    public static $model;
+    protected static $_model;
 
     /**
      * @var array
      */
-    public static $data;
-
-    public static $one = false;
+    protected static $_data;
 
     /**
      * SqliteActiveRecord constructor.
@@ -41,14 +39,14 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
     public function save()
     {
-        $header = 'INSERT INTO ' . self::$model->name() . '(';
+        $header = 'INSERT INTO ' . self::$_model->name() . '(';
         $values = 'VALUES(';
-        foreach (self::$model->attributeLabels() as $k => $v) {
+        foreach (self::$_model->attributeLabels() as $k => $v) {
 //            $k = sqlite_escape_string($k);
 //            $v = sqlite_escape_string($v);
             if ($k === 'id') continue;
             $header .= '`' . trim($k) . '`,';
-            $values .= '\''. trim(self::$model->$k) . '\',';
+            $values .= '\''. trim(self::$_model->$k) . '\',';
         }
         $header = trim($header, ',') . ')';
         $values = trim($values, ',') . ')';
@@ -60,7 +58,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
      */
     public static function find()
     {
-        return self::$query = (new SqliteQuery());
+        return self::$_query = (new SqliteQuery());
     }
 
     public static function findOne()
@@ -71,7 +69,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
         $stmt = self::_prepare($sql);
         self::_fetchArray($stmt);
-        return self::$data ? self::$data[0] : [];
+        return self::$_data ? self::$_data[0] : [];
     }
 
     public static function findAll()
@@ -85,10 +83,10 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
     private static function _getQuerySql()
     {
-        $sql = sprintf("SELECT `%s` FROM `%s`", implode('`,`', self::$query->select), self::$model->name());
-        if (self::$query->where) {
+        $sql = sprintf("SELECT `%s` FROM `%s`", implode('`,`', self::$_query->select), self::$_model->name());
+        if (self::$_query->where) {
             $sql .= ' WHERE ';
-            foreach (self::$query->where as $item => $value) {
+            foreach (self::$_query->where as $item => $value) {
                 $sql .= sprintf("`%s`=:%s", $item, $item);
             }
         }
@@ -103,7 +101,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
     {
         $stmt = parent::$db->prepare($sql);
         if ($stmt) {
-            foreach (self::$query->where as $item => $value) {
+            foreach (self::$_query->where as $item => $value) {
                 //todo type
                 $stmt->bindValue(':' . $item, $value, SQLITE3_TEXT);
             }
@@ -117,10 +115,10 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
      */
     private static function _fetchArray(\SQLite3Result $stmt)
     {
-        self::$data = [];
+        self::$_data = [];
         while ($data = $stmt->fetchArray(SQLITE3_ASSOC)) {
-            self::$data[] = $data;
+            self::$_data[] = $data;
         }
-        return self::$data;
+        return self::$_data;
     }
 }

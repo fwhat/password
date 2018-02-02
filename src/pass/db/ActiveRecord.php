@@ -9,61 +9,55 @@ class ActiveRecord implements ActiveRecordInterface
     /**
      * @var BaseActiveRecordInterface
      */
-    protected static $db;
+    protected static $_db;
 
     /**
      * @var QueryInterface
      */
-    protected static $query;
+    protected static $_query;
 
-    private $attributeLabels = [];
-
-    protected static $className;
+    protected static $_className;
 
     /**
      * @var ActiveRecordInterface
      */
-    protected static $model;
+    protected static $_model;
+
+    private $_attributeLabels = [];
 
     public function __construct()
     {
         self::setDb($this);
     }
 
-    public function attributeLabels()
-    {
-    }
+    public function attributeLabels(){}
 
-    public function name()
-    {
-    }
+    public function name(){}
 
-    public function rules()
-    {
-    }
+    public function rules(){}
 
     /**
      * @return QueryInterface
      */
     public static function find()
     {
-        if (self::$className === null) {
-            self::$className = get_called_class();
+        if (self::$_className === null) {
+            self::$_className = get_called_class();
         }
-        if (self::$db == null) {
+        if (self::$_db == null) {
             self::setDb();
         }
-        return self::$query = (self::$db)::find();
+        return self::$_query = (self::$_db)::find();
     }
 
     public function all()
     {
-        return (self::$query)->all();
+        return (self::$_query)->all();
     }
 
     public function one()
     {
-        return (self::$query)->one();
+        return (self::$_query)->one();
     }
 
     /**
@@ -71,14 +65,14 @@ class ActiveRecord implements ActiveRecordInterface
      */
     public function save()
     {
-         return (self::$db)->save();
+         return (self::$_db)->save();
     }
 
     public function __set($name, $value)
     {
         if (isset($this->attributeLabels()[$name])) {
 
-            $this->attributeLabels[$name] = $value;
+            $this->_attributeLabels[$name] = $value;
         } else {
             throw new \Exception('Undefined property: ' . $name);
         }
@@ -86,18 +80,18 @@ class ActiveRecord implements ActiveRecordInterface
 
     public function __get($name)
     {
-        if (isset($this->attributeLabels[$name])) {
-            return $this->attributeLabels[$name];
+        if (isset($this->_attributeLabels[$name])) {
+            return $this->_attributeLabels[$name];
 
         } else {
             throw new \Exception('Undefined property: ' . $name);
         }
     }
 
-    public static function setDb($model = null)
+    private static function setDb($model = null)
     {
-        self::$model = $model ?: new self::$className();
-        self::$db = new Password::$dbClass(array_merge(Password::$dbConfig,
-            ['name' => self::$model->name(), 'model' => self::$model]));
+        self::$_model = $model ?: new self::$_className();
+        self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
+            ['name' => self::$_model->name(), 'model' => self::$_model]));
     }
 }

@@ -42,7 +42,7 @@ class PasswordCommand extends Command
             $question = new Question('Set the password' . PHP_EOL);
             $question->setHidden(true);
             $question->setHiddenFallback(false);
-            $password = SymfonyAsk::ask($helper, $input, $output, $question);
+            $password = Password::ask($helper, $input, $output, $question);
 
             PasswordForm::pass()->createPass($user['id'], $password, Password::encryptData($name), $description);
         }

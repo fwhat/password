@@ -21,14 +21,15 @@ class ClearCommand extends Command
     {
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
-            'Warning, this command will clear your password records, Y/N ?',
+            '<error>Warning, this command will clear your password records, Y/N ?</error>',
             'false');
         $way = $helper->ask($input, $output, $question);
         if ($way !== true) {
             return;
         }
-        Password::askPassword($this, $input, $output);
-        Password::clear();
-        $this->_io->success('Clear password data success!');
+        if (Password::askPassword($this, $input, $output)) {
+            Password::clear();
+            $this->_io->success('Clear password data success!');
+        }
     }
 }

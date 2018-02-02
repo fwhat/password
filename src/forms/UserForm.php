@@ -2,6 +2,7 @@
 namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
+use Dowte\Password\pass\exceptions\UserException;
 use Dowte\Password\pass\Password;
 
 class UserForm
@@ -19,7 +20,7 @@ class UserForm
     {
         $user = UserModel::find()
             ->select('id, password')
-            ->where(['username' => sha1($username)])
+            ->where(['username' => $username])
             ->one();
 
         if (empty($user)) {
@@ -35,7 +36,7 @@ class UserForm
         $model = new UserModel();
         $model->username = sha1($userName);
         $model->password = $password;
-
-        return $model->save();
+        $model->save();
+        return $model->username;
     }
 }

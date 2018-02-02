@@ -9,14 +9,15 @@ class DbInit implements DbInitInterface
     const FILE = 'file';
     const SQLITE = 'sqlite';
     const MYSQL = 'mysql';
+    const DB_NAMESPACE = 'Dowte\Password\pass\db\\';
 
-    public static $way;
+    protected static $_way;
 
-    public static $dbInitClass = 'DbInit';
+    protected static $_dbInitClassName = 'DbInit';
 
     public function setWay($way)
     {
-        self::$way = $way;
+        self::$_way = $way;
         return $this;
     }
 
@@ -27,9 +28,10 @@ class DbInit implements DbInitInterface
 
     public function exec()
     {
-        if (in_array(self::$way, [self::FILE, self::SQLITE, self::MYSQL])) {
+        if (in_array(self::$_way, [self::FILE, self::SQLITE, self::MYSQL])) {
+            $dbClass = self::DB_NAMESPACE . self::$_way . '\\' . self::$_dbInitClassName;
             /**@var $dbInit DbInitInterface*/
-            $dbInit = new (self::$way . '\\' . self::$dbInitClass)();
+            $dbInit = new $dbClass();
             return $dbInit->exec();
         } else {
             throw new UserException('Init way is invalid.');

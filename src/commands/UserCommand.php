@@ -4,7 +4,6 @@ namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\Password;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,23 +24,28 @@ class UserCommand extends Command
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp('This command allows you to create a user...')
-            ->addArgument('username', InputArgument::REQUIRED, 'The username of the user.');
+            ->addArgument('username', InputArgument::OPTIONAL, 'New username for password');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $userName = $input->getArgument('username');
+        if (! $userName) {
+            $helper = $this->getHelper('question');
+            $question = new Question('Set a name for Pass?');
+            $userName = $helper->ask($input, $output, $question);
+        }
         $helper = $this->getHelper('question');
         $question = new Question('Set a password for Pass?');
         $question->setHidden(true);
         $question->setHiddenFallback(false);
-        $password = SymfonyAsk::ask($helper, $input, $output, $question);
-        $output->writeln([
-            'User Creator',
-            '============',
-            '',
-        ]);
-        UserForm::user()->createUser($userName, $password);
-        Password::userConf($userName);
+        $password = Password::ask($helper, $input, $output, $question);
+        if (! $password) {
+            $this->_io->error('Password could\'t be empty');
+        } else {
+            $userName = UserForm::user()->createUser($userName, $password);
+            Password::userConf($userName);
+            $this->_io->success('User created ! ' . PHP_EOL . 'please protect the user conf in ' . realpath(Password::getUserConfFile()));
+        }
     }
 }

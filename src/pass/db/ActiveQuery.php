@@ -56,12 +56,4 @@ abstract class ActiveQuery implements QueryInterface
         }
         return $this;
     }
-
-//    /**
-//     * @return array
-//     */
-//    public function all()
-//    {
-//
-//    }
 }

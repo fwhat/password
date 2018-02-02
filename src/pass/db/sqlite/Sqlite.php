@@ -14,7 +14,7 @@ class Sqlite extends \SQLite3
      */
     public static $db;
 
-    public static $dbKey;
+    protected static $_dbKey;
 
     public function __construct()
     {
@@ -23,7 +23,7 @@ class Sqlite extends \SQLite3
     public function init()
     {
         if (file_exists(SQLITE_FILE)) {
-            self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$dbKey);
+            self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$_dbKey);
 
         } else {
             throw new QueryException('The db file is not exists, please exec init at first');

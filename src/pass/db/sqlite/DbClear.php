@@ -3,6 +3,7 @@
 namespace Dowte\Password\pass\db\sqlite;
 
 use Dowte\Password\pass\db\DbClearInterface;
+use Dowte\Password\pass\Password;
 
 class DbClear implements DbClearInterface
 {
@@ -10,7 +11,7 @@ class DbClear implements DbClearInterface
     {
         $sql = '';
         foreach (DbInit::getTables() as $table) {
-            $sql .= "DROP TABLE {$table};";
+            $sql .= sprintf("DELETE FROM %s WHERE username = '%s';\n", $table, Password::getUser());
         }
         Sqlite::$db->exec($sql);
     }
