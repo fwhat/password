@@ -6,15 +6,13 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class SymfonyConsoleOutput extends ConsoleOutput
 {
-    public function writePaste($messages, $description = '复制剪切板成功')
+    public function writeError()
     {
-        $messages = Password::decryptedData($messages);
-        $this->copy($messages);
-        parent::write($description, true, self::OUTPUT_NORMAL);
+
     }
 
-    protected function copy($messages)
+    public function writeSuccess()
     {
-        shell_exec('echo "'. $messages. '" | pbcopy');
+
     }
 }

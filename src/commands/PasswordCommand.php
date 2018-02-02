@@ -1,13 +1,11 @@
 <?php
 
-namespace Dowte\Password\controllers;
+namespace Dowte\Password\commands;
 
 
 use Dowte\Password\forms\PasswordForm;
-use Dowte\Password\models\PasswordModel;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\SymfonyAsk;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -46,7 +44,7 @@ class PasswordCommand extends Command
             $question->setHiddenFallback(false);
             $password = SymfonyAsk::ask($helper, $input, $output, $question);
 
-            PasswordForm::pass()->createPass($user['id'], $password, $name, $description);
+            PasswordForm::pass()->createPass($user['id'], $password, Password::encryptData($name), $description);
         }
     }
 }

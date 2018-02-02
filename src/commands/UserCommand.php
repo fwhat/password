@@ -1,6 +1,6 @@
 <?php
 
-namespace Dowte\Password\controllers;
+namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\Password;

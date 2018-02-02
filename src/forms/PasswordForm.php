@@ -45,4 +45,22 @@ class PasswordForm
 
         return $model->save();
     }
+
+    /**
+     * @param string $sprintf the sprintf string has a %s to set name
+     * @return string | array
+     */
+    public function getDecryptedName($sprintf = '')
+    {
+        $names = $this->findModels('name');
+        $lists = '';
+        foreach ($names as $name) {
+            if ($sprintf) {
+                $lists .= sprintf($sprintf, $name['name']);
+            } else {
+                $lists[] = $name['name'];
+            }
+        }
+        return $lists;
+    }
 }

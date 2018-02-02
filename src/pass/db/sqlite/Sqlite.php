@@ -3,10 +3,12 @@
 namespace Dowte\Password\pass\db\sqlite;
 
 
+use Dowte\Password\commands\InitCommand;
+use Dowte\Password\pass\exceptions\QueryException;
+use Dowte\Password\pass\SymfonyApplication;
+
 class Sqlite extends \SQLite3
 {
-    public static $file = __DIR__ . '/../../../../data/pass.db';
-
     /**
      * @var \SQLite3
      */
@@ -16,19 +18,15 @@ class Sqlite extends \SQLite3
 
     public function __construct()
     {
-
     }
 
     public function init()
     {
-        if (file_exists(self::$file)) {
-            self::$db = new \SQLite3(self::$file, SQLITE3_OPEN_READWRITE, self::$dbKey);
+        if (file_exists(SQLITE_FILE)) {
+            self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$dbKey);
 
         } else {
-            $fp = fopen(self::$file, 'w+');
-            fclose($fp);
-            self::$db = new \SQLite3(self::$file, SQLITE3_OPEN_READWRITE, self::$dbKey);
+            throw new QueryException('The db file is not exists, please exec init at first');
         }
-
     }
 }

@@ -1,15 +1,19 @@
 <?php
 
-namespace Dowte\Password\pass;
+namespace Dowte\Password\pass\db\sqlite;
 
 
-use Dowte\Password\pass\db\sqlite\Sqlite;
+use Dowte\Password\pass\db\DbInitInterface;
 
-class PassInit
+class DbInit implements DbInitInterface
 {
-    public function InitSqlite($dbKey = null)
+    public function exec()
     {
         $sqlite = new Sqlite();
+        if (! file_exists(SQLITE_FILE)) {
+            $fp = fopen(SQLITE_FILE, 'w+');
+            fclose($fp);
+        }
 //        $sqlite::$dbKey = $dbKey;
         $sqlite->init();
         $sql = <<<EOF
@@ -18,7 +22,6 @@ CREATE TABLE IF NOT EXISTS user (
                     username VARCHAR(255) NOT NULL, 
                     password VARCHAR(255) NOT NULL)
 EOF;
-
 
         $sqlite::$db->exec($sql);
         $sql = <<<EOF
@@ -32,5 +35,10 @@ CREATE TABLE IF NOT EXISTS password (
                     )
 EOF;
         $sqlite::$db->exec($sql);
+    }
+
+    public static function getTables()
+    {
+        return ['user', 'password'];
     }
 }
