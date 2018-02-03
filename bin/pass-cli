@@ -18,14 +18,12 @@ require __DIR__ . '/../vendor/autoload.php';
 defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE_DIR') or define('SQLITE_FILE_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
+defined('CONF_FILE') or define('CONF_FILE', realpath(__DIR__ . '/../pass-conf.php'));
 
-$config = array_merge(
-        require __DIR__ . '/../pass-conf.php'
-);
+$config = require __DIR__ . '/../pass-conf.php';
 $app = new Password($config);
 
 $console = new Application();
-
 
 // ... register commands
 $console->add(new InitCommand());

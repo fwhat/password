@@ -28,7 +28,7 @@ class PassCommand extends Command
             $question = new Question('Which name is you want to get:' . PHP_EOL);
             $name = $helper->ask($input, $output, $question);
         }
-        Password::askPassword($this, $input, $output);
+        $this->validPassword();
         $pass = PasswordForm::pass()->findOne(['password'], ['name' => $name]);
         if (! $pass || !isset($pass['password'])) {
             $this->_io->error('You provide password is wrong !');

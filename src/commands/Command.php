@@ -2,10 +2,15 @@
 
 namespace Dowte\Password\commands;
 
+use Dowte\Password\forms\UserForm;
+use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command implements CompletionAwareInterface
@@ -16,6 +21,16 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
      * @var SymfonyStyle
      */
     protected $_io;
+
+    /**
+     * @var $_input InputInterface
+     */
+    protected $_input;
+
+    /**
+     * @var $_output OutputInterface
+     */
+    protected $_output;
 
     public function completeArgumentValues($argumentName, CompletionContext $context)
     {
@@ -29,6 +44,8 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->_input = $input;
+        $this->_output = $output;
         $this->_io = new SymfonyStyle($input, $output);
     }
 
@@ -51,5 +68,26 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
     public function getIO()
     {
         return $this->_io;
+    }
+
+    protected function encryptAsk(QuestionHelper $helper, Question $question)
+    {
+        $messages = $helper->ask($this->_input, $this->_output, $question);
+        return PassSecret::encryptData($messages);
+    }
+
+    protected function validPassword()
+    {
+        $helper = $this->getHelper('question');
+        $question = new Question('What is the database password?');
+        $question->setHidden(true);
+        $question->setHiddenFallback(false);
+        $password = $this->encryptAsk($helper, $question);
+        $user = UserForm::user()->findUser(Password::getUser(), $password);
+        if (! $user) {
+            $this->_io->error('Please check the password is right!');
+        } else {
+            return $user;
+        }
     }
 }

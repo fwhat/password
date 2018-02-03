@@ -44,7 +44,7 @@ class UserCommand extends Command
             $this->_io->error('Password could\'t be empty');
         } else {
             $userName = UserForm::user()->createUser($userName, $password);
-            Password::userConf($userName);
+            Password::userConfigure($userName);
             $this->_io->success('User created ! ' . PHP_EOL . 'please protect the user conf in ' . realpath(Password::getUserConfFile()));
         }
     }

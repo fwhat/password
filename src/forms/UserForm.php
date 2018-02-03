@@ -3,6 +3,7 @@ namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
 use Dowte\Password\pass\exceptions\UserException;
+use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 
 class UserForm
@@ -27,7 +28,7 @@ class UserForm
             return null;
 
         } else {
-            return Password::validPassword($password, $user['password']) ? $user : null;
+            return PassSecret::validData($password, $user['password']) ? $user : null;
         }
     }
 

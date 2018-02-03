@@ -27,7 +27,7 @@ class ClearCommand extends Command
         if ($way !== true) {
             return;
         }
-        if (Password::askPassword($this, $input, $output)) {
+        if ($this->validPassword()) {
             Password::clear();
             $this->_io->success('Clear password data success!');
         }

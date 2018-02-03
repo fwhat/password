@@ -15,9 +15,17 @@
     "symfony/console": "^3.4",
     "stecman/symfony-console-completion": "^0.7.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
   "autoload": {
     "psr-4": {
       "Dowte\\Password\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
     }
   },
   "dependencies": {

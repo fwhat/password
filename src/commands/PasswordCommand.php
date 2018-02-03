@@ -4,6 +4,7 @@ namespace Dowte\Password\commands;
 
 
 use Dowte\Password\forms\PasswordForm;
+use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\SymfonyAsk;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +29,7 @@ class PasswordCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $user = Password::askPassword($this, $input, $output);
+        $user = $this->validPassword();
         if ($user) {
             $helper = $this->getHelper('question');
             $question = new Question('Set a name for new password:' . PHP_EOL);
@@ -42,9 +43,9 @@ class PasswordCommand extends Command
             $question = new Question('Set the password' . PHP_EOL);
             $question->setHidden(true);
             $question->setHiddenFallback(false);
-            $password = Password::ask($helper, $input, $output, $question);
+            $password = $this->encryptAsk($helper, $question);
 
-            PasswordForm::pass()->createPass($user['id'], $password, Password::encryptData($name), $description);
+            PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($name), $description);
         }
     }
 }

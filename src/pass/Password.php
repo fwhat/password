@@ -46,36 +46,16 @@ class Password
         }
     }
 
-    protected function loadParams(array $value)
+    public static function init($config)
     {
-        foreach ((array) $value as $name => $item) {
-            self::$params[$name] = $item;
-        }
+        new self($config);
     }
 
-    protected function loadComponents(array $configs)
-    {
-        foreach ((array) $configs as $name => $config) {
-            if ($name === 'db') {
-                if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
-                    $className = self::BASE_NAMESPACE . $config['class'];
-                    $instance = new $className();
-                    if ($instance instanceof ConnectionInterface) {
-                        return $instance->init($config);
-                    }
-                    die('Connection db error!');
-                } else {
-                    die('Connection db error!');
-                }
-            }
-        }
-    }
 
     public static function getUserConfFile()
     {
         return PASS_USER_CONF_DIR . '.user';
     }
-
 
     public static function getUser()
     {
@@ -86,77 +66,11 @@ class Password
         return $user;
     }
 
-    public static function userConf($userName)
+    public static function userConfigure($userName)
     {
         $filename = self::getUserConfFile();
         file_put_contents($filename, $userName);
         return chmod($filename, 0400);
-    }
-
-    /**
-     * @param $command \Dowte\Password\commands\Command
-     * @param $input
-     * @param OutputInterface $output
-     * @return array|null
-     */
-    public static function askPassword($command, $input, OutputInterface $output)
-    {
-        $helper = $command->getHelper('question');
-        $question = new Question('What is the database password?');
-        $question->setHidden(true);
-        $question->setHiddenFallback(false);
-        $password = self::ask($helper, $input, $output, $question);
-        $user = UserForm::user()->findUser(Password::getUser(), $password);
-        if (! $user) {
-            $command->getIO()->error('Please check the password is right!');
-        } else {
-            return $user;
-        }
-    }
-
-    /**
-     * @param $password
-     * @param $validPassword
-     * @return bool
-     */
-    public static function validPassword($password, $validPassword)
-    {
-        openssl_private_decrypt(base64_decode($password), $decrypted, self::getPrivateKey());
-        openssl_private_decrypt(base64_decode($validPassword), $validDecrypted, self::getPrivateKey());
-        if ($decrypted === $validDecrypted) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param $data
-     * @return mixed
-     */
-    public static function encryptData($data)
-    {
-        openssl_public_encrypt($data, $encrypted, self::getPublicKey());
-        return base64_encode($encrypted);
-    }
-
-    /**
-     * @param $data
-     * @return mixed
-     */
-    public static function decryptedData($data)
-    {
-        openssl_private_decrypt(base64_decode($data), $decrypted, self::getPrivateKey());
-        return $decrypted;
-    }
-
-    public static function getPublicKey()
-    {
-        return file_get_contents(self::$params['public_key']);
-    }
-
-    public static function getPrivateKey()
-    {
-        return file_get_contents(self::$params['private_key']);
     }
 
     public static function ways()
@@ -177,13 +91,18 @@ class Password
         return unlink(self::getUserConfFile());
     }
 
+    public static function underline2hump($property)
+    {
+        return lcfirst(str_replace(' ', '',ucwords(str_replace(['_', '-'], ' ', $property))));
+    }
+
     /**
      * @param $messages
      * @param $io SymfonyStyle
      */
-    public static function writePaste($messages, $io)
+    public static function writePaste($messages, SymfonyStyle $io)
     {
-        $messages = Password::decryptedData($messages);
+        $messages = PassSecret::decryptedData($messages);
         $status = self::copy($messages);
         if ($status) {
             $io->success('复制剪贴板成功 !');
@@ -192,14 +111,37 @@ class Password
         }
     }
 
+    protected function loadParams(array $value)
+    {
+        foreach ((array) $value as $name => $item) {
+            ! $item or self::$params[$name] = $item;
+        }
+    }
+
+    protected function loadComponents(array $configs)
+    {
+        foreach ((array) $configs as $name => $config) {
+            if ($name === 'db') {
+                if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
+                    $className = self::BASE_NAMESPACE . $config['class'];
+                    $instance = new $className();
+                    if ($instance instanceof ConnectionInterface) {
+                        $instance->init($config);
+                    } else {
+                        die('Connection db error!');
+                    }
+                } else {
+                    die('Connection db error!');
+                }
+            }
+            if ($name === 'secret') {
+                PassSecret::load($config);
+            }
+        }
+    }
+
     protected static function copy($messages)
     {
         return shell_exec('echo "'. $messages. '" | pbcopy');
-    }
-
-    public static function ask(QuestionHelper $helper, InputInterface $input, OutputInterface $output, Question $question)
-    {
-        $messages = $helper->ask($input, $output, $question);
-        return self::encryptData($messages);
     }
 }
