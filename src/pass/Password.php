@@ -6,6 +6,8 @@ use Dowte\Password\pass\db\ConnectionInterface;
 use Dowte\Password\pass\db\DbClear;
 use Dowte\Password\pass\db\DbInit;
 use Dowte\Password\pass\exceptions\BaseException;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Password
@@ -41,6 +43,7 @@ class Password
                 $this->loadParams($value);
             }
         }
+        self::$io = new SymfonyStyle(new ArgvInput(), new ConsoleOutput());
     }
 
     public static function init($config)

@@ -48,7 +48,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
     {
         $this->_input = $input;
         $this->_output = $output;
-        $this->_io = Password::$io = new SymfonyStyle($input, $output);
+        $this->_io = new SymfonyStyle($input, $output);
     }
 
     protected function getOptionValues($optionName, CompletionContext $context)
