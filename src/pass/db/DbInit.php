@@ -35,8 +35,7 @@ class DbInit implements DbInitInterface
             $dbInit = new $dbClass();
             return $dbInit->exec();
         } else {
-            Password::$io->error('Init way is invalid.');
-            exit(BaseException::USER_CODE);
+            Password::error('Init way is invalid.');
         }
     }
 }

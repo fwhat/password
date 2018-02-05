@@ -80,8 +80,7 @@ class FileActiveRecord extends File implements BaseActiveRecordInterface
                         return self::$emptyData;
                     }
                 } else {
-                    Password::$io->error('Where param error: ' . $kWhere);
-                    exit(BaseException::QUERY_CODE);
+                    Password::error('Where param error: ' . $kWhere, BaseException::QUERY_CODE);
                 }
             }
         }
@@ -93,8 +92,7 @@ class FileActiveRecord extends File implements BaseActiveRecordInterface
             }
         }
         if (array_diff(array_keys($array), self::$query->select)) {
-            Password::$io->error('Select param error: ' . implode(',', array_diff(array_keys($array), self::$query->select)));
-            exit(BaseException::QUERY_CODE);
+            Password::error('Select param error: ' . implode(',', array_diff(array_keys($array), self::$query->select)), BaseException::QUERY_CODE);
         }
 
 

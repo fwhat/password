@@ -30,7 +30,7 @@ class Password
     /**
      * @var SymfonyStyle
      */
-    public static $io;
+    protected static $_io;
 
     public function __construct($options = [])
     {
@@ -43,7 +43,7 @@ class Password
                 $this->loadParams($value);
             }
         }
-        self::$io = new SymfonyStyle(new ArgvInput(), new ConsoleOutput());
+        self::$_io = new SymfonyStyle(new ArgvInput(), new ConsoleOutput());
     }
 
     public static function init($config)
@@ -64,8 +64,7 @@ class Password
     {
         $user = @file_get_contents(self::getUserConfFile());
         if (! $user) {
-            self::$io->error('Please create user at first! ');
-            exit(BaseException::USER_CODE);
+            self::error('Please create user at first! ');
         }
         return $user;
     }
@@ -142,10 +141,10 @@ class Password
                     if ($instance instanceof ConnectionInterface) {
                         $instance->init($config);
                     } else {
-                        die('Connection db error!');
+                        self::error('Connection db error!');
                     }
                 } else {
-                    die('Connection db error!');
+                    self::error('Connection db error!');
                 }
             }
             if ($name === 'secret') {
@@ -158,5 +157,24 @@ class Password
     {
         system("printf '%s' {$messages} | pbcopy", $code);
         return $code === 0;
+    }
+
+    /**
+     * @param $message
+     * @param int $code exit code
+     */
+    public static function error($message, $code = BaseException::USER_CODE)
+    {
+        self::$_io->error($message);
+        exit($code);
+    }
+
+    /**
+     * @param $message
+     */
+    public static function success($message)
+    {
+        self::$_io->error($message);
+        exit(0);
     }
 }

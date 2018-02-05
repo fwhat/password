@@ -22,8 +22,7 @@ abstract class ActiveQuery implements QueryInterface
         } elseif (is_string($select)) {
             $this->select = explode(',', str_replace(['`', ' '], '', $select));
         } else {
-            Password::$io->error('Set select error');
-            exit(BaseException::QUERY_CODE);
+            Password::error('Set select error', BaseException::QUERY_CODE);
         }
         return $this;
     }
@@ -48,13 +47,11 @@ abstract class ActiveQuery implements QueryInterface
                     $fileWhere[trim(trim(mb_substr($item, 0, $index), '`'))] = trim(trim(mb_substr($item, $index, mb_strlen($item)), '\'"'));
 
                 } else {
-                    Password::$io->error('Set where error');
-                    exit(BaseException::QUERY_CODE);
+                    Password::error('Set where error', BaseException::QUERY_CODE);
                 }
             }
         } else {
-            Password::$io->error('Set where error');
-            exit(BaseException::QUERY_CODE);
+            Password::error('Set where error', BaseException::QUERY_CODE);
         }
         return $this;
     }

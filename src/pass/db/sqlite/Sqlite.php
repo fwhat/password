@@ -25,8 +25,7 @@ class Sqlite extends \SQLite3
             self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$_dbKey);
 
         } else {
-            Password::$io->error('The db file is not exists, please exec init at first');
-            exit(BaseException::QUERY_CODE);
+            Password::error('The db file is not exists, please exec init at first', BaseException::QUERY_CODE);
         }
     }
 }
