@@ -2,9 +2,7 @@
 namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
-use Dowte\Password\pass\exceptions\UserException;
 use Dowte\Password\pass\PassSecret;
-use Dowte\Password\pass\Password;
 
 class UserForm
 {

@@ -2,7 +2,8 @@
 
 namespace Dowte\Password\pass\db;
 
-use Dowte\Password\pass\exceptions\UserException;
+use Dowte\Password\pass\exceptions\BaseException;
+use Dowte\Password\pass\Password;
 
 class DbInit implements DbInitInterface
 {
@@ -34,7 +35,8 @@ class DbInit implements DbInitInterface
             $dbInit = new $dbClass();
             return $dbInit->exec();
         } else {
-            throw new UserException('Init way is invalid.');
+            Password::$io->error('Init way is invalid.');
+            exit(BaseException::USER_CODE);
         }
     }
 }

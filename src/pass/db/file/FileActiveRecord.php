@@ -6,7 +6,8 @@ use Dowte\Password\pass\db\ActiveQuery;
 use Dowte\Password\pass\db\ActiveRecordInterface;
 use Dowte\Password\pass\db\BaseActiveRecordInterface;
 use Dowte\Password\pass\db\QueryInterface;
-use Dowte\Password\pass\exceptions\QueryException;
+use Dowte\Password\pass\exceptions\BaseException;
+use Dowte\Password\pass\Password;
 
 class FileActiveRecord extends File implements BaseActiveRecordInterface
 {
@@ -79,7 +80,8 @@ class FileActiveRecord extends File implements BaseActiveRecordInterface
                         return self::$emptyData;
                     }
                 } else {
-                    throw new QueryException('Where param error: ' . $kWhere);
+                    Password::$io->error('Where param error: ' . $kWhere);
+                    exit(BaseException::QUERY_CODE);
                 }
             }
         }
@@ -91,7 +93,8 @@ class FileActiveRecord extends File implements BaseActiveRecordInterface
             }
         }
         if (array_diff(array_keys($array), self::$query->select)) {
-            throw new QueryException('Select param error: ' . implode(',', array_diff(array_keys($array), self::$query->select)));
+            Password::$io->error('Select param error: ' . implode(',', array_diff(array_keys($array), self::$query->select)));
+            exit(BaseException::QUERY_CODE);
         }
 
 
@@ -140,11 +143,6 @@ class FileActiveRecord extends File implements BaseActiveRecordInterface
             } else {
                 break;
             }
-//            $temp = explode('=', $item);
-//            if (! isset($temp[0]) || ! isset($temp[1])) {
-//                throw new QueryException('Where param error: ');
-//            }
-//            $fileWhere[trim($temp[0], '`')] = trim($temp[1], '\'"');
         }
         return $fileWhere;
     }

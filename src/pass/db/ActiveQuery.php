@@ -2,7 +2,8 @@
 
 namespace Dowte\Password\pass\db;
 
-use Dowte\Password\pass\exceptions\QueryException;
+use Dowte\Password\pass\exceptions\BaseException;
+use Dowte\Password\pass\Password;
 
 abstract class ActiveQuery implements QueryInterface
 {
@@ -13,7 +14,6 @@ abstract class ActiveQuery implements QueryInterface
     /**
      * @param $select
      * @return ActiveQuery
-     * @throws QueryException
      */
     public function select($select = '*')
     {
@@ -22,7 +22,8 @@ abstract class ActiveQuery implements QueryInterface
         } elseif (is_string($select)) {
             $this->select = explode(',', str_replace(['`', ' '], '', $select));
         } else {
-            throw new QueryException('Set select error');
+            Password::$io->error('Set select error');
+            exit(BaseException::QUERY_CODE);
         }
         return $this;
     }
@@ -30,7 +31,6 @@ abstract class ActiveQuery implements QueryInterface
     /**
      * @param $where
      * @return ActiveQuery
-     * @throws QueryException
      */
     public function where($where)
     {
@@ -48,11 +48,13 @@ abstract class ActiveQuery implements QueryInterface
                     $fileWhere[trim(trim(mb_substr($item, 0, $index), '`'))] = trim(trim(mb_substr($item, $index, mb_strlen($item)), '\'"'));
 
                 } else {
-                    throw new QueryException('Set where error');
+                    Password::$io->error('Set where error');
+                    exit(BaseException::QUERY_CODE);
                 }
             }
         } else {
-            throw new QueryException('Set where error');
+            Password::$io->error('Set where error');
+            exit(BaseException::QUERY_CODE);
         }
         return $this;
     }

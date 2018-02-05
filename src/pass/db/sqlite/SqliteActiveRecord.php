@@ -87,7 +87,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
         if (self::$_query->where) {
             $sql .= ' WHERE ';
             foreach (self::$_query->where as $item => $value) {
-                $sql .= sprintf("`%s`=:%s", $item, $item);
+                $sql .= sprintf("`%s`=':%s'", $item, $item);
             }
         }
         return $sql;

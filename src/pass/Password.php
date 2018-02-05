@@ -1,19 +1,11 @@
 <?php
 namespace Dowte\Password\pass;
 
-use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\db\ActiveRecordInterface;
 use Dowte\Password\pass\db\ConnectionInterface;
 use Dowte\Password\pass\db\DbClear;
 use Dowte\Password\pass\db\DbInit;
-use Dowte\Password\pass\db\DbInitInterface;
-use Dowte\Password\pass\exceptions\UserException;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+use Dowte\Password\pass\exceptions\BaseException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Password
@@ -32,6 +24,11 @@ class Password
     public static $dbClass;
 
     public static $dbConfig;
+
+    /**
+     * @var SymfonyStyle
+     */
+    public static $io;
 
     public function __construct($options = [])
     {
@@ -57,11 +54,15 @@ class Password
         return PASS_USER_CONF_DIR . '.user';
     }
 
+    /**
+     * @return string
+     */
     public static function getUser()
     {
         $user = @file_get_contents(self::getUserConfFile());
         if (! $user) {
-            throw new UserException('Please create user at first! ');
+            self::$io->error('Please create user at first! ');
+            exit(BaseException::USER_CODE);
         }
         return $user;
     }
@@ -117,7 +118,7 @@ class Password
         if ($status) {
             ! $successMessage or $io->success($successMessage);
         } else {
-            ! $successMessage or $io->error('复制剪贴板失败 !');
+            ! $successMessage or $io->error($errorMessage);
         }
     }
 
@@ -152,7 +153,7 @@ class Password
 
     protected static function copy($messages)
     {
-        system('echo "'. $messages. '" | pbcopy', $code);
+        system("printf '%s' {$messages} | pbcopy", $code);
         return $code === 0;
     }
 }
