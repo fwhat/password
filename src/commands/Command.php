@@ -5,17 +5,19 @@ namespace Dowte\Password\commands;
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
-use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command implements CompletionAwareInterface
 {
     const GET_ARGUMENT = 'getArgument';
+
+    const GET_OPTION = 'getOption';
 
     /**
      * @var SymfonyStyle
@@ -39,7 +41,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
 
     public function completeOptionValues($optionName, CompletionContext $context)
     {
-        // TODO: Implement completeOptionValues() method.
+        return $this->getOptionValues($optionName, $context);
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -47,6 +49,14 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         $this->_input = $input;
         $this->_output = $output;
         $this->_io = new SymfonyStyle($input, $output);
+    }
+
+    protected function getOptionValues($optionName, CompletionContext $context)
+    {
+        if (method_exists($this, self::GET_OPTION . ucfirst($optionName))) {
+            return call_user_func([$this, self::GET_OPTION . ucfirst($optionName)], $context);
+        }
+        return [];
     }
 
     protected function getArgumentValues($argumentName, CompletionContext $context)

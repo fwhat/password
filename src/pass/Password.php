@@ -100,7 +100,7 @@ class Password
      * @param $messages
      * @param $io SymfonyStyle
      */
-    public static function writePaste($messages, SymfonyStyle $io)
+    public static function toPasteDecode($messages, SymfonyStyle $io)
     {
         $messages = PassSecret::decryptedData($messages);
         $status = self::copy($messages);
@@ -108,6 +108,16 @@ class Password
             $io->success('复制剪贴板成功 !');
         } else {
             $io->error('复制剪贴板失败 !');
+        }
+    }
+
+    public static function toPaste($messages, SymfonyStyle $io, $successMessage = '复制剪贴板成功 !', $errorMessage = '复制剪贴板失败 !')
+    {
+        $status = self::copy($messages);
+        if ($status) {
+            ! $successMessage or $io->success($successMessage);
+        } else {
+            ! $successMessage or $io->error('复制剪贴板失败 !');
         }
     }
 
@@ -142,6 +152,7 @@ class Password
 
     protected static function copy($messages)
     {
-        return shell_exec('echo "'. $messages. '" | pbcopy');
+        system('echo "'. $messages. '" | pbcopy', $code);
+        return $code === 0;
     }
 }

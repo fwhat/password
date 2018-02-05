@@ -4,6 +4,7 @@ namespace Dowte\Password\forms;
 
 
 use Dowte\Password\models\PasswordModel;
+use Dowte\Password\pass\PassSecret;
 
 class PasswordForm
 {
@@ -54,13 +55,15 @@ class PasswordForm
     {
         $names = $this->findModels('name');
         $lists = '';
-        foreach ($names as $name) {
-            if ($sprintf) {
+        $names = array_map(function($arr) {
+            return PassSecret::decryptedData($arr['name']);
+        }, $names);
+        if ($sprintf) {
+            foreach ($names as $name) {
                 $lists .= sprintf($sprintf, $name['name']);
-            } else {
-                $lists[] = $name['name'];
             }
+            return $lists;
         }
-        return $lists;
+        return $names;
     }
 }

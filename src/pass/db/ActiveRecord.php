@@ -80,7 +80,7 @@ class ActiveRecord implements ActiveRecordInterface
 
     public function __get($name)
     {
-        if (isset($this->_attributeLabels[$name])) {
+        if (isset($this->_attributeLabels[$name]) || $this->_attributeLabels[$name] === null) {
             return $this->_attributeLabels[$name];
 
         } else {
@@ -92,6 +92,6 @@ class ActiveRecord implements ActiveRecordInterface
     {
         self::$_model = $model ?: new self::$_className();
         self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
-            ['name' => self::$_model->name(), 'model' => self::$_model]));
+            ['_name' => self::$_model->name(), '_model' => self::$_model]));
     }
 }

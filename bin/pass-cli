@@ -3,13 +3,13 @@
 use Symfony\Component\Console\Application;
 use Dowte\Password\pass\Password;
 use Dowte\Password\commands\UserCommand;
-use Dowte\Password\commands\DefaultCommand;
 use Dowte\Password\commands\PasswordCommand;
 use Dowte\Password\commands\ListCommand;
 use Dowte\Password\commands\PassCommand;
 use Dowte\Password\commands\InitCommand;
 use Dowte\Password\commands\CompletionCommand;
 use Dowte\Password\commands\ClearCommand;
+use Dowte\Password\commands\GenerateCommand;
 
 // application.php
 
@@ -21,19 +21,23 @@ defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
 defined('CONF_FILE') or define('CONF_FILE', realpath(__DIR__ . '/../pass-conf.php'));
 
 $config = require __DIR__ . '/../pass-conf.php';
-$app = new Password($config);
+Password::init($config);
 
 $console = new Application();
+
+$passCommand = new PassCommand();
 
 // ... register commands
 $console->add(new InitCommand());
 $console->add(new CompletionCommand());
-$console->add(new DefaultCommand());
 $console->add(new UserCommand());
 $console->add(new PasswordCommand());
 $console->add(new ListCommand());
-$console->add(new PassCommand());
+$console->add($passCommand);
 $console->add(new ClearCommand());
+$console->add(new GenerateCommand());
+
+$console->setDefaultCommand($passCommand->getName());
 
 $console->run();
 

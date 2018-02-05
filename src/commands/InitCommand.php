@@ -3,8 +3,10 @@
 namespace Dowte\Password\commands;
 
 use Dowte\Password\pass\Password;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -14,19 +16,24 @@ class InitCommand extends Command
     protected function configure()
     {
         $this->setName('init')
-            ->setDescription('DbInit pass-cli settings');
+            ->setDescription('DbInit pass-cli settings')
+            ->setHelp('This command could help you init this application! ')
+            ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            '请选择储存密码文件的方式 (默认本地)',
-            Password::ways(),
-            0
-        );
-        $question->setErrorMessage('the way %s is invalid.');
-        $way = $helper->ask($input, $output, $question);
+        $way = $input->getOption('way');
+        if (empty($way) || ! in_array($way, Password::ways())) {
+            $question = new ChoiceQuestion(
+                '请选择储存密码文件的方式 (默认本地)',
+                Password::ways(),
+                0
+            );
+            $question->setErrorMessage('the way %s is invalid.');
+            $way = $helper->ask($input, $output, $question);
+        }
         Password::dbInit($way);
         $status = $this->dumpCompletion('/usr/local/bin/pass');
         if ($status) {
@@ -35,6 +42,11 @@ class InitCommand extends Command
         } else {
             $this->_io->error('DbInit Error !');
         }
+    }
+
+    protected function getOptionWay(CompletionContext $context)
+    {
+        return Password::ways();
     }
 
     private function dumpCompletion($program)

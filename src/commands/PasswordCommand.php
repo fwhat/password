@@ -30,22 +30,32 @@ class PasswordCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
+        $name = '';
+        $password = '';
         if ($user) {
-            $helper = $this->getHelper('question');
-            $question = new Question('Set a name for new password:' . PHP_EOL);
-            $name = $helper->ask($input, $output, $question);
+            while (empty($name)) {
+                $helper = $this->getHelper('question');
+                $question = new Question('Set a name for new password: (name is required)' . PHP_EOL);
+                $name = $helper->ask($input, $output, $question);
+            }
+            while (empty($password)) {
+                $helper = $this->getHelper('question');
+                $question = new Question('Set the password: (password is required)' . PHP_EOL);
+                $question->setHidden(true);
+                $question->setHiddenFallback(false);
+                $password = $this->encryptAsk($helper, $question);
+            }
 
             $helper = $this->getHelper('question');
             $question = new Question('Set description for new password' . PHP_EOL);
             $description = $helper->ask($input, $output, $question);
 
-            $helper = $this->getHelper('question');
-            $question = new Question('Set the password' . PHP_EOL);
-            $question->setHidden(true);
-            $question->setHiddenFallback(false);
-            $password = $this->encryptAsk($helper, $question);
-
-            PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($name), $description);
+            $status = PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($name), $description);
+            if ($status) {
+                $this->_io->success('Create new password record success!');
+            } else {
+                $this->_io->error('Create new password record false!');
+            }
         }
     }
 }
