@@ -18,11 +18,19 @@ class PassCommand extends Command
         $this->setName('name')
             ->setDescription('Get a pass by name')
             ->setHelp('This command allows you to get a password...')
-            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Get password from the password name.');
+            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Get password from the password name.')
+            ->addOption('list', 'a', InputOption::VALUE_NONE, 'Get all passwords of user.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($input->getOption('list')) {
+            $lists = PasswordForm::pass()->getDecryptedName("<fg=green>%s          </>");
+
+            $output->writeln(trim($lists));
+            return;
+        }
+
         $name = $this->encryptOption('name');
         if (! $name) {
             $helper = $this->getHelper('question');
