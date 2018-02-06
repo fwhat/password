@@ -83,7 +83,8 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
     private static function _getQuerySql()
     {
-        $sql = sprintf("SELECT `%s` FROM `%s`", implode('`,`', self::$_query->select), self::$_model->name());
+        $query = self::$_query->select == ActiveQuery::DEFAULT_SELECT ? '*' : '`' . implode('`,`', self::$_query->select) . '`';
+        $sql = sprintf("SELECT %s FROM `%s`", $query, self::$_model->name());
         if (self::$_query->where) {
             $sql .= ' WHERE ';
             foreach (self::$_query->where as $item => $value) {

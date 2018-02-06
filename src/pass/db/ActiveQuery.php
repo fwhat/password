@@ -7,6 +7,8 @@ use Dowte\Password\pass\Password;
 
 abstract class ActiveQuery implements QueryInterface
 {
+    const DEFAULT_SELECT = ['*'];
+
     public $select = [];
 
     public $where = [];
@@ -15,8 +17,11 @@ abstract class ActiveQuery implements QueryInterface
      * @param $select
      * @return ActiveQuery
      */
-    public function select($select = '*')
+    public function select($select = self::DEFAULT_SELECT)
     {
+        if ($select == '*') {
+            $select = self::DEFAULT_SELECT;
+        }
         if(is_array($select)) {
             $this->select = $select;
         } elseif (is_string($select)) {

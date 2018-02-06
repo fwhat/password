@@ -23,22 +23,22 @@ class PassCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-            $name = $input->getOption('name');
-            if (! $name) {
-                $helper = $this->getHelper('question');
-                $question = new Question('Which name is you want to get:' . PHP_EOL);
-                $name = $helper->ask($input, $output, $question);
-            }
-            $this->validPassword();
-            $pass = PasswordForm::pass()->findOne(['name' => $name], ['password']);
-            if (! $pass || !isset($pass['password'])) {
-                $this->_io->error('You provide password is wrong or name is not exist!');
-            } else {
-                Password::toPasteDecode($pass['password'], $this->_io);
-            }
+        $name = $this->encryptOption('name');
+        if (! $name) {
+            $helper = $this->getHelper('question');
+            $question = new Question('Which name is you want to get:' . PHP_EOL);
+            $name = $this->encryptAsk($helper, $question);
+        }
+        $user = $this->validPassword();
+        $pass = PasswordForm::pass()->findPassword($user['id'], $name);
+        if ($pass) {
+            Password::toPasteDecode($pass, $this->_io);
+        } else {
+            $this->_io->error('You provide password is wrong or name is not exist!');
+        }
     }
 
-    protected function getOptionPass(CompletionContext $context)
+    protected function getOptionName(CompletionContext $context)
     {
         $names = PasswordForm::pass()->getDecryptedName();
 

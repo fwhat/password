@@ -19,7 +19,7 @@ class PasswordCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('create-pass')
+            ->setName('c-pass')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new password.')
@@ -41,7 +41,7 @@ class PasswordCommand extends Command
         $noDescription = $input->getOption('no-description');
         $generate = $input->getOption('generate');
         $password = $generate === true ? PasswordGenerate::gen()->get() : '';
-        $this->_io->success('The new password is' . $password);
+        ! $password or $this->_io->success('The new password is' . $password);
         if ($user) {
             while (empty($name)) {
                 $helper = $this->getHelper('question');

@@ -80,6 +80,12 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return $this->_io;
     }
 
+    protected function encryptOption($name)
+    {
+        $messages = $this->_input->getOption($name);
+        return $messages ? PassSecret::encryptData($messages) : null;
+    }
+
     protected function encryptAsk(QuestionHelper $helper, Question $question)
     {
         $messages = $helper->ask($this->_input, $this->_output, $question);
@@ -95,7 +101,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         $password = $this->encryptAsk($helper, $question);
         $user = UserForm::user()->findUser(Password::getUser(), $password);
         if (! $user) {
-            $this->_io->error('Please check the password is right!');
+            Password::error('Please check the password is right!');
         } else {
             return $user;
         }

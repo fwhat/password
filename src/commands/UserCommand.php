@@ -16,7 +16,7 @@ class UserCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('create-user')
+            ->setName('c-user')
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new user.')

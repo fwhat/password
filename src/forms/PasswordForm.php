@@ -5,6 +5,7 @@ namespace Dowte\Password\forms;
 
 use Dowte\Password\models\PasswordModel;
 use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 
 class PasswordForm
 {
@@ -15,6 +16,18 @@ class PasswordForm
     public static function pass()
     {
         return (new self());
+    }
+
+    public function findPassword($userId, $name)
+    {
+        $model = new PasswordModel();
+        $passwords = $model::find()->select('password, name')->where(['user_id' => $userId])->all();
+        foreach ($passwords as $password) {
+            if (PassSecret::validData($password['name'], $name)) {
+                return $password['password'];
+            }
+        }
+        return false;
     }
 
     public function findModels($fields, $where = [])
@@ -53,17 +66,18 @@ class PasswordForm
      */
     public function getDecryptedName($sprintf = '')
     {
-        $names = $this->findModels('name');
+        $user = UserForm::user()->findOne(['username' => Password::getUser()]);
+        $names = $this->findModels('name', ['user_id' => $user['id']]);
         $lists = '';
-        $names = array_map(function($arr) {
-            return PassSecret::decryptedData($arr['name']);
-        }, $names);
         if ($sprintf) {
             foreach ($names as $name) {
-                $lists .= sprintf($sprintf, $name['name']);
+                $lists .= sprintf($sprintf, PassSecret::decryptedData($name['name']));
             }
             return $lists;
+        } else {
+            return array_map(function($arr) {
+                return PassSecret::decryptedData($arr['name']);
+            }, $names);
         }
-        return $names;
     }
 }
