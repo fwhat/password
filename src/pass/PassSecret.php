@@ -172,8 +172,8 @@ class PassSecret
     {
         $content = str_replace(
             [$this->_privateMatch, $this->_publicMatch],
-            [$privateKeyPath, $publicKeyPath],
-            file_get_contents(CONF_FILE)
+            [Password::_realPath($privateKeyPath), Password::_realPath($publicKeyPath)],
+            file_get_contents(CONF_FILE_TEMP)
         );
         file_put_contents(CONF_FILE, $content);
     }
@@ -199,10 +199,11 @@ class PassSecret
         $publicKeyPath = rtrim($this->_secretKeyDir, '/') . '/' . $this->_publicKeyName;
         $this->secretKeyTemplateTo($privateKeyPath, $publicKeyPath);
         $secret = [$privateKeyPath => $privateKey, $publicKeyPath => $publicKey];
-        foreach ($secret as $k => $item) {
-            $fp = fopen($k, 'w+');
+        foreach ($secret as $filename => $item) {
+            $fp = fopen($filename, 'w+');
             fwrite($fp, $item);
             fclose($fp);
+            chmod($filename, '0400');
         }
         Password::init(require CONF_FILE);
     }

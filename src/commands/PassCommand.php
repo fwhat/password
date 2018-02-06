@@ -32,12 +32,12 @@ class PassCommand extends Command
         }
 
         $name = $this->encryptOption('name');
-        if (! $name) {
+        $user = $this->validPassword();
+        while (empty($name)) {
             $helper = $this->getHelper('question');
             $question = new Question('Which name is you want to get:' . PHP_EOL);
             $name = $this->encryptAsk($helper, $question);
         }
-        $user = $this->validPassword();
         $pass = PasswordForm::pass()->findPassword($user['id'], $name);
         if ($pass) {
             Password::toPasteDecode($pass, $this->_io);

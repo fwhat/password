@@ -18,10 +18,15 @@ require __DIR__ . '/../vendor/autoload.php';
 defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE_DIR') or define('SQLITE_FILE_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
-defined('CONF_FILE') or define('CONF_FILE', realpath(__DIR__ . '/../pass-conf.php'));
+defined('CONF_FILE') or define('CONF_FILE', __DIR__ . '/../pass-conf.php');
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
 
-$config = require __DIR__ . '/../pass-conf.php';
-Password::init($config);
+if (file_exists(CONF_FILE)) {
+    $config = require CONF_FILE;
+    Password::init($config);
+} else {
+    Password::notice('The pass-conf.php is not exists, please configure it or use init -G command to generate.');
+}
 
 $console = new Application();
 

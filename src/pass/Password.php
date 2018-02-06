@@ -30,7 +30,7 @@ class Password
     /**
      * @var SymfonyStyle
      */
-    protected static $_io;
+    private static $_io;
 
     public function __construct($options = [])
     {
@@ -43,7 +43,6 @@ class Password
                 $this->loadParams($value);
             }
         }
-        self::$_io = new SymfonyStyle(new ArgvInput(), new ConsoleOutput());
     }
 
     public static function init($config)
@@ -165,8 +164,13 @@ class Password
      */
     public static function error($message, $code = BaseException::USER_CODE)
     {
-        self::$_io->error($message);
+        self::getIo()->error($message);
         exit($code);
+    }
+
+    public static function notice($message)
+    {
+        self::getIo()->note($message);
     }
 
     /**
@@ -174,7 +178,32 @@ class Password
      */
     public static function success($message)
     {
-        self::$_io->error($message);
+        self::getIo()->error($message);
         exit(0);
+    }
+
+    public static function _realPath($path)
+    {
+        $arr = explode('/', $path);
+        $realPath = [];
+        foreach ($arr as $key => $value) {
+            if ($value == '..') {
+                array_pop($realPath);
+                continue;
+            }
+            if ($value == '.') {
+                continue;
+            }
+            $realPath[] = $value;
+        }
+        return implode('/', $realPath);
+    }
+
+    private static function getIo()
+    {
+        if (self::$_io === null) {
+            self::$_io = new SymfonyStyle(new ArgvInput(), new ConsoleOutput());
+        }
+        return self::$_io;
     }
 }

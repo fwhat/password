@@ -2,8 +2,10 @@
 namespace Tests;
 error_reporting(0);
 define(CONF_FILE, __DIR__ . '/pass-conf-template.php');
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
 
 use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 
 class PasswordTest extends \PHPUnit\Framework\TestCase
 {
@@ -16,9 +18,9 @@ class PasswordTest extends \PHPUnit\Framework\TestCase
 
     private function init()
     {
-        $config = require (__DIR__ . '/pass-conf-template.php');
-        \Dowte\Password\pass\Password::init($config);
-        $this->secret = new \Dowte\Password\pass\PassSecret();
+        $config = require CONF_FILE_TEMP;
+        Password::init($config);
+        $this->secret = new PassSecret();
         $this->secret->setSecretKeyDir(__DIR__);
         $this->secret->buildSecretKey();
     }
