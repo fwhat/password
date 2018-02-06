@@ -6,8 +6,10 @@ namespace Dowte\Password\commands;
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
+use Dowte\Password\pass\PasswordGenerate;
 use Dowte\Password\pass\SymfonyAsk;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -24,18 +26,26 @@ class PasswordCommand extends Command
 
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp('This command allows you to create a password...');
+            ->setHelp('This command allows you to create a password...')
+            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Set a name for new password')
+            ->addOption('description', 'd', InputOption::VALUE_OPTIONAL, 'Set a description for new password')
+            ->addOption('no-description', 'D', InputOption::VALUE_NONE, 'Don\'t set description for new password')
+            ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random password for new password(level 3 length 12)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
-        $name = '';
-        $password = '';
+        $name = $input->getOption('name');
+        $description = $input->getOption('description');
+        $noDescription = $input->getOption('no-description');
+        $generate = $input->getOption('generate');
+        $password = $generate === true ? PasswordGenerate::gen()->get() : '';
+        $this->_io->success('The new password is' . $password);
         if ($user) {
             while (empty($name)) {
                 $helper = $this->getHelper('question');
-                $question = new Question('Set a name for new password: (name is required)' . PHP_EOL);
+                $question = new Question('Set a name for new password: (name is required for search)' . PHP_EOL);
                 $name = $helper->ask($input, $output, $question);
             }
             while (empty($password)) {
@@ -46,9 +56,11 @@ class PasswordCommand extends Command
                 $password = $this->encryptAsk($helper, $question);
             }
 
-            $helper = $this->getHelper('question');
-            $question = new Question('Set description for new password' . PHP_EOL);
-            $description = $helper->ask($input, $output, $question);
+            if ($noDescription !== true && ! $description) {
+                $helper = $this->getHelper('question');
+                $question = new Question('Set description for new password' . PHP_EOL);
+                $description = $helper->ask($input, $output, $question);
+            }
 
             $status = PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($name), $description);
             if ($status) {

@@ -1,4 +1,5 @@
 <?php
+namespace Tests;
 error_reporting(0);
 define(CONF_FILE, __DIR__ . '/pass-conf-template.php');
 

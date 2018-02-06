@@ -23,7 +23,7 @@ class PasswordForm
         return $model::find()->select($fields)->where($where)->all();
     }
 
-    public function findOne($fields, $where = [])
+    public function findOne($where = [], $fields = '*')
     {
         $model = new PasswordModel();
         return $model::find()->select($fields)->where($where)->one();

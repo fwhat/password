@@ -18,19 +18,19 @@ class PassCommand extends Command
         $this->setName('name')
             ->setDescription('Get a pass by name')
             ->setHelp('This command allows you to get a password...')
-            ->addOption('pass', 'p', InputOption::VALUE_OPTIONAL, 'Get password from the password name.');
+            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Get password from the password name.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-            $name = $input->getOption('pass');
+            $name = $input->getOption('name');
             if (! $name) {
                 $helper = $this->getHelper('question');
                 $question = new Question('Which name is you want to get:' . PHP_EOL);
                 $name = $helper->ask($input, $output, $question);
             }
             $this->validPassword();
-            $pass = PasswordForm::pass()->findOne(['password'], ['name' => $name]);
+            $pass = PasswordForm::pass()->findOne(['name' => $name], ['password']);
             if (! $pass || !isset($pass['password'])) {
                 $this->_io->error('You provide password is wrong or name is not exist!');
             } else {

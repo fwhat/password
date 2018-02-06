@@ -15,6 +15,12 @@ class UserForm
         return (new self());
     }
 
+    public function findOne($where, $fields = '*')
+    {
+        $model = new UserModel();
+        return $model::find()->select($fields)->where($where)->one();
+    }
+
     public function findUser($username, $password)
     {
         $user = UserModel::find()

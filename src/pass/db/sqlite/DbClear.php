@@ -3,6 +3,7 @@
 namespace Dowte\Password\pass\db\sqlite;
 
 use Dowte\Password\forms\PasswordForm;
+use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\db\DbClearInterface;
 use Dowte\Password\pass\Password;
 
@@ -11,7 +12,7 @@ class DbClear implements DbClearInterface
     public function exec()
     {
         $sql = '';
-        $user = PasswordForm::pass()->findOne(['username' => Password::getUser()]);
+        $user = UserForm::user()->findOne(['username' => Password::getUser()], ['id']);
         if (! $user) {
             return;
         }

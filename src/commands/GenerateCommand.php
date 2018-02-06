@@ -16,9 +16,9 @@ class GenerateCommand extends Command
         $this->setName('g')
             ->setDescription('Generate a new password')
             ->setHelp('This command could help generate a new random password.')
-            ->addOption('hidden', 'c', InputOption::VALUE_OPTIONAL, 'Whether or not to hidden the generate result.(max 100)')
+            ->addOption('hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.(max 100)')
             ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length password you want generate', 12)
-            ->addOption('level', 'e', InputOption::VALUE_OPTIONAL, 'Which password level generate', PasswordGenerate::LEVEL_THREE);
+            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which password level generate', PasswordGenerate::LEVEL_THREE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -27,7 +27,7 @@ class GenerateCommand extends Command
         $length = $input->getOption('length');
         $level = $input->getOption('level');
         $genResult = PasswordGenerate::gen()->setLength($length)->setLevel($level)->get();
-        if ($hidden !== 'h') {
+        if ($hidden === true) {
             $output->write($genResult);
         }
         Password::toPaste($genResult, $this->_io, '已复制在剪贴板');
