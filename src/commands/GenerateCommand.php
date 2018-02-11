@@ -13,7 +13,8 @@ class GenerateCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('g')
+        $this->setName('generate')
+            ->setAliases(['g'])
             ->setDescription('Generate a new password')
             ->setHelp('This command could help generate a new random password.')
             ->addOption('hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.(max 100)')

@@ -16,12 +16,12 @@ class MysqlQuery implements QueryInterface
         // TODO: Implement one() method.
     }
 
-    public function select()
+    public function select($select)
     {
         // TODO: Implement select() method.
     }
 
-    public function where()
+    public function where($where)
     {
         // TODO: Implement where() method.
     }

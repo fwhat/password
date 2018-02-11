@@ -13,6 +13,8 @@ abstract class ActiveQuery implements QueryInterface
 
     public $where = [];
 
+    public $keyWords = ['like'];
+
     /**
      * @param $select
      * @return ActiveQuery
@@ -42,6 +44,7 @@ abstract class ActiveQuery implements QueryInterface
             $this->where = $where;
             return $this;
         } elseif (is_string($where)) {
+            $where = str_replace('and', 'AND', $where);
             $items = explode('AND', $where);
             foreach ($items as $item) {
                 if (preg_match('/`(.*)`/', $item, $kMatch) && preg_match('/\'(.*)\'/', $item, $vMatch)) {

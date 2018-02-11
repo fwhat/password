@@ -10,6 +10,7 @@ use Dowte\Password\commands\InitCommand;
 use Dowte\Password\commands\CompletionCommand;
 use Dowte\Password\commands\ClearCommand;
 use Dowte\Password\commands\GenerateCommand;
+use Dowte\Password\commands\AlfredCommand;
 
 // application.php
 
@@ -41,6 +42,7 @@ $console->add(new ListCommand());
 $console->add($passCommand);
 $console->add(new ClearCommand());
 $console->add(new GenerateCommand());
+$console->add(new AlfredCommand());
 
 $console->setDefaultCommand($passCommand->getName());
 
