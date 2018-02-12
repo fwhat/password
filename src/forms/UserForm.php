@@ -32,8 +32,13 @@ class UserForm
             return null;
 
         } else {
-            return PassSecret::validData($password, $user['password']) ? $user : null;
+            if (PassSecret::validData($password, $user['password'])) {
+                $user['password'] = $password;
+                return $user;
+            }
         }
+
+        return null;
     }
 
     public function createUser($userName, $password)

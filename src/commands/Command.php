@@ -92,13 +92,15 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return PassSecret::encryptData($messages);
     }
 
-    protected function validPassword()
+    protected function validPassword($password = '')
     {
-        $helper = $this->getHelper('question');
-        $question = new Question('What is the database password?');
-        $question->setHidden(true);
-        $question->setHiddenFallback(false);
-        $password = $this->encryptAsk($helper, $question);
+        if (! $password) {
+            $helper = $this->getHelper('question');
+            $question = new Question('What is the database password?');
+            $question->setHidden(true);
+            $question->setHiddenFallback(false);
+            $password = $this->encryptAsk($helper, $question);
+        }
         $user = UserForm::user()->findUser(Password::getUser(), $password);
         if (! $user) {
             Password::error('Please check the password is right!');

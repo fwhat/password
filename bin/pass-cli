@@ -21,6 +21,7 @@ defined('SQLITE_FILE_DIR') or define('SQLITE_FILE_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
 defined('CONF_FILE') or define('CONF_FILE', __DIR__ . '/../pass-conf.php');
 defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
+defined('ALFRED_CONF_FILE') or define('ALFRED_CONF_FILE', Password::_realPath(__DIR__ . '/../data/.pass'));
 
 if (file_exists(CONF_FILE)) {
     $config = require CONF_FILE;

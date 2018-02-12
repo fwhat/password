@@ -178,7 +178,7 @@ class Password
      */
     public static function success($message)
     {
-        self::getIo()->error($message);
+        self::getIo()->success($message);
         exit(0);
     }
 

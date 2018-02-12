@@ -7,7 +7,6 @@ use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordGenerate;
-use Dowte\Password\pass\SymfonyAsk;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +29,10 @@ class PasswordCommand extends Command
             ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Set a name for new password')
             ->addOption('description', 'd', InputOption::VALUE_OPTIONAL, 'Set a description for new password')
             ->addOption('no-description', 'D', InputOption::VALUE_NONE, 'Don\'t set description for new password')
-            ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random password for new password(level 3 length 12)');
+            ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random password for new password(level 3 length 12)')
+            ->addOption('hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.(max 100)')
+            ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length password you want generate', 12)
+            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which password level generate', PasswordGenerate::LEVEL_THREE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -40,8 +42,17 @@ class PasswordCommand extends Command
         $description = $input->getOption('description');
         $noDescription = $input->getOption('no-description');
         $generate = $input->getOption('generate');
-        $password = $generate === true ? PasswordGenerate::gen()->get() : '';
-        ! $password or $this->_io->success('The new password is' . $password);
+        $length = $input->getOption('length');
+        $level = $input->getOption('level');
+        $hidden = $input->getOption('hidden');
+        $newPassword = $generate === true ? PasswordGenerate::gen()->setLength($length)->setLevel($level)->get() : '';
+        if ($newPassword) {
+            $password = PassSecret::encryptData($newPassword);
+            Password::toPaste($newPassword, $this->_io, 'The new password is set into clipboard.');
+            if (! $hidden) {
+                $this->_io->success('The new password is' . $newPassword);
+            }
+        }
         if ($user) {
             while (empty($name)) {
                 $helper = $this->getHelper('question');
