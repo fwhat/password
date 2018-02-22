@@ -3,16 +3,16 @@ ___
 [![Build Status](https://travis-ci.org/Dowte/pass-cli.svg?branch=master)](https://travis-ci.org/Dowte/pass-cli)
 #### A command-line tool to help you manage your password
 
-### 安装及配置
+### 一 安装及配置
 
-##### 下载
+##### 1.1 下载
 
 + git clone  
 
-#### 配置
+#### 1.2 配置
 + cp pass-cli/bin/pass-cli /usr/local/bin/pass
 
-### 初始化
+### 二 初始化
 
 ```php
 pass init -G
@@ -22,7 +22,7 @@ pass init -G
 
 ![init](https://github.com/Dowte/ideas/blob/master/imgs/1518406735911.jpg?raw=true)
 
-### 创建一个用户
+### 三 创建一个用户
 
 ```php
 pass c-user dowte
@@ -31,7 +31,7 @@ pass c-user dowte
 ```
 ![user](https://github.com/Dowte/ideas/blob/master/imgs/1519266586736.jpg?raw=true)
 
-### 存入密码
+### 四 存入密码
 
 ```php
 pass c-pass -g
@@ -43,7 +43,7 @@ pass c-pass -g
 
 ![password](https://github.com/Dowte/ideas/blob/master/imgs/1519267095200.jpg?raw=true)
 
-### 查找
+### 五 查找
 
 ```php
 pass -a //列出所有存入的密码的名称
@@ -51,9 +51,9 @@ pass name -N test1 //test1的密码
 ```
 ![find](https://github.com/Dowte/ideas/blob/master/imgs/1519268480172.jpg?raw=true)
 
-### ext
+### 六 ext
 
-#### 使用 alfred
+#### 6.1 使用 alfred
 
 双击使用Pass.alfredworkflow
 
@@ -62,13 +62,13 @@ pass alfred init
 ```
 ![alfred-init](https://github.com/Dowte/ideas/blob/master/imgs/1519268865294.jpg?raw=true)
 
-#### 列表
+#### 6.2 列表
 
 ![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519268947588.jpg?raw=true)
 
 cmd+enter 将密码复制到剪贴板
 
-#### 其他命令
+#### 6.3 其他命令
 ```
 //在alfred中
 pass -c 
@@ -78,7 +78,7 @@ tab 键选择一个
 
 ![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519269195392.jpg?raw=true)
 
-##### generate 随机生成密码串
+##### 6.3.1 generate 随机生成密码串
 
 ![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519269323424.jpg?raw=true)
 
