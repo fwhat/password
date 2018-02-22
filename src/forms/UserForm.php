@@ -44,7 +44,7 @@ class UserForm
     public function createUser($userName, $password)
     {
         $model = new UserModel();
-        $model->username = sha1($userName);
+        $model->username = hash('sha256', $userName);
         $model->password = $password;
         $model->save();
         return $model->username;

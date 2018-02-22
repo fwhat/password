@@ -90,6 +90,7 @@ class Password
         //clear db
         (new DbClear())->exec();
         //clear user file
+        unlink(CONF_FILE);
         return unlink(self::getUserConfFile());
     }
 

@@ -2,3 +2,84 @@
 ___
 [![Build Status](https://travis-ci.org/Dowte/pass-cli.svg?branch=master)](https://travis-ci.org/Dowte/pass-cli)
 #### A command-line tool to help you manage your password
+
+### 安装及配置
+
+##### 下载
+
++ git clone  
+
+#### 配置
++ cp pass-cli/bin/pass-cli /usr/local/bin/pass
+
+### 初始化
+
+```php
+pass init -G
+//-G 自动生成密钥对, 如使用已有的密钥对请先配置pass-conf.php
+//生成的密钥对将会保存在提示的路径下
+```
+
+![init](https://github.com/Dowte/ideas/blob/master/imgs/1518406735911.jpg?raw=true)
+
+### 创建一个用户
+
+```php
+pass c-user dowte
+//将会创建一个用户名为dowte密码库, 会提示设置密码(此密码将被加密, 查询密码库时必须提供)
+//库中用户名为dowte的sha256串 本地保存在提示的路径下
+```
+![user](https://github.com/Dowte/ideas/blob/master/imgs/1519266586736.jpg?raw=true)
+
+### 存入密码
+
+```php
+pass c-pass -g
+//-g 生成新的密码(如保存之前的密码，则无需提供该参数)
+//-l 生成新密码的长度 默认12位
+//-L 生成新密码的等级 默认3(大小写字母+数字) max 4
+//-H 隐藏生成的结果
+```
+
+![password](https://github.com/Dowte/ideas/blob/master/imgs/1519267095200.jpg?raw=true)
+
+### 查找
+
+```php
+pass -a //列出所有存入的密码的名称
+pass name -N test1 //test1的密码
+```
+![find](https://github.com/Dowte/ideas/blob/master/imgs/1519268480172.jpg?raw=true)
+
+### ext
+
+#### 使用 alfred
+
+双击使用Pass.alfredworkflow
+
+```
+pass alfred init
+```
+![alfred-init](https://github.com/Dowte/ideas/blob/master/imgs/1519268865294.jpg?raw=true)
+
+#### 列表
+
+![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519268947588.jpg?raw=true)
+
+cmd+enter 将密码复制到剪贴板
+
+#### 其他命令
+```
+//在alfred中
+pass -c 
+//显示可执行的命令
+tab 键选择一个
+```
+
+![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519269195392.jpg?raw=true)
+
+##### generate 随机生成密码串
+
+![alfred-list](https://github.com/Dowte/ideas/blob/master/imgs/1519269323424.jpg?raw=true)
+
+cmd+enter 将密码复制到剪贴板

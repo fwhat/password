@@ -119,11 +119,11 @@ class PassSecret
     }
 
     /**
-     * @param $_secretKeyDir
+     * @param $secretKeyDir
      */
-    public function setSecretKeyDir($_secretKeyDir)
+    public function setSecretKeyDir($secretKeyDir)
     {
-        $this->_secretKeyDir = $_secretKeyDir;
+        $this->_secretKeyDir = $secretKeyDir;
     }
 
     /**
@@ -140,6 +140,12 @@ class PassSecret
     public function setSecretKeyType($type)
     {
         $this->_secretKeyType = $type;
+    }
+
+    public function __construct()
+    {
+        ! defined('PUBLIC_KEY_PATH_MATCH') or $this->_publicMatch = PUBLIC_KEY_PATH_MATCH;
+        ! defined('PRIVATE_KEY_PATH_MATCH') or $this->_privateMatch = PRIVATE_KEY_PATH_MATCH;
     }
 
     /**
