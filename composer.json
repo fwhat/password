@@ -1,7 +1,7 @@
 {
   "name": "dowte/password",
-  "version": "0.0.1",
-  "description": "Save and find your password for each website or card etc.",
+  "version": "1.0.0",
+  "description": "Save and find your passwords for each website or card etc.",
   "keywords": ["password"],
   "license": "MIT",
   "author": [
