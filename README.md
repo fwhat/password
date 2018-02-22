@@ -3,7 +3,7 @@ ___
 [![Build Status](https://travis-ci.org/Dowte/pass-cli.svg?branch=master)](https://travis-ci.org/Dowte/pass-cli)
 #### A command-line tool to help you manage your password
 
-### 一 安装及配置
+### 一、安装及配置
 
 ##### 1.1 下载
 
@@ -12,7 +12,7 @@ ___
 #### 1.2 配置
 + cp pass-cli/bin/pass-cli /usr/local/bin/pass
 
-### 二 初始化
+### 二、初始化
 
 ```php
 pass init -G
@@ -22,7 +22,7 @@ pass init -G
 
 ![init](https://github.com/Dowte/ideas/blob/master/imgs/1518406735911.jpg?raw=true)
 
-### 三 创建一个用户
+### 三、创建一个用户
 
 ```php
 pass c-user dowte
@@ -31,7 +31,7 @@ pass c-user dowte
 ```
 ![user](https://github.com/Dowte/ideas/blob/master/imgs/1519266586736.jpg?raw=true)
 
-### 四 存入密码
+### 四、存入密码
 
 ```php
 pass c-pass -g
@@ -43,7 +43,7 @@ pass c-pass -g
 
 ![password](https://github.com/Dowte/ideas/blob/master/imgs/1519267095200.jpg?raw=true)
 
-### 五 查找
+### 五、查找
 
 ```php
 pass -a //列出所有存入的密码的名称
@@ -51,7 +51,7 @@ pass name -N test1 //test1的密码
 ```
 ![find](https://github.com/Dowte/ideas/blob/master/imgs/1519268480172.jpg?raw=true)
 
-### 六 ext
+### 六、ext
 
 #### 6.1 使用 alfred
 
