@@ -12,6 +12,7 @@ ___
 #### 1.2 配置
 + cp pass-cli/bin/pass-cli /usr/local/bin/pass
 
+
 ### 二、初始化
 
 ```php
@@ -21,6 +22,10 @@ pass init -G
 ```
 
 ![init](http://assest.dowte.com/imgs//1518406735911.jpg)
+
+#### 配置命令行提示工具
+echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc ({{pass-cli-path}}用真实路径替换)
+source ~/.zshrc
 
 ### 三、创建一个用户
 

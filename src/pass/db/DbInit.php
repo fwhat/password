@@ -2,7 +2,6 @@
 
 namespace Dowte\Password\pass\db;
 
-use Dowte\Password\pass\exceptions\BaseException;
 use Dowte\Password\pass\Password;
 
 class DbInit implements DbInitInterface
@@ -24,12 +23,13 @@ class DbInit implements DbInitInterface
 
     public static function ways()
     {
-        return [self::FILE, self::SQLITE, self::MYSQL];
+//        return [self::FILE, self::SQLITE, self::MYSQL];
+        return [self::SQLITE];
     }
 
     public function exec()
     {
-        if (in_array(self::$_way, [self::FILE, self::SQLITE, self::MYSQL])) {
+        if (in_array(self::$_way, self::ways())) {
             $dbClass = self::DB_NAMESPACE . self::$_way . '\\' . self::$_dbInitClassName;
             /**@var $dbInit DbInitInterface*/
             $dbInit = new $dbClass();

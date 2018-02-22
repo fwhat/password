@@ -29,9 +29,9 @@ class InitCommand extends Command
         $way = $input->getOption('way');
         if (empty($way) || ! in_array($way, Password::ways())) {
             $question = new ChoiceQuestion(
-                '请选择储存密码文件的方式 (默认1)',
+                '请选择储存密码文件的方式 (默认0)',
                 Password::ways(),
-                1
+                0
             );
             $question->setErrorMessage('the way %s is invalid.');
             $way = $helper->ask($input, $output, $question);
