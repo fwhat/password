@@ -4,7 +4,7 @@ use Symfony\Component\Console\Application;
 use Dowte\Password\pass\Password;
 use Dowte\Password\commands\UserCommand;
 use Dowte\Password\commands\PasswordCommand;
-use Dowte\Password\commands\PassCommand;
+use Dowte\Password\commands\FindCommand;
 use Dowte\Password\commands\InitCommand;
 use Dowte\Password\commands\CompletionCommand;
 use Dowte\Password\commands\ClearCommand;
@@ -33,7 +33,7 @@ if (file_exists(CONF_FILE)) {
 
 $console = new Application();
 
-$passCommand = new PassCommand();
+$passCommand = new FindCommand();
 
 // ... register commands
 $console->add(new InitCommand());

@@ -183,6 +183,11 @@ class Password
         exit(0);
     }
 
+    public static function encryptUserName($username)
+    {
+        return hash('sha256', $username);
+    }
+
     public static function _realPath($path)
     {
         $arr = explode('/', $path);

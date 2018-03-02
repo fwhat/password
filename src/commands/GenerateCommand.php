@@ -15,28 +15,23 @@ class GenerateCommand extends Command
     {
         $this->setName('generate')
             ->setAliases(['g'])
-            ->setDescription('Generate a new password')
-            ->setHelp('This command could help generate a new random password.')
-            ->addOption('hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.(max 100)')
-            ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length password you want generate', 12)
-            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which password level generate', PasswordGenerate::LEVEL_THREE);
+            ->setDescription('Generate a new random string')
+            ->setHelp('This command could help generate a new random string.')
+            ->addOption('no-hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.')
+            ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length string you want generate(max 100)', 12)
+            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which random string level to generate', PasswordGenerate::LEVEL_THREE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $hidden = $input->getOption('hidden');
+        $noHidden = $input->getOption('no-hidden');
         $length = $input->getOption('length');
         $level = $input->getOption('level');
         $genResult = PasswordGenerate::gen()->setLength($length)->setLevel($level)->get();
-        if ($hidden === true) {
+        if ($noHidden === true) {
             $output->write($genResult);
         }
         Password::toPaste($genResult, $this->_io, '已复制在剪贴板');
-    }
-
-    protected function getOptionHidden(CompletionContext $context)
-    {
-        return ['t'];
     }
 
     protected function getOptionLevel(CompletionContext $context)

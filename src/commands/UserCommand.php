@@ -6,6 +6,7 @@ use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -15,7 +16,8 @@ class UserCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('c-user')
+            ->setName('user')
+            ->setAliases(['u'])
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new user.')
@@ -23,28 +25,38 @@ class UserCommand extends Command
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp('This command allows you to create a user...')
-            ->addArgument('username', InputArgument::OPTIONAL, 'New username for password');
+            ->addOption('username', 'u', InputOption::VALUE_OPTIONAL, 'New username for password')
+            ->addOption('fix', 'f',InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $userName = $input->getArgument('username');
+        $userName = $input->getOption('username');
+        $fix = $input->getOption('fix');
+        $askNameQuestion = $fix ? 'What\'s your old username?' : 'Set a name for Pass?';
         if (! $userName) {
             $helper = $this->getHelper('question');
-            $question = new Question('Set a name for Pass?');
+            $question = new Question($askNameQuestion);
             $userName = $helper->ask($input, $output, $question);
         }
-        $helper = $this->getHelper('question');
-        $question = new Question('Set a password for Pass?');
-        $question->setHidden(true);
-        $question->setHiddenFallback(false);
-        $password = $this->encryptAsk($helper, $question);
-        if (! $password) {
-            $this->_io->error('Password could\'t be empty');
+        if ($fix) {
+            $encryptName = Password::encryptUserName($userName);
+            if ($this->validPassword('', $encryptName)) {
+                Password::userConfigure($encryptName);
+            }
         } else {
-            $userName = UserForm::user()->createUser($userName, $password);
-            Password::userConfigure($userName);
-            $this->_io->success('User created ! please protect the user conf in ' . realpath(Password::getUserConfFile()));
+            $helper = $this->getHelper('question');
+            $question = new Question('Set a password for Pass?');
+            $question->setHidden(true);
+            $question->setHiddenFallback(false);
+            $password = $this->encryptAsk($helper, $question);
+            if (! $password) {
+                $this->_io->error('Password could\'t be empty');
+            } else {
+                $userName = UserForm::user()->createUser($userName, $password);
+                Password::userConfigure($userName);
+                $this->_io->success('User created !');
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ class AlfredCommand extends Command
         $this->setName('alfred')
             ->setDescription('Some Shortcut keys when use alfred')
             ->setHelp('This command is for user find password quickly when use alfred')
-            ->addArgument('action', InputArgument::OPTIONAL)
+            ->addOption('init', '', InputOption::VALUE_NONE, 'Init the pass-alfred')
             ->addOption('keyword', 'k', InputOption::VALUE_OPTIONAL, 'Query password by keywords');
     }
 
@@ -32,7 +32,7 @@ class AlfredCommand extends Command
         if ($action === 'init') {
             if (($user = $this->validPassword())) {
                 $this->setPassword($user['password']);
-                Password::success('Init alfred success!');
+                Password::success('Init pass-alfred success!');
             }
         }
         $this->loadPassword();

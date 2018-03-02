@@ -10,11 +10,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class PassCommand extends Command
+class FindCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('name')
+        $this->setName('find')
             ->setDescription('Get a pass by name')
             ->setHelp('This command allows you to get a password...')
             ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Get password from the password name.')
@@ -25,7 +25,6 @@ class PassCommand extends Command
     {
         if ($input->getOption('list')) {
             $lists = PasswordForm::pass()->getDecryptedName("<fg=green>%s          </>");
-
             $output->writeln(trim($lists));
             return;
         }

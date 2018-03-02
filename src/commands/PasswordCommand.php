@@ -18,7 +18,8 @@ class PasswordCommand extends Command
     {
         $this
             // the name of the command (the part after "bin/console")
-            ->setName('c-pass')
+            ->setName('password')
+            ->setAliases(['p'])
 
             // the short description shown while running "php bin/console list"
             ->setDescription('Creates a new password.')
@@ -29,10 +30,10 @@ class PasswordCommand extends Command
             ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Set a name for new password')
             ->addOption('description', 'd', InputOption::VALUE_OPTIONAL, 'Set a description for new password')
             ->addOption('no-description', 'D', InputOption::VALUE_NONE, 'Don\'t set description for new password')
-            ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random password for new password(level 3 length 12)')
-            ->addOption('hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.(max 100)')
-            ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length password you want generate', 12)
-            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which password level generate', PasswordGenerate::LEVEL_THREE);
+            ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random string for new password(level 3 length 12)')
+            ->addOption('no-hidden', 'H', InputOption::VALUE_NONE, 'Whether or not to hidden the generate result.')
+            ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length random string you want generate.(max 100)', 12)
+            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which random string level to generate', PasswordGenerate::LEVEL_THREE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -44,12 +45,12 @@ class PasswordCommand extends Command
         $generate = $input->getOption('generate');
         $length = $input->getOption('length');
         $level = $input->getOption('level');
-        $hidden = $input->getOption('hidden');
+        $hidden = $input->getOption('no-hidden');
         $newPassword = $generate === true ? PasswordGenerate::gen()->setLength($length)->setLevel($level)->get() : '';
         if ($newPassword) {
             $password = PassSecret::encryptData($newPassword);
             Password::toPaste($newPassword, $this->_io, 'The new password is set into clipboard.');
-            if (! $hidden) {
+            if ($hidden) {
                 $this->_io->success('The new password is' . $newPassword);
             }
         }

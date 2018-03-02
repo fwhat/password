@@ -26,7 +26,7 @@ Options:
   + 1. 在~/.zshrc 文件最后添加 source {{application-path}}pass-cli.bash
   + 2. 执行source ~/.zshrc
 
-![init](http://assest.dowte.com/imgs/1518406735911.jpg)
+![init](http://assest.dowte.com/imgs/pass-cli/init-G.jpg)
 
 
 

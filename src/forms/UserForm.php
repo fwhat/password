@@ -3,6 +3,7 @@ namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
 use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 
 class UserForm
 {
@@ -44,7 +45,7 @@ class UserForm
     public function createUser($userName, $password)
     {
         $model = new UserModel();
-        $model->username = hash('sha256', $userName);
+        $model->username = Password::encryptUserName($userName);
         $model->password = $password;
         $model->save();
         return $model->username;

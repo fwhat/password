@@ -92,7 +92,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return PassSecret::encryptData($messages);
     }
 
-    protected function validPassword($password = '')
+    protected function validPassword($password = '', $user = '')
     {
         if (! $password) {
             $helper = $this->getHelper('question');
@@ -101,7 +101,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
             $question->setHiddenFallback(false);
             $password = $this->encryptAsk($helper, $question);
         }
-        $user = UserForm::user()->findUser(Password::getUser(), $password);
+        $user = UserForm::user()->findUser($user ?: Password::getUser(), $password);
         if (! $user) {
             Password::error('Please check the password is right!');
         } else {
