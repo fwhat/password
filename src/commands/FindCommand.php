@@ -5,6 +5,7 @@ namespace Dowte\Password\commands;
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ class FindCommand extends Command
         $this->setName('find')
             ->setDescription('Get a pass by name')
             ->setHelp('This command allows you to get a password...')
-            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Get password from the password name.')
+            ->addArgument('name', InputArgument::OPTIONAL, 'Get password from the password name.')
             ->addOption('list', 'a', InputOption::VALUE_NONE, 'Get all passwords of user.');
     }
 
@@ -29,7 +30,7 @@ class FindCommand extends Command
             return;
         }
 
-        $name = $this->encryptOption('name');
+        $name = $this->encryptArgument('name');
         $user = $this->validPassword();
         while (empty($name)) {
             $helper = $this->getHelper('question');

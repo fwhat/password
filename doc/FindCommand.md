@@ -27,3 +27,6 @@ Options:
 
 ##### list 
 ![find-a](http://assest.dowte.com/imgs/pass-cli/find-a.jpg)
+
+#### 其他
+    + find 命令为默认命令 可以直接省略find

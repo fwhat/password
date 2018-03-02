@@ -12,13 +12,14 @@ class SymfonyApplication extends Application
 {
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
+        // 将为找不到的命令以搜索密码形式查找
         $input = new ArgvInput();
         try {
             $name = $this->getCommandName($input);
             $this->find($name);
         } catch (\Exception $e) {
             if (($e->getMessage() == 'Command "'.$name.'" is not defined.' ) && in_array($name, PasswordForm::pass()->getDecryptedName())) {
-                $input = new ArgvInput(['', 'find', '-N', $name]);
+                $input = new ArgvInput(['', 'find', $name]);
             }
         }
 

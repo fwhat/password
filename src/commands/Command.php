@@ -86,6 +86,12 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return $messages ? PassSecret::encryptData($messages) : null;
     }
 
+    protected function encryptArgument($name)
+    {
+        $messages = $this->_input->getArgument($name);
+        return $messages ? PassSecret::encryptData($messages) : null;
+    }
+
     protected function encryptAsk(QuestionHelper $helper, Question $question)
     {
         $messages = $helper->ask($this->_input, $this->_output, $question);
