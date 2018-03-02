@@ -27,6 +27,7 @@ class ActiveRecord implements ActiveRecordInterface
 
     public function __construct()
     {
+        self::$_className = get_called_class();
         self::setDb($this);
     }
 
@@ -35,10 +36,8 @@ class ActiveRecord implements ActiveRecordInterface
      */
     public static function find()
     {
-        if (self::$_className === null) {
+        if (self::$_db == null || self::$_className !== get_called_class()) {
             self::$_className = get_called_class();
-        }
-        if (self::$_db == null) {
             self::setDb();
         }
         $db = self::$_db;
@@ -83,9 +82,16 @@ class ActiveRecord implements ActiveRecordInterface
         }
     }
 
+    /**
+     * @param ActiveRecordInterface $model
+     */
     private static function setDb($model = null)
     {
-        self::$_model = $model ?: new self::$_className();
+        if ($model instanceof ActiveRecordInterface) {
+            self::$_model = $model;
+        } else {
+            new self::$_className();
+        }
         self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
             ['_name' => self::$_model->name(), '_model' => self::$_model]));
     }

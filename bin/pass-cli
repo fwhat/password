@@ -31,7 +31,7 @@ if (file_exists(CONF_FILE)) {
     Password::notice('The pass-conf.php is not exists, please configure it or use init -G command to generate.');
 }
 
-$console = new Application();
+$console = new \Dowte\Password\pass\SymfonyApplication();
 
 $passCommand = new FindCommand();
 

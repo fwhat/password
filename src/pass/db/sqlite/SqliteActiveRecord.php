@@ -42,8 +42,6 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
         $header = 'INSERT INTO ' . self::$_model->name() . '(';
         $values = 'VALUES(';
         foreach (self::$_model->attributeLabels() as $k => $v) {
-//            $k = sqlite_escape_string($k);
-//            $v = sqlite_escape_string($v);
             if ($k === 'id') continue;
             $header .= '`' . trim($k) . '`,';
             $values .= '\''. trim(self::$_model->$k) . '\',';
