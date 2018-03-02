@@ -82,7 +82,7 @@ class Password
 
     public static function dbInit($way)
     {
-        return ((new DbInit())->setWay($way))->exec();
+        return (new DbInit())->setWay($way)->exec();
     }
 
     public static function clear()

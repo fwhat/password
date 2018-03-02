@@ -21,7 +21,7 @@ pass init -G
 //生成的密钥对将会保存在提示的路径下
 ```
 
-![init](http://assest.dowte.com/imgs//1518406735911.jpg)
+![init](http://assest.dowte.com/imgs/1518406735911.jpg)
 
 #### 配置命令行提示工具
 echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc ({{pass-cli-path}}用真实路径替换)
@@ -34,7 +34,7 @@ pass c-user dowte
 //将会创建一个用户名为dowte密码库, 会提示设置密码(此密码将被加密, 查询密码库时必须提供)
 //库中用户名为dowte的sha256串 本地保存在提示的路径下
 ```
-![user](http://assest.dowte.com/imgs//1519266586736.jpg)
+![user](http://assest.dowte.com/imgs/1519266586736.jpg)
 
 ### 四、存入密码
 
@@ -46,7 +46,7 @@ pass c-pass -g
 //-H 隐藏生成的结果
 ```
 
-![password](http://assest.dowte.com/imgs//1519267095200.jpg)
+![password](http://assest.dowte.com/imgs/1519267095200.jpg)
 
 ### 五、查找
 
@@ -54,7 +54,7 @@ pass c-pass -g
 pass -a //列出所有存入的密码的名称
 pass name -N test1 //test1的密码
 ```
-![find](http://assest.dowte.com/imgs//1519268480172.jpg)
+![find](http://assest.dowte.com/imgs/1519268480172.jpg)
 
 ### 六、ext
 
@@ -65,11 +65,11 @@ pass name -N test1 //test1的密码
 ```
 pass alfred init
 ```
-![alfred-init](http://assest.dowte.com/imgs//1519268865294.jpg)
+![alfred-init](http://assest.dowte.com/imgs/1519268865294.jpg)
 
 #### 6.2 列表
 
-![alfred-list](http://assest.dowte.com/imgs//1519268947588.jpg)
+![alfred-list](http://assest.dowte.com/imgs/1519268947588.jpg)
 
 cmd+enter 将密码复制到剪贴板
 
@@ -81,10 +81,10 @@ pass -c
 tab 键选择一个
 ```
 
-![alfred-list](http://assest.dowte.com/imgs//1519269195392.jpg)
+![alfred-list](http://assest.dowte.com/imgs/1519269195392.jpg)
 
 ##### 6.3.1 generate 随机生成密码串
 
-![alfred-list](http://assest.dowte.com/imgs//1519269323424.jpg)
+![alfred-list](http://assest.dowte.com/imgs/1519269323424.jpg)
 
 cmd+enter 将密码复制到剪贴板

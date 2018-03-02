@@ -30,12 +30,6 @@ class ActiveRecord implements ActiveRecordInterface
         self::setDb($this);
     }
 
-    public function attributeLabels(){}
-
-    public function name(){}
-
-    public function rules(){}
-
     /**
      * @return QueryInterface
      */
@@ -47,17 +41,18 @@ class ActiveRecord implements ActiveRecordInterface
         if (self::$_db == null) {
             self::setDb();
         }
-        return self::$_query = (self::$_db)::find();
+        $db = self::$_db;
+        return self::$_query = $db::find();
     }
 
     public function all()
     {
-        return (self::$_query)->all();
+        return $this->getQuery()->all();
     }
 
     public function one()
     {
-        return (self::$_query)->one();
+        return $this->getQuery()->one();
     }
 
     /**
@@ -65,7 +60,7 @@ class ActiveRecord implements ActiveRecordInterface
      */
     public function save()
     {
-         return (self::$_db)->save();
+         return $this->getDb()->save();
     }
 
     public function __set($name, $value)
@@ -94,4 +89,21 @@ class ActiveRecord implements ActiveRecordInterface
         self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
             ['_name' => self::$_model->name(), '_model' => self::$_model]));
     }
+
+    protected function getDb()
+    {
+        return self::$_db;
+    }
+    protected function getQuery()
+    {
+        return self::$_query;
+    }
+
+
+
+    public function attributeLabels(){}
+
+    public function name(){}
+
+    public function rules(){}
 }
