@@ -48,10 +48,11 @@ pass password -g -D
 ### 五、查找
 
 ```php
-pass -a //列出所有存入的密码的名称
-pass find -N test1 //test1的密码
+pass find -a  | pass -a //列出所有存入的密码的名称
+pass find dowte  | pass dowte //dowte的密码
 ```
 ![find](http://assest.dowte.com/imgs/pass-cli/find-a.jpg)
+![find-N](http://assest.dowte.com/imgs/pass-cli/find-N.jpg)
 
 ### 六、ext
 
