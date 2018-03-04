@@ -3,11 +3,12 @@
 namespace Dowte\Password\forms;
 
 
-use Dowte\Password\models\PasswordModel;
+use Dowte\Password\pass\BaseForm;
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
+use Dowte\Password\models\PasswordModel;
 
-class PasswordForm
+class PasswordForm extends BaseForm
 {
     private function __construct()
     {

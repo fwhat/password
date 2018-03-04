@@ -45,12 +45,18 @@ class Password
         }
     }
 
+    /**
+     * @param $config
+     */
     public static function init($config)
     {
         new self($config);
     }
 
 
+    /**
+     * @return string
+     */
     public static function getUserConfFile()
     {
         return PASS_USER_CONF_DIR . '.user';
@@ -68,6 +74,10 @@ class Password
         return $user;
     }
 
+    /**
+     * @param $userName
+     * @return bool
+     */
     public static function userConfigure($userName)
     {
         $filename = self::getUserConfFile();
@@ -75,16 +85,26 @@ class Password
         return chmod($filename, 0400);
     }
 
+    /**
+     * @return array
+     */
     public static function ways()
     {
         return DbInit::ways();
     }
 
+    /**
+     * @param $way
+     * @return mixed
+     */
     public static function dbInit($way)
     {
         return (new DbInit())->setWay($way)->exec();
     }
 
+    /**
+     * @return bool
+     */
     public static function clear()
     {
         //clear db
@@ -94,6 +114,10 @@ class Password
         return unlink(self::getUserConfFile());
     }
 
+    /**
+     * @param $property
+     * @return string
+     */
     public static function underline2hump($property)
     {
         return lcfirst(str_replace(' ', '',ucwords(str_replace(['_', '-'], ' ', $property))));
@@ -114,6 +138,12 @@ class Password
         }
     }
 
+    /**
+     * @param $messages
+     * @param SymfonyStyle $io
+     * @param string $successMessage
+     * @param string $errorMessage
+     */
     public static function toPaste($messages, SymfonyStyle $io, $successMessage = '复制剪贴板成功 !', $errorMessage = '复制剪贴板失败 !')
     {
         $status = self::copy($messages);
@@ -124,6 +154,9 @@ class Password
         }
     }
 
+    /**
+     * @param array $value
+     */
     protected function loadParams(array $value)
     {
         foreach ((array) $value as $name => $item) {
@@ -131,6 +164,9 @@ class Password
         }
     }
 
+    /**
+     * @param array $configs
+     */
     protected function loadComponents(array $configs)
     {
         foreach ((array) $configs as $name => $config) {
@@ -153,13 +189,20 @@ class Password
         }
     }
 
+    /**
+     * copy data to clipboard
+     * @param $messages
+     * @return bool
+     */
     protected static function copy($messages)
     {
+        //todo more os
         system("printf '%s' {$messages} | pbcopy", $code);
         return $code === 0;
     }
 
     /**
+     * error output
      * @param $message
      * @param int $code exit code
      */
@@ -169,12 +212,17 @@ class Password
         exit($code);
     }
 
+    /**
+     * notice output
+     * @param $message
+     */
     public static function notice($message)
     {
         self::getIo()->note($message);
     }
 
     /**
+     * success output
      * @param $message
      */
     public static function success($message)
@@ -183,11 +231,21 @@ class Password
         exit(0);
     }
 
+    /**
+     * encryptUserName
+     * @param $username
+     * @return string
+     */
     public static function encryptUserName($username)
     {
         return hash('sha256', $username);
     }
 
+    /**
+     * 获取相对路径写法的绝对路径写法
+     * @param $path
+     * @return string
+     */
     public static function _realPath($path)
     {
         $arr = explode('/', $path);
@@ -205,6 +263,20 @@ class Password
         return implode('/', $realPath);
     }
 
+    /**
+     * 获取一个命令的位置
+     * @param $command
+     * @return int|string
+     */
+    public static function getCommandPath($command)
+    {
+        if (str_replace(' ', '', $command) !== $command) return 0;
+        return exec("which $command");
+    }
+
+    /**
+     * @return SymfonyStyle
+     */
     private static function getIo()
     {
         if (self::$_io === null) {

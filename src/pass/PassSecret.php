@@ -174,6 +174,10 @@ class PassSecret
         }
     }
 
+    /**
+     * @param $privateKeyPath
+     * @param $publicKeyPath
+     */
     public function secretKeyTemplateTo($privateKeyPath, $publicKeyPath)
     {
         $content = str_replace(
@@ -184,6 +188,10 @@ class PassSecret
         file_put_contents(CONF_FILE, $content);
     }
 
+    /**
+     * @param $privateKeyPath
+     * @param $publicKeyPath
+     */
     public function toSecretKeyTemplate($privateKeyPath, $publicKeyPath)
     {
         $content = str_replace(

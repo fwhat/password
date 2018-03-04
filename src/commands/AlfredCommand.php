@@ -28,8 +28,8 @@ class AlfredCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $query = $input->getOption('keyword');
-        $action = $input->getArgument('action');
-        if ($action === 'init') {
+        $init = $input->getOption('init');
+        if ($init) {
             if (($user = $this->validPassword())) {
                 $this->setPassword($user['password']);
                 Password::success('Init pass-alfred success!');

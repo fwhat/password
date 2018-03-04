@@ -45,7 +45,7 @@ class InitCommand extends Command
             }
         }
         Password::dbInit($way);
-        $status = $this->dumpCompletion('/usr/local/bin/pass');
+        $status = $this->dumpCompletion();
         if ($status) {
             $this->_io->success('DbInit Success !');
 
@@ -59,12 +59,16 @@ class InitCommand extends Command
         return Password::ways();
     }
 
-    private function dumpCompletion($program)
+    /**
+     * 生成自动补全
+     * @param string $program
+     * @return bool|int
+     */
+    private function dumpCompletion($program = '')
     {
         if (empty($program)) {
-            $program = $_SERVER['argv'][0];
+            $program = Password::getCommandPath($_SERVER['argv'][0]);
         }
-
         $command = $this->getApplication()->find('_completion');
         $arguments = [
             'command' => '_completion',
@@ -76,7 +80,7 @@ class InitCommand extends Command
         $completionInput = new ArrayInput($arguments);
         $command->run($completionInput, $buffer);
         $completion = $buffer->fetch();
-        $status = file_put_contents('./pass-cli.bash', $completion);
+        $status = file_put_contents(__DIR__ . '/../../pass-cli.bash', $completion);
         return $status;
     }
 }
