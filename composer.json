@@ -1,5 +1,5 @@
 {
-  "name": "dowte/password",
+  "name": "dowte/pass-cli",
   "version": "1.0.0",
   "description": "Save and find your passwords for each website or card etc.",
   "keywords": ["password"],
