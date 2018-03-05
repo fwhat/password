@@ -17,7 +17,7 @@ class InitCommand extends Command
     protected function configure()
     {
         $this->setName('init')
-            ->setDescription('DbInit pass-cli settings')
+            ->setDescription('DbInit pass settings')
             ->setHelp('This command could help you init this application! ')
             ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.')
             ->addOption('generate-secret', 'G', InputOption::VALUE_NONE, 'Generate new openssl secret keys.');

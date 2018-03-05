@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-use Symfony\Component\Console\Application;
 use Dowte\Password\pass\Password;
 use Dowte\Password\commands\UserCommand;
 use Dowte\Password\commands\PasswordCommand;
@@ -10,6 +9,8 @@ use Dowte\Password\commands\CompletionCommand;
 use Dowte\Password\commands\ClearCommand;
 use Dowte\Password\commands\GenerateCommand;
 use Dowte\Password\commands\AlfredCommand;
+use Dowte\Password\commands\ImportCommand;
+use Dowte\Password\commands\ExportCommand;
 
 // application.php
 
@@ -44,6 +45,8 @@ $console->add($passCommand);
 $console->add(new ClearCommand());
 $console->add(new GenerateCommand());
 $console->add(new AlfredCommand());
+$console->add(new ImportCommand());
+$console->add(new ExportCommand());
 
 $console->setDefaultCommand($passCommand->getName());
 

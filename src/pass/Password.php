@@ -275,6 +275,31 @@ class Password
     }
 
     /**
+     * 获取路径下的文件
+     * @param $path
+     * @param $extension
+     * @return false | array
+     */
+    public static function getFiles($path, $extension = '')
+    {
+        $path = rtrim($path, '/') . '/';
+        if (! is_dir($path)) {
+            return false;
+        }
+        $fileNames = [];
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..' || is_dir($path . $file)) continue;
+            if ($extension) {
+                if (pathinfo($file, PATHINFO_EXTENSION) != $extension) continue;
+            }
+            $fileNames[] = $file;
+        }
+
+        return $fileNames;
+    }
+
+    /**
      * @return SymfonyStyle
      */
     private static function getIo()
