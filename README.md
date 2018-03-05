@@ -1,10 +1,10 @@
-### Pass-cli
+### Password-cli
 ___
-[![Build Status](https://travis-ci.org/Dowte/pass-cli.svg?branch=master)](https://travis-ci.org/Dowte/pass-cli)
-[![Latest Stable Version](https://poser.pugx.org/Dowte/pass-cli/v/stable.svg)](https://packagist.org/packages/Dowte/pass-cli)
-[![Total Downloads](https://poser.pugx.org/Dowte/pass-cli/downloads.svg)](https://packagist.org/packages/Dowte/pass-cli) 
-[![Latest Unstable Version](https://poser.pugx.org/Dowte/pass-cli/v/unstable.svg)](https://packagist.org/packages/Dowte/pass-cli) 
-[![License](https://poser.pugx.org/Dowte/pass-cli/license.svg)](https://packagist.org/packages/Dowte/pass-cli)
+[![Build Status](https://travis-ci.org/Dowte/password.svg?branch=master)](https://travis-ci.org/Dowte/password)
+[![Latest Stable Version](https://poser.pugx.org/Dowte/password/v/stable.svg)](https://packagist.org/packages/Dowte/password)
+[![Total Downloads](https://poser.pugx.org/Dowte/password/downloads.svg)](https://packagist.org/packages/Dowte/password) 
+[![Latest Unstable Version](https://poser.pugx.org/Dowte/password/v/unstable.svg)](https://packagist.org/packages/Dowte/password) 
+[![License](https://poser.pugx.org/Dowte/password/license.svg)](https://packagist.org/packages/Dowte/password)
 #### A command-line tool to help you manage your password
 
 ### 一、安装及配置
