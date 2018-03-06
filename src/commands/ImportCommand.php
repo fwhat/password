@@ -3,8 +3,8 @@
 namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\PasswordForm;
+use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\PassSecret;
-use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,7 +49,7 @@ class ImportCommand extends Command
 
     protected function getArgumentFile(CompletionContext $context)
     {
-        return Password::getFiles(exec('pwd'), 'yaml');
+        return FileUtil::getFiles(exec('pwd'), 'yaml');
     }
 
     private function validImportData($passwords)

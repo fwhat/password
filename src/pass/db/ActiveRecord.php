@@ -11,11 +11,6 @@ class ActiveRecord implements ActiveRecordInterface
      */
     protected static $_db;
 
-    /**
-     * @var QueryInterface
-     */
-    protected static $_query;
-
     protected static $_className;
 
     /**
@@ -25,10 +20,11 @@ class ActiveRecord implements ActiveRecordInterface
 
     private $_attributeLabels = [];
 
+    public static $modelName;
+
     public function __construct()
     {
-        self::$_className = get_called_class();
-        self::setDb($this);
+        self::setModelClass($this);
     }
 
     /**
@@ -36,22 +32,10 @@ class ActiveRecord implements ActiveRecordInterface
      */
     public static function find()
     {
-        if (self::$_db == null || self::$_className !== get_called_class()) {
-            self::$_className = get_called_class();
-            self::setDb();
-        }
-        $db = self::$_db;
-        return self::$_query = $db::find();
-    }
-
-    public function all()
-    {
-        return $this->getQuery()->all();
-    }
-
-    public function one()
-    {
-        return $this->getQuery()->one();
+        self::setModelClass(Password::newObject(get_called_class()));
+        self::$_db = Password::newObject(Password::$dbClass, array_merge(Password::$dbConfig,
+            ['modelClass' => self::getModel()]));
+        return self::getDb()->find();
     }
 
     /**
@@ -82,30 +66,32 @@ class ActiveRecord implements ActiveRecordInterface
         }
     }
 
-    /**
-     * @param ActiveRecordInterface $model
-     */
-    private static function setDb($model = null)
+    protected static function getDb()
     {
-        if ($model instanceof ActiveRecordInterface) {
-            self::$_model = $model;
-        } else {
-            new self::$_className();
+        if (self::$_db === null) {
+            self::$_db = Password::newObject(Password::$dbClass, array_merge(Password::$dbConfig,
+                ['modelClass' => self::getModel()]));
         }
-        self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
-            ['_name' => self::$_model->name(), '_model' => self::$_model]));
-    }
-
-    protected function getDb()
-    {
         return self::$_db;
     }
-    protected function getQuery()
+
+    public static function setModelClass($model)
     {
-        return self::$_query;
+        if (self::getModel() !== null) {
+            if (is_string($model)) {
+                if ($model == get_class(self::getModel())) {
+                    return;
+                }
+            }
+        }
+        self::$_db = null;
+        self::$_model = is_string($model) ? Password::newObject($model) : $model;
     }
 
-
+    protected static function getModel()
+    {
+        return self::$_model;
+    }
 
     public function attributeLabels(){}
 

@@ -31,7 +31,7 @@ class PasswordTest extends \PHPUnit\Framework\TestCase
         $password = PassSecret::encryptData(self::VALID_STR);
         $password2 = PassSecret::encryptData(self::VALID_STR);
         $this->assertTrue(PassSecret::validData($password, $password2));
-        $this->secret->toSecretKeyTemplate(PassSecret::$privateKeyPath, PassSecret::$publicKeyPath);
+        $this->secret->toTemplate(PassSecret::$privateKeyPath, PassSecret::$publicKeyPath);
         unlink(PassSecret::$publicKeyPath);
         unlink(PassSecret::$privateKeyPath);
     }

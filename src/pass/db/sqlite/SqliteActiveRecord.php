@@ -18,7 +18,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
     /**
      * @var ActiveRecordInterface
      */
-    protected static $_model;
+    public static $modelClass;
 
     /**
      * @var array
@@ -39,12 +39,12 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
     public function save()
     {
-        $header = 'INSERT INTO ' . self::$_model->name() . '(';
+        $header = 'INSERT INTO ' . self::$modelClass->name() . '(';
         $values = 'VALUES(';
-        foreach (self::$_model->attributeLabels() as $k => $v) {
+        foreach (self::$modelClass->attributeLabels() as $k => $v) {
             if ($k === 'id') continue;
             $header .= '`' . trim($k) . '`,';
-            $values .= '\''. trim(self::$_model->$k) . '\',';
+            $values .= '\''. trim(self::$modelClass->$k) . '\',';
         }
         $header = trim($header, ',') . ')';
         $values = trim($values, ',') . ')';
@@ -82,7 +82,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
     private static function _getQuerySql()
     {
         $query = self::$_query->select == ActiveQuery::DEFAULT_SELECT ? '*' : '`' . implode('`,`', self::$_query->select) . '`';
-        $sql = sprintf("SELECT %s FROM `%s`", $query, self::$_model->name());
+        $sql = sprintf("SELECT %s FROM `%s`", $query, self::$modelClass->name());
         if (self::$_query->where) {
             $sql .= ' WHERE ';
             foreach (self::$_query->where as $item => $value) {

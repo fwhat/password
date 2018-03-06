@@ -2,8 +2,8 @@
 return [
     'components' => [
         'db' => [
-            'class' => 'pass\db\sqlite\Connection',
-            'dbDir' => '',
+            'class' => 'pass\db\%dbClass%\Connection',
+            'dbDir' => DB_FILE_DIR,
         ],
         'secret' => [
             'private_key_path' => '%private_key_path%',//private_key path

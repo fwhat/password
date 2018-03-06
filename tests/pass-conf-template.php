@@ -2,7 +2,7 @@
 return [
     'components' => [
         'db' => [
-            'class' => 'pass\db\sqlite\Connection',
+            'class' => 'pass\db\%dbClass%\Connection',
             'dbDir' => '',
         ],
         'secret' => [

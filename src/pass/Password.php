@@ -3,8 +3,6 @@ namespace Dowte\Password\pass;
 
 use Dowte\Password\pass\db\ActiveRecordInterface;
 use Dowte\Password\pass\db\ConnectionInterface;
-use Dowte\Password\pass\db\DbClear;
-use Dowte\Password\pass\db\DbInit;
 use Dowte\Password\pass\exceptions\BaseException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -13,10 +11,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class Password
 {
     const BASE_NAMESPACE = 'Dowte\Password\\';
-
-    public static $dbInitNamespace = 'Dowte\Pssword\pass\db\\';
-
-    public static $dbInitClass = 'DbInit';
 
     public static $params = [];
 
@@ -90,28 +84,7 @@ class Password
      */
     public static function ways()
     {
-        return DbInit::ways();
-    }
-
-    /**
-     * @param $way
-     * @return mixed
-     */
-    public static function dbInit($way)
-    {
-        return (new DbInit())->setWay($way)->exec();
-    }
-
-    /**
-     * @return bool
-     */
-    public static function clear()
-    {
-        //clear db
-        (new DbClear())->exec();
-        //clear user file
-        unlink(CONF_FILE);
-        return unlink(self::getUserConfFile());
+        return PasswordDb::ways();
     }
 
     /**
@@ -242,28 +215,6 @@ class Password
     }
 
     /**
-     * 获取相对路径写法的绝对路径写法
-     * @param $path
-     * @return string
-     */
-    public static function _realPath($path)
-    {
-        $arr = explode('/', $path);
-        $realPath = [];
-        foreach ($arr as $key => $value) {
-            if ($value == '..') {
-                array_pop($realPath);
-                continue;
-            }
-            if ($value == '.') {
-                continue;
-            }
-            $realPath[] = $value;
-        }
-        return implode('/', $realPath);
-    }
-
-    /**
      * 获取一个命令的位置
      * @param $command
      * @return int|string
@@ -274,29 +225,15 @@ class Password
         return exec("which $command");
     }
 
-    /**
-     * 获取路径下的文件
-     * @param $path
-     * @param $extension
-     * @return false | array
-     */
-    public static function getFiles($path, $extension = '')
+    public static function newObject($class, $param = [])
     {
-        $path = rtrim($path, '/') . '/';
-        if (! is_dir($path)) {
-            return false;
-        }
-        $fileNames = [];
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if ($file == '.' || $file == '..' || is_dir($path . $file)) continue;
-            if ($extension) {
-                if (pathinfo($file, PATHINFO_EXTENSION) != $extension) continue;
-            }
-            $fileNames[] = $file;
-        }
+        return $param ? new $class($param) : new $class();
+    }
 
-        return $fileNames;
+    public static function rewriteConfig($search, $replace)
+    {
+        $content = str_replace($search, $replace, file_get_contents(file_exists(CONF_FILE) ? CONF_FILE : CONF_FILE_TEMP));
+        file_put_contents(CONF_FILE, $content);
     }
 
     /**

@@ -28,6 +28,6 @@ class ExportCommand extends Command
             $password['name'] = PassSecret::decryptedData($password['name']);
             $password['password'] = PassSecret::decryptedData($password['password']);
         }
-        file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump($passwords));
+        file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump([$passwords]));
     }
 }

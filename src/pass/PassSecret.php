@@ -3,6 +3,8 @@
 namespace Dowte\Password\pass;
 
 
+use Dowte\Password\pass\components\FileUtil;
+
 class PassSecret
 {
     /**
@@ -178,28 +180,20 @@ class PassSecret
      * @param $privateKeyPath
      * @param $publicKeyPath
      */
-    public function secretKeyTemplateTo($privateKeyPath, $publicKeyPath)
+    public function configureSecretKey($privateKeyPath, $publicKeyPath)
     {
-        $content = str_replace(
-            [$this->_privateMatch, $this->_publicMatch],
-            [Password::_realPath($privateKeyPath), Password::_realPath($publicKeyPath)],
-            file_get_contents(CONF_FILE_TEMP)
-        );
-        file_put_contents(CONF_FILE, $content);
+        Password::rewriteConfig([$this->_privateMatch, $this->_publicMatch],
+            [FileUtil::_realPath($privateKeyPath), FileUtil::_realPath($publicKeyPath)]);
     }
 
     /**
      * @param $privateKeyPath
      * @param $publicKeyPath
      */
-    public function toSecretKeyTemplate($privateKeyPath, $publicKeyPath)
+    public function toTemplate($privateKeyPath, $publicKeyPath)
     {
-        $content = str_replace(
-            [$privateKeyPath, $publicKeyPath],
-            [$this->_privateMatch, $this->_publicMatch],
-            file_get_contents(CONF_FILE)
-        );
-        file_put_contents(CONF_FILE, $content);
+        Password::rewriteConfig([$privateKeyPath, $publicKeyPath],
+            [$this->_privateMatch, $this->_publicMatch]);
     }
 
 
@@ -211,7 +205,7 @@ class PassSecret
     {
         $privateKeyPath = rtrim($this->_secretKeyDir, '/') . '/' . $this->_privateKeyName;
         $publicKeyPath = rtrim($this->_secretKeyDir, '/') . '/' . $this->_publicKeyName;
-        $this->secretKeyTemplateTo($privateKeyPath, $publicKeyPath);
+        $this->configureSecretKey($privateKeyPath, $publicKeyPath);
         $secret = [$privateKeyPath => $privateKey, $publicKeyPath => $publicKey];
         foreach ($secret as $filename => $item) {
             $fp = fopen($filename, 'w+');

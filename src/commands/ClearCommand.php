@@ -4,6 +4,7 @@ namespace Dowte\Password\commands;
 
 
 use Dowte\Password\pass\Password;
+use Dowte\Password\pass\PasswordDb;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -28,7 +29,10 @@ class ClearCommand extends Command
             return;
         }
         if ($this->validPassword()) {
-            Password::clear();
+            $pdb = new PasswordDb();
+            $way = $pdb->getDbWay();
+            $pdb->setWay($way);
+            $pdb->clear();
             $this->_io->success('Clear password data success!');
         }
     }

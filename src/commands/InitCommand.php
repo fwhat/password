@@ -4,6 +4,7 @@ namespace Dowte\Password\commands;
 
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
+use Dowte\Password\pass\PasswordDb;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,15 +28,17 @@ class InitCommand extends Command
     {
         $helper = $this->getHelper('question');
         $way = $input->getOption('way');
-        if (empty($way) || ! in_array($way, Password::ways())) {
+        $db = new PasswordDb();
+        if (empty($way) || ! in_array($way, PasswordDb::ways())) {
             $question = new ChoiceQuestion(
                 '请选择储存密码文件的方式 (默认0)',
-                Password::ways(),
+                $db::ways(),
                 0
             );
             $question->setErrorMessage('the way %s is invalid.');
             $way = $helper->ask($input, $output, $question);
         }
+        $db->setWay($way)->init();
         if ($input->getOption('generate-secret')) {
             $secret = new PassSecret();
             $secretKeyDir = __DIR__ . '/../../data/';
@@ -44,7 +47,6 @@ class InitCommand extends Command
                 $this->_io->success('Generate new keys success, the keys is save in ' . realpath($secretKeyDir));
             }
         }
-        Password::dbInit($way);
         $status = $this->dumpCompletion();
         if ($status) {
             $this->_io->success('DbInit Success !');
