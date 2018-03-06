@@ -230,10 +230,10 @@ class Password
         return $param ? new $class($param) : new $class();
     }
 
-    public static function rewriteConfig($search, $replace)
+    public static function rewriteConfig($search, $replace, $toFile = '')
     {
         $content = str_replace($search, $replace, file_get_contents(file_exists(CONF_FILE) ? CONF_FILE : CONF_FILE_TEMP));
-        file_put_contents(CONF_FILE, $content);
+        file_put_contents($toFile ?: CONF_FILE, $content);
     }
 
     /**

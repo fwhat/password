@@ -19,6 +19,8 @@ class PasswordDb
 
     protected $_way;
 
+    protected $_configureFile = CONF_FILE;
+
     public function __construct()
     {
     }
@@ -53,6 +55,12 @@ class PasswordDb
         return unlink(Password::getUserConfFile());
     }
 
+    public function setConfigureFile($file)
+    {
+        ! file_exists($file) or $this->_configureFile = $file;
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -68,7 +76,7 @@ class PasswordDb
 
     protected function configureDb()
     {
-        Password::rewriteConfig(self::DB_CLASS_MATCH, $this->_way);
+        Password::rewriteConfig(self::DB_CLASS_MATCH, $this->_way, $this->_configureFile);
     }
 
     protected function toTemplate()
@@ -107,7 +115,8 @@ EOF;
     private function sqliteClear()
     {
         $sql = '';
-        $user = UserForm::user()->findOne(['username' => Password::getUser()], ['id']);
+        $user = @file_get_contents(Password::getUserConfFile());
+        $user = UserForm::user()->findOne(['username' => $user], ['id']);
         if (! $user) {
             return;
         }
