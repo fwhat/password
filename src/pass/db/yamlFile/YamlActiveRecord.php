@@ -91,7 +91,15 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
                 }
             }
         }
-        
+
+        foreach ($findArr as &$v) {
+            foreach ($v as &$item) {
+                if ($item ===  null) {
+                    $item = '';
+                }
+            }
+        }
+
         return $findArr;
     }
 

@@ -48,11 +48,20 @@ class PasswordDb
 
     public function clear()
     {
-        $functionName = $this->_way . 'Clear';
-        $this->$functionName();
+        $functionName = $this->_way . 'File';
+        $this->clearDb();
         $this->toTemplate();
         unlink(CONF_FILE);
+        foreach ($this->$functionName() as $value) {
+            unlink($value);
+        }
         return unlink(Password::getUserConfFile());
+    }
+
+    public function clearDb()
+    {
+        $functionName = $this->_way . 'Clear';
+        $this->$functionName();
     }
 
     public function setConfigureFile($file)
@@ -126,15 +135,28 @@ EOF;
         Sqlite::$db->exec($sql);
     }
 
+    private function sqliteFile()
+    {
+        return [SQLITE_FILE];
+    }
+
+    private function yamlFileFile()
+    {
+        return [
+            DB_FILE_DIR . Yaml::getFromFile((new PasswordModel())->name()),
+            DB_FILE_DIR . Yaml::getFromFile((new UserModel())->name()),
+        ];
+    }
+
     private function yamlFileInit()
     {
-        FileUtil::createFile(DB_FILE_DIR . Yaml::getFromFile((new UserModel())->name()));
-        FileUtil::createFile(DB_FILE_DIR . Yaml::getFromFile((new PasswordModel())->name()));
+        FileUtil::createFile($this->yamlFileFile());
     }
 
     private function yamlFileClear()
     {
-        unlink(DB_FILE_DIR . Yaml::getFromFile((new UserModel())->name()));
-        unlink(DB_FILE_DIR . Yaml::getFromFile((new PasswordModel())->name()));
+        foreach ($this->yamlFileFile() as $file) {
+            file_put_contents($file, '');
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace Dowte\Password\commands;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -15,7 +16,8 @@ class ClearCommand extends Command
     {
         $this->setName('clear')
             ->setDescription('Clear your password data !')
-            ->setHelp('This command allows you to clear data, ' . PHP_EOL . 'And if you want use Application after clear, you need init again.');
+            ->setHelp('This command allows you to clear db data, ' . PHP_EOL . 'And if you want use Application after clear, you need init again.')
+            ->addOption('full', 'f', InputOption::VALUE_NONE, 'Clear the whole data file!');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -28,12 +30,17 @@ class ClearCommand extends Command
         if ($way !== true) {
             return;
         }
-        if ($this->validPassword()) {
-            $pdb = new PasswordDb();
-            $way = $pdb->getDbWay();
-            $pdb->setWay($way);
+        $this->validPassword();
+        $pdb = new PasswordDb();
+        $way = $pdb->getDbWay();
+        $pdb->setWay($way);
+
+        if ($input->getOption('full')) {
             $pdb->clear();
             $this->_io->success('Clear password data success!');
+        } else {
+            $pdb->clearDb();
+            $this->_io->success('Clear password db data success!');
         }
     }
 }

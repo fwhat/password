@@ -7,10 +7,12 @@ class FileUtil
 {
     public static function createFile($path, $mode = '')
     {
-        if (file_exists($path)) return;
-        $fp = fopen($path, 'w+');
-        fclose($fp);
-        if ($mode) chmod($path, $mode);
+        foreach ((array) $path as $value) {
+            if (file_exists($value)) continue;
+            $fp = fopen($value, 'w+');
+            fclose($fp);
+            if ($mode) chmod($value, $mode);
+        }
     }
 
     /**
