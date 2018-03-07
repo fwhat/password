@@ -5,7 +5,6 @@ use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
-use Dowte\Password\pass\SymfonyApplication;
 
 error_reporting(0);
 define(CONF_FILE, __DIR__ . '/pass-conf-template.php');
@@ -29,8 +28,8 @@ class PasswordTest extends \PHPUnit\Framework\TestCase
     private function init()
     {
         $this->pdb = new PasswordDb();
-        $this->pdb->setWay(PasswordDb::SQLITE)->setConfigureFile(CONF_FILE_TEMP)->init();
-        $config = require CONF_FILE_TEMP;
+        $this->pdb->setWay(PasswordDb::SQLITE)->setConfigureFile(CONF_FILE)->init();
+        $config = require CONF_FILE;
         Password::init($config);
         $this->secret = new PassSecret();
         $this->secret->setSecretKeyDir(__DIR__);

@@ -59,16 +59,16 @@ class AlfredCommand extends Command
         } else {
             $user = UserForm::user()->findOne(['username' => Password::getUser()]);
 
-            $lists = PasswordForm::pass()->findModels(['name', 'description', 'password'], ['user_id' => $user['id']]);
+            $lists = PasswordForm::pass()->findModels(['keyword', 'description', 'password'], ['user_id' => $user['id']]);
             foreach ($lists as $list) {
-                $name = PassSecret::decryptedData($list['name']);
+                $keyword = Password::decryptedPasswordKey($list['keyword']);
                 $password = PassSecret::decryptedData($list['password']);
                 if ($query) {
-                    if (strstr($name , $query) === false ){
+                    if (strstr($keyword , $query) === false ){
                         continue;
                     }
                 }
-                $passwordList['items'][] = $this->alfredItems($name, $list['description'], $name, $password);
+                $passwordList['items'][] = $this->alfredItems($keyword, $list['description'], $keyword, $password);
             }
         }
         $this->_io->writeln(json_encode($passwordList));

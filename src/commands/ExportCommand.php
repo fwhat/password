@@ -23,9 +23,9 @@ class ExportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
-        $passwords = PasswordForm::pass()->findModels(['name', 'password', 'description'], ['user_id' => $user['id']]);
+        $passwords = PasswordForm::pass()->findModels(['keyword', 'password', 'description'], ['user_id' => $user['id']]);
         foreach ($passwords as &$password) {
-            $password['name'] = PassSecret::decryptedData($password['name']);
+            $password['keyword'] = PassSecret::decryptedData($password['keyword']);
             $password['password'] = PassSecret::decryptedData($password['password']);
         }
         file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump([$passwords]));

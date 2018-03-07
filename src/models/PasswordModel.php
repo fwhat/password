@@ -13,7 +13,7 @@ use Dowte\Password\pass\db\ActiveRecord;
  * @property $id
  * @property $password
  * @property $user_id
- * @property $name
+ * @property $keyword
  * @property $description
  * @package Dowte\Password\models
  */
@@ -29,7 +29,7 @@ class PasswordModel extends BaseModel
         return [
             [['password'], 'required'],
             [['id', 'user_id'], 'integer'],
-            [['name'], 'string', 'max' => '32'],
+            [['keyword'], 'string', 'max' => '32'],
             [['description'], 'string', 'max' => '64'],
             [['password', 'text']],
         ];
@@ -40,7 +40,7 @@ class PasswordModel extends BaseModel
         return [
             'id' => '流水号',
             'user_id' => '用户id',
-            'name' => '名称',
+            'keyword' => '关键词',
             'description' => '描述',
             'password' => '密码',
         ];

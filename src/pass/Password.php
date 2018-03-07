@@ -215,6 +215,26 @@ class Password
     }
 
     /**
+     * encryptPasswordKey
+     * @param $key
+     * @return string
+     */
+    public static function encryptPasswordKey($key)
+    {
+        return base64_encode($key);
+    }
+
+    /**
+     * decryptedPasswordKey
+     * @param $key
+     * @return string
+     */
+    public static function decryptedPasswordKey($key)
+    {
+        return base64_decode($key);
+    }
+
+    /**
      * 获取一个命令的位置
      * @param $command
      * @return int|string

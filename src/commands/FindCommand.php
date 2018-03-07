@@ -16,39 +16,39 @@ class FindCommand extends Command
     protected function configure()
     {
         $this->setName('find')
-            ->setDescription('Get a pass by name')
+            ->setDescription('Get a password by keyword')
             ->setHelp('This command allows you to get a password...')
-            ->addArgument('name', InputArgument::OPTIONAL, 'Get password from the password name.')
-            ->addOption('list', 'a', InputOption::VALUE_NONE, 'Get all passwords of user.');
+            ->addArgument('keyword', InputArgument::OPTIONAL, 'Get password by the password keyword.')
+            ->addOption('list', 'a', InputOption::VALUE_NONE, 'Get all passwords of keyword.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('list')) {
-            $lists = PasswordForm::pass()->getDecryptedName("<fg=green>%s          </>");
+            $lists = PasswordForm::pass()->getDecryptedKey("<fg=green>%s          </>");
             $output->writeln(trim($lists));
             return;
         }
 
-        $name = $this->encryptArgument('name');
+        $key = $this->encryptArgument('keyword');
         $user = $this->validPassword();
-        while (empty($name)) {
+        while (empty($key)) {
             $helper = $this->getHelper('question');
-            $question = new Question('Which name is you want to get:' . PHP_EOL);
-            $name = $this->encryptAsk($helper, $question);
+            $question = new Question('Which password is you want to get:' . PHP_EOL);
+            $key = $this->encryptAsk($helper, $question);
         }
-        $pass = PasswordForm::pass()->findPassword($user['id'], $name);
+        $pass = PasswordForm::pass()->findPassword($user['id'], $key);
         if ($pass) {
             Password::toPasteDecode($pass, $this->_io);
         } else {
-            $this->_io->error('You provide password is wrong or name is not exist!');
+            $this->_io->error('You provide password is wrong or keyword is not exist!');
         }
     }
 
     protected function getOptionName(CompletionContext $context)
     {
-        $names = PasswordForm::pass()->getDecryptedName();
+        $keys = PasswordForm::pass()->getDecryptedKey();
 
-        return $names;
+        return $keys;
     }
 }

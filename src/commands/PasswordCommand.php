@@ -27,7 +27,7 @@ class PasswordCommand extends Command
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp('This command allows you to create a password...')
-            ->addOption('name', 'N', InputOption::VALUE_OPTIONAL, 'Set a name for new password')
+            ->addOption('keyword', 'k', InputOption::VALUE_OPTIONAL, 'Set a keyword for new password')
             ->addOption('description', 'd', InputOption::VALUE_OPTIONAL, 'Set a description for new password')
             ->addOption('no-description', 'D', InputOption::VALUE_NONE, 'Don\'t set description for new password')
             ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random string for new password(level 3 length 12)')
@@ -39,7 +39,7 @@ class PasswordCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
-        $name = $input->getOption('name');
+        $keyword = $input->getOption('keyword');
         $description = $input->getOption('description');
         $noDescription = $input->getOption('no-description');
         $generate = $input->getOption('generate');
@@ -55,10 +55,10 @@ class PasswordCommand extends Command
             }
         }
         if ($user) {
-            while (empty($name)) {
+            while (empty($keyword)) {
                 $helper = $this->getHelper('question');
-                $question = new Question('Set a name for new password: (name is required for search)' . PHP_EOL);
-                $name = $helper->ask($input, $output, $question);
+                $question = new Question('Set a keyword for new password: (keyword is required for search)' . PHP_EOL);
+                $keyword = $helper->ask($input, $output, $question);
             }
             while (empty($password)) {
                 $helper = $this->getHelper('question');
@@ -74,7 +74,7 @@ class PasswordCommand extends Command
                 $description = $helper->ask($input, $output, $question);
             }
 
-            $status = PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($name), $description);
+            $status = PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($keyword), $description);
             if ($status) {
                 $this->_io->success('Create new password record success!');
             } else {

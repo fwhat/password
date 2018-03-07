@@ -5,6 +5,7 @@ namespace Dowte\Password\commands;
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,7 +42,7 @@ class ImportCommand extends Command
             PasswordForm::pass()->createPass(
                 $user['id'],
                 PassSecret::encryptData($password['password']),
-                PassSecret::encryptData($password['name']),
+                Password::encryptPasswordKey($password['keyword']),
                 (isset($password['description']) ? $password['description'] : ''));
         }
         $this->_io->success('Import password success!');
@@ -55,7 +56,7 @@ class ImportCommand extends Command
     private function validImportData($passwords)
     {
         foreach ($passwords as $password) {
-            if (! isset($password['name']) || ! isset($password['password'])) {
+            if (! isset($password['keyword']) || ! isset($password['password'])) {
                 $this->_io->error('The password yaml file format error!');
             }
         }

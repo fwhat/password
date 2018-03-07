@@ -22,9 +22,9 @@ class PasswordForm extends BaseForm
     public function findPassword($userId, $name)
     {
         $model = new PasswordModel();
-        $passwords = $model::find()->select('password, name')->where(['user_id' => $userId])->all();
+        $passwords = $model::find()->select('password, keyword')->where(['user_id' => $userId])->all();
         foreach ($passwords as $password) {
-            if (PassSecret::validData($password['name'], $name)) {
+            if (PassSecret::validData($password['keyword'], $name)) {
                 return $password['password'];
             }
         }
@@ -46,15 +46,15 @@ class PasswordForm extends BaseForm
     /**
      * @param integer $userId
      * @param string $password
-     * @param string $name
+     * @param string $keyword
      * @param string $description
      * @return int
      */
-    public function createPass($userId, $password, $name = '', $description = '')
+    public function createPass($userId, $password, $keyword = '', $description = '')
     {
         $model = new PasswordModel();
         $model->user_id = $userId;
-        $model->name = $name;
+        $model->keyword = $keyword;
         $model->password = $password;
         $model->description = $description;
 
@@ -65,20 +65,20 @@ class PasswordForm extends BaseForm
      * @param string $sprintf the sprintf string has a %s to set name
      * @return string | array
      */
-    public function getDecryptedName($sprintf = '')
+    public function getDecryptedKey($sprintf = '')
     {
         $user = UserForm::user()->findOne(['username' => Password::getUser()]);
-        $names = $this->findModels('name', ['user_id' => $user['id']]);
+        $keys = $this->findModels('keyword', ['user_id' => $user['id']]);
         $lists = '';
         if ($sprintf) {
-            foreach ($names as $name) {
-                $lists .= sprintf($sprintf, PassSecret::decryptedData($name['name']));
+            foreach ($keys as $key) {
+                $lists .= sprintf($sprintf, Password::decryptedPasswordKey($key['keyword']));
             }
             return $lists;
         } else {
             return array_map(function($arr) {
-                return PassSecret::decryptedData($arr['name']);
-            }, $names);
+                return Password::decryptedPasswordKey($arr['keyword']);
+            }, $keys);
         }
     }
 }

@@ -51,7 +51,7 @@ class PasswordDb
         $functionName = $this->_way . 'File';
         $this->clearDb();
         $this->toTemplate();
-        unlink(CONF_FILE);
+        unlink($this->_configureFile);
         foreach ($this->$functionName() as $value) {
             unlink($value);
         }
@@ -90,8 +90,8 @@ class PasswordDb
 
     protected function toTemplate()
     {
-        $config = str_replace(str_replace($this->_way, self::DB_CLASS_MATCH, Password::$dbClass), Password::$dbClass, file_get_contents(CONF_FILE));
-        file_put_contents(CONF_FILE, $config);
+        $config = str_replace(Password::$dbClass, str_replace($this->_way, self::DB_CLASS_MATCH, Password::$dbClass), file_get_contents($this->_configureFile));
+        file_put_contents($this->_configureFile, $config);
     }
 
     private function sqliteInit()
@@ -112,7 +112,7 @@ EOF;
 CREATE TABLE IF NOT EXISTS password (
                     id INTEGER PRIMARY KEY, 
                     user_id INTEGER NOT NULL, 
-                    name VARCHAR(255) NOT NULL,
+                    keyword VARCHAR(255) NOT NULL,
                     password VARCHAR(255) NOT NULL,
                     description VARCHAR(255) NOT NULL,
                     FOREIGN KEY(user_id) REFERENCES user(id)

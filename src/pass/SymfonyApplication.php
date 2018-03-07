@@ -18,7 +18,7 @@ class SymfonyApplication extends Application
             $name = $this->getCommandName($input);
             $this->find($name);
         } catch (\Exception $e) {
-            if (($e->getMessage() == 'Command "'.$name.'" is not defined.' ) && in_array($name, PasswordForm::pass()->getDecryptedName())) {
+            if (($e->getMessage() == 'Command "'.$name.'" is not defined.' ) && in_array($name, PasswordForm::pass()->getDecryptedKey())) {
                 $input = new ArgvInput(['', 'find', $name]);
             }
         }
