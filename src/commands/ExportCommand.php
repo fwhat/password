@@ -4,7 +4,7 @@ namespace Dowte\Password\commands;
 
 
 use Dowte\Password\forms\PasswordForm;
-use Dowte\Password\pass\PassSecret;
+use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -25,8 +25,8 @@ class ExportCommand extends Command
         $user = $this->validPassword();
         $passwords = PasswordForm::pass()->findModels(['keyword', 'password', 'description'], ['user_id' => $user['id']]);
         foreach ($passwords as &$password) {
-            $password['keyword'] = PassSecret::decryptedData($password['keyword']);
-            $password['password'] = PassSecret::decryptedData($password['password']);
+            $password['keyword'] = Password::decryptedPasswordKey($password['keyword']);
+            $password['password'] = Password::decryptedPassword($user['password'], $password['password']);
         }
         file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump([$passwords]));
     }

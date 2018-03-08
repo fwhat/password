@@ -4,7 +4,6 @@ namespace Dowte\Password\commands;
 
 
 use Dowte\Password\forms\PasswordForm;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordGenerate;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,7 +47,7 @@ class PasswordCommand extends Command
         $hidden = $input->getOption('no-hidden');
         $newPassword = $generate === true ? PasswordGenerate::gen()->setLength($length)->setLevel($level)->get() : '';
         if ($newPassword) {
-            $password = PassSecret::encryptData($newPassword);
+            $password = Password::encryptPassword($user['password'], $newPassword);
             Password::toPaste($newPassword, $this->_io, 'The new password is set into clipboard.');
             if ($hidden) {
                 $this->_io->success('The new password is' . $newPassword);
@@ -65,7 +64,7 @@ class PasswordCommand extends Command
                 $question = new Question('Set the password: (password is required)' . PHP_EOL);
                 $question->setHidden(true);
                 $question->setHiddenFallback(false);
-                $password = $this->encryptAsk($helper, $question);
+                $password = Password::encryptPassword($user['password'], $helper->ask($input, $output, $question));
             }
 
             if ($noDescription !== true && ! $description) {
@@ -74,7 +73,7 @@ class PasswordCommand extends Command
                 $description = $helper->ask($input, $output, $question);
             }
 
-            $status = PasswordForm::pass()->createPass($user['id'], $password, PassSecret::encryptData($keyword), $description);
+            $status = PasswordForm::pass()->createPass($user['id'], $password, Password::encryptPasswordKey($keyword), $description);
             if ($status) {
                 $this->_io->success('Create new password record success!');
             } else {

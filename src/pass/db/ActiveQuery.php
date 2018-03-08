@@ -15,6 +15,28 @@ abstract class ActiveQuery implements QueryInterface
 
     public $keyWords = ['like'];
 
+    public static $className;
+
+    /**
+     * @var ActiveRecord
+     */
+    protected $modelClass;
+
+    public function __construct($modelClass)
+    {
+        if (is_object($modelClass) && $modelClass instanceof ActiveRecord) {
+            $this->modelClass = $modelClass;
+        } else if (is_string($modelClass) && class_exists($modelClass)) {
+            $newClass = Password::newObject($modelClass);
+            if ($newClass instanceof ActiveRecord) {
+                $this->modelClass = $newClass;
+            }
+        }
+        if ($this->modelClass === null) {
+            Password::error('The Active Record create false!');
+        }
+    }
+
     /**
      * @param $select
      * @return ActiveQuery

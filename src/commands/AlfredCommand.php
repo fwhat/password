@@ -4,10 +4,8 @@ namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\forms\UserForm;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordGenerate;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,7 +33,7 @@ class AlfredCommand extends Command
                 Password::success('Init pass-alfred success!');
             }
         }
-        $this->loadPassword();
+        $masterPassword = $this->loadPassword();
         $passwordList = [
             "items" => []
         ];
@@ -62,7 +60,7 @@ class AlfredCommand extends Command
             $lists = PasswordForm::pass()->findModels(['keyword', 'description', 'password'], ['user_id' => $user['id']]);
             foreach ($lists as $list) {
                 $keyword = Password::decryptedPasswordKey($list['keyword']);
-                $password = PassSecret::decryptedData($list['password']);
+                $password = Password::decryptedPassword($masterPassword, $list['password']);
                 if ($query) {
                     if (strstr($keyword , $query) === false ){
                         continue;
@@ -117,7 +115,7 @@ class AlfredCommand extends Command
         if (file_exists(ALFRED_CONF_FILE)) {
             $password = file_get_contents(ALFRED_CONF_FILE);
             if ($this->validPassword($password)) {
-                return true;
+                return $password;
             }
         }
         Password::error('Miss password or password is wrong, please init alfredCommand before use alfred.');

@@ -4,7 +4,6 @@ namespace Dowte\Password\forms;
 
 
 use Dowte\Password\pass\BaseForm;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\models\PasswordModel;
 
@@ -24,7 +23,7 @@ class PasswordForm extends BaseForm
         $model = new PasswordModel();
         $passwords = $model::find()->select('password, keyword')->where(['user_id' => $userId])->all();
         foreach ($passwords as $password) {
-            if (PassSecret::validData($password['keyword'], $name)) {
+            if (Password::decryptedPasswordKey($password['keyword']) == $name) {
                 return $password['password'];
             }
         }

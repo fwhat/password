@@ -4,7 +4,6 @@ namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\components\FileUtil;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,7 +40,7 @@ class ImportCommand extends Command
         foreach ($passwords as $password) {
             PasswordForm::pass()->createPass(
                 $user['id'],
-                PassSecret::encryptData($password['password']),
+                Password::encryptPassword($user['password'], $password['password']),
                 Password::encryptPasswordKey($password['keyword']),
                 (isset($password['description']) ? $password['description'] : ''));
         }

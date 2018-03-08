@@ -17,4 +17,6 @@ interface ActiveRecordInterface extends BaseActiveRecordInterface
      * @return array
      */
     public function rules();
+
+    public static function find();
 }

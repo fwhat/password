@@ -11,7 +11,7 @@ class Sqlite extends \SQLite3
     /**
      * @var \SQLite3
      */
-    public static $db;
+    private static $db;
 
     protected static $_dbKey;
 
@@ -19,13 +19,17 @@ class Sqlite extends \SQLite3
     {
     }
 
-    public function init()
+    public static function getDb()
     {
-        if (file_exists(SQLITE_FILE)) {
-            self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$_dbKey);
+        if (self::$db === null) {
+            if (file_exists(SQLITE_FILE)) {
+                self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$_dbKey);
 
-        } else {
-            Password::error('The db file is not exists, please exec init at first', BaseException::QUERY_CODE);
+            } else {
+                Password::error('The db file is not exists, please exec init at first', BaseException::QUERY_CODE);
+            }
         }
+
+        return self::$db;
     }
 }

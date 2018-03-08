@@ -6,6 +6,7 @@ use Dowte\Password\forms\UserForm;
 use Dowte\Password\models\PasswordModel;
 use Dowte\Password\models\UserModel;
 use Dowte\Password\pass\components\FileUtil;
+use Dowte\Password\pass\db\ActiveRecord;
 use Dowte\Password\pass\db\sqlite\Sqlite;
 use Dowte\Password\pass\db\yamlFile\Yaml;
 
@@ -75,7 +76,7 @@ class PasswordDb
      */
     public function getDbWay()
     {
-        foreach (explode('\\', Password::$dbClass) as $dbName) {
+        foreach (explode('\\', ActiveRecord::$className) as $dbName) {
             if (in_array($dbName, self::ways())) {
                 return $dbName;
             }
@@ -90,7 +91,7 @@ class PasswordDb
 
     protected function toTemplate()
     {
-        $config = str_replace(Password::$dbClass, str_replace($this->_way, self::DB_CLASS_MATCH, Password::$dbClass), file_get_contents($this->_configureFile));
+        $config = str_replace(ActiveRecord::$className, str_replace($this->_way, self::DB_CLASS_MATCH, ActiveRecord::$className), file_get_contents($this->_configureFile));
         file_put_contents($this->_configureFile, $config);
     }
 

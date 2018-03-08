@@ -1,8 +1,8 @@
 <?php
 namespace Dowte\Password\pass;
 
-use Dowte\Password\pass\db\ActiveRecordInterface;
-use Dowte\Password\pass\db\ConnectionInterface;
+use Dowte\Password\pass\components\OpensslEncryptHelper;
+use Dowte\Password\pass\components\PdHelper;
 use Dowte\Password\pass\exceptions\BaseException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -15,11 +15,9 @@ class Password
     public static $params = [];
 
     /**
-     * @var ActiveRecordInterface
+     * @var PdHelper
      */
-    public static $dbClass;
-
-    public static $dbConfig;
+    public static $pd;
 
     /**
      * @var SymfonyStyle
@@ -37,6 +35,7 @@ class Password
                 $this->loadParams($value);
             }
         }
+        self::$pd = $this->getPd();
     }
 
     /**
@@ -97,12 +96,13 @@ class Password
     }
 
     /**
+     * @param $masterPassword
      * @param $messages
      * @param $io SymfonyStyle
      */
-    public static function toPasteDecode($messages, SymfonyStyle $io)
+    public static function toPasteDecode($masterPassword, $messages, SymfonyStyle $io)
     {
-        $messages = PassSecret::decryptedData($messages);
+        $messages = self::decryptedPassword($masterPassword, $messages);
         $status = self::copy($messages);
         if ($status) {
             $io->success('复制剪贴板成功 !');
@@ -133,7 +133,7 @@ class Password
     protected function loadParams(array $value)
     {
         foreach ((array) $value as $name => $item) {
-            ! $item or self::$params[$name] = $item;
+            $this->getPd()->params[$name] = $item;
         }
     }
 
@@ -143,21 +143,10 @@ class Password
     protected function loadComponents(array $configs)
     {
         foreach ((array) $configs as $name => $config) {
-            if ($name === 'db') {
-                if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
-                    $className = self::BASE_NAMESPACE . $config['class'];
-                    $instance = new $className();
-                    if ($instance instanceof ConnectionInterface) {
-                        $instance->init($config);
-                    } else {
-                        self::error('Connection db error!');
-                    }
-                } else {
-                    self::error('Connection db error!');
-                }
-            }
-            if ($name === 'secret') {
-                PassSecret::load($config);
+            if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
+                $this->getPd()->$name = self::newObject(self::BASE_NAMESPACE . $config['class'], $config);
+            } else {
+                self::error($config['class'] . ' Class not found! ');
             }
         }
     }
@@ -204,14 +193,19 @@ class Password
         exit(0);
     }
 
-    /**
-     * encryptUserName
-     * @param $username
-     * @return string
-     */
-    public static function encryptUserName($username)
+    public static function sha256($data)
     {
-        return hash('sha256', $username);
+        return hash('sha256', $data);
+    }
+
+    public static function encryptPassword($masterPassword, $password)
+    {
+        return OpensslEncryptHelper::cipher()->setPassword($masterPassword)->encryptWithOpenssl($password);
+    }
+
+    public static function decryptedPassword($masterPassword, $password)
+    {
+        return OpensslEncryptHelper::cipher()->setPassword($masterPassword)->decryptWithOpenssl($password);
     }
 
     /**
@@ -245,6 +239,11 @@ class Password
         return exec("which $command");
     }
 
+    /**
+     * @param $class
+     * @param mixed $param
+     * @return mixed
+     */
     public static function newObject($class, $param = [])
     {
         return $param ? new $class($param) : new $class();
@@ -254,6 +253,34 @@ class Password
     {
         $content = str_replace($search, $replace, file_get_contents(file_exists(CONF_FILE) ? CONF_FILE : CONF_FILE_TEMP));
         file_put_contents($toFile ?: CONF_FILE, $content);
+    }
+
+
+    /**
+     * @param array $data
+     * @param array $handler
+     * @return bool
+     */
+    public static function compareArray(array $data, array $handler)
+    {
+        foreach ($handler as $k => $value) {
+            if ($data[$k] !== $value) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return PdHelper
+     */
+    protected function getPd()
+    {
+        if (self::$pd === null) {
+            self::$pd = new PdHelper();
+        }
+
+        return self::$pd;
     }
 
     /**

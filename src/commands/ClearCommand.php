@@ -3,7 +3,6 @@
 namespace Dowte\Password\commands;
 
 
-use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

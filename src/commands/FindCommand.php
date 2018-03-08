@@ -30,16 +30,16 @@ class FindCommand extends Command
             return;
         }
 
-        $key = $this->encryptArgument('keyword');
+        $key = $input->getArgument('keyword');
         $user = $this->validPassword();
         while (empty($key)) {
             $helper = $this->getHelper('question');
             $question = new Question('Which password is you want to get:' . PHP_EOL);
-            $key = $this->encryptAsk($helper, $question);
+            $key = Password::encryptPasswordKey($helper->ask($input, $output, $question));
         }
         $pass = PasswordForm::pass()->findPassword($user['id'], $key);
         if ($pass) {
-            Password::toPasteDecode($pass, $this->_io);
+            Password::toPasteDecode($user['password'], $pass, $this->_io);
         } else {
             $this->_io->error('You provide password is wrong or keyword is not exist!');
         }

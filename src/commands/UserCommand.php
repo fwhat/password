@@ -4,7 +4,6 @@ namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\Password;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,7 +39,7 @@ class UserCommand extends Command
             $userName = $helper->ask($input, $output, $question);
         }
         if ($fix) {
-            $encryptName = Password::encryptUserName($userName);
+            $encryptName = Password::sha256($userName);
             if ($this->validPassword('', $encryptName)) {
                 Password::userConfigure($encryptName);
             }
@@ -49,7 +48,7 @@ class UserCommand extends Command
             $question = new Question('Set a password for Pass?');
             $question->setHidden(true);
             $question->setHiddenFallback(false);
-            $password = $this->encryptAsk($helper, $question);
+            $password = $this->sha256Ask($helper, $question);
             if (! $password) {
                 $this->_io->error('Password could\'t be empty');
             } else {

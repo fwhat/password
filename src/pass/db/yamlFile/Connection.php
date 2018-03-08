@@ -2,14 +2,22 @@
 
 namespace Dowte\Password\pass\db\yamlFile;
 
-use Dowte\Password\pass\db\ConnectionInterface;
-use Dowte\Password\pass\Password;
+use Dowte\Password\pass\db\BaseConnection;
 
-class Connection implements ConnectionInterface
+class Connection extends BaseConnection
 {
-    public static function init($config)
+    protected function setActiveRecordClass()
     {
-        Password::$dbClass = YamlActiveRecord::class;
-        Password::$dbConfig = $config;
+        $this->_activeRecordClass = YamlActiveRecord::class;
+    }
+
+    protected function allowProperty()
+    {
+        return ['dbDir'];
+    }
+
+    protected function setActiveQueryClass()
+    {
+        $this->_activeQueryClass = YamlQuery::class;
     }
 }

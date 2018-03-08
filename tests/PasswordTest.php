@@ -25,32 +25,14 @@ class PasswordTest extends \PHPUnit\Framework\TestCase
      */
     public $pdb;
 
-    private function init()
-    {
-        $this->pdb = new PasswordDb();
-        $this->pdb->setWay(PasswordDb::SQLITE)->setConfigureFile(CONF_FILE)->init();
-        $config = require CONF_FILE;
-        Password::init($config);
-        $this->secret = new PassSecret();
-        $this->secret->setSecretKeyDir(__DIR__);
-        $this->secret->buildSecretKey();
-    }
+    public $masterPassword = 'Dowte';
 
-    private function clear()
-    {
-        unlink(SQLITE_FILE);
-    }
+    public $tempString = 'Dowte\Password';
 
-    public function testValidPassword()
+    public function testSymmetricalEncryption()
     {
-        $this->init();
-        $password = PassSecret::encryptData(self::VALID_STR);
-        $password2 = PassSecret::encryptData(self::VALID_STR);
-        $this->assertTrue(PassSecret::validData($password, $password2));
-        $this->secret->toTemplate(PassSecret::$privateKeyPath, PassSecret::$publicKeyPath);
-        unlink(PassSecret::$publicKeyPath);
-        unlink(PassSecret::$privateKeyPath);
-        $this->pdb->clear();
-        $this->clear();
+        $str = Password::encryptPassword($this->masterPassword, $this->tempString);
+        $enstr = Password::decryptedPassword($this->masterPassword, $str);
+        $this->assertTrue($this->tempString === $enstr);
     }
 }

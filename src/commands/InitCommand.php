@@ -2,7 +2,6 @@
 
 namespace Dowte\Password\commands;
 
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -20,8 +19,7 @@ class InitCommand extends Command
         $this->setName('init')
             ->setDescription('DbInit pass settings')
             ->setHelp('This command could help you init this application! ')
-            ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.')
-            ->addOption('generate-secret', 'G', InputOption::VALUE_NONE, 'Generate new openssl secret keys.');
+            ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -39,14 +37,6 @@ class InitCommand extends Command
             $way = $helper->ask($input, $output, $question);
         }
         $db->setWay($way)->init();
-        if ($input->getOption('generate-secret')) {
-            $secret = new PassSecret();
-            $secretKeyDir = __DIR__ . '/../../data/';
-            $secret->setSecretKeyDir($secretKeyDir);
-            if ($secret->buildSecretKey()) {
-                $this->_io->success('Generate new keys success, the keys is save in ' . realpath($secretKeyDir));
-            }
-        }
         $status = $this->dumpCompletion();
         if ($status) {
             $this->_io->success('DbInit Success !');

@@ -3,7 +3,6 @@ namespace Dowte\Password\forms;
 
 use Dowte\Password\models\UserModel;
 use Dowte\Password\pass\BaseForm;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 
 class UserForm extends BaseForm
@@ -23,6 +22,11 @@ class UserForm extends BaseForm
         return $model::find()->select($fields)->where($where)->one();
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @return bool|array *return with a password which is be provide*
+     */
     public function findUser($username, $password)
     {
         $user = UserModel::find()
@@ -31,23 +35,22 @@ class UserForm extends BaseForm
             ->one();
 
         if (empty($user)) {
-            return null;
+            return false;
 
         } else {
-            if (PassSecret::validData($password, $user['password'])) {
+            if (password_verify($password, $user['password'])) {
                 $user['password'] = $password;
                 return $user;
             }
         }
-
-        return null;
+        return false;
     }
 
     public function createUser($userName, $password)
     {
         $model = new UserModel();
-        $model->username = Password::encryptUserName($userName);
-        $model->password = $password;
+        $model->username = Password::sha256($userName);
+        $model->password = password_hash($password, PASSWORD_DEFAULT);
         $model->save();
         return $model->username;
     }

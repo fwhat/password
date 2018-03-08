@@ -3,7 +3,6 @@
 namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\UserForm;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -80,24 +79,17 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return $this->_io;
     }
 
-    protected function encryptOption($name)
-    {
-        $messages = $this->_input->getOption($name);
-        return $messages ? PassSecret::encryptData($messages) : null;
-    }
-
-    protected function encryptArgument($name)
-    {
-        $messages = $this->_input->getArgument($name);
-        return $messages ? PassSecret::encryptData($messages) : null;
-    }
-
-    protected function encryptAsk(QuestionHelper $helper, Question $question)
+    protected function sha256Ask(QuestionHelper $helper, Question $question)
     {
         $messages = $helper->ask($this->_input, $this->_output, $question);
-        return PassSecret::encryptData($messages);
+        return Password::sha256($messages);
     }
 
+    /**
+     * @param string $password
+     * @param string $user
+     * @return array|bool|string
+     */
     protected function validPassword($password = '', $user = '')
     {
         if (! $password) {
@@ -105,7 +97,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
             $question = new Question('What is the database password?');
             $question->setHidden(true);
             $question->setHiddenFallback(false);
-            $password = $this->encryptAsk($helper, $question);
+            $password = $this->sha256Ask($helper, $question);
         }
         $user = UserForm::user()->findUser($user ?: Password::getUser(), $password);
         if (! $user) {
