@@ -18,7 +18,7 @@ class PdHelper
     public function __get($name)
     {
         if (! isset(self::$static[$name])) {
-            Password::error('The ' . $name . 'property is not exists');
+            Password::error('The property ' . $name . ' is not exists');
         }
         return self::$static[$name];
     }

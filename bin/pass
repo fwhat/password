@@ -12,6 +12,7 @@ use Dowte\Password\commands\AlfredCommand;
 use Dowte\Password\commands\ImportCommand;
 use Dowte\Password\commands\ExportCommand;
 use Dowte\Password\pass\components\FileUtil;
+use Dowte\Password\pass\db\RegisterDb;
 
 // application.php
 
@@ -23,8 +24,6 @@ defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
 defined('CONF_FILE') or define('CONF_FILE', __DIR__ . '/../pass-conf.php');
 defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
 defined('ALFRED_CONF_FILE') or define('ALFRED_CONF_FILE', FileUtil::_realPath(__DIR__ . '/../data/.pass'));
-defined('PUBLIC_KEY_PATH_MATCH') or define('PUBLIC_KEY_PATH_MATCH', '%public_key_path%');
-defined('PRIVATE_KEY_PATH_MATCH') or define('PRIVATE_KEY_PATH_MATCH', '%private_key_path%');
 
 if (file_exists(CONF_FILE)) {
     $config = require CONF_FILE;
@@ -32,6 +31,8 @@ if (file_exists(CONF_FILE)) {
 } else {
     Password::notice('The pass-conf.php is not exists, please configure it or use init -G command to generate.');
 }
+$registerDB = new RegisterDb();
+$registerDB->registerDbException(new \Dowte\Password\pass\exceptions\DbException());
 
 $console = new \Dowte\Password\pass\SymfonyApplication();
 

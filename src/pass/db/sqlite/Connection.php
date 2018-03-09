@@ -11,13 +11,18 @@ class Connection extends BaseConnection
         $this->_activeRecordClass = SqliteActiveRecord::class;
     }
 
-    protected function allowProperty()
+    protected function allowProperties()
     {
-        return ['dbDir'];
+        return ['dbDir', 'dbName', 'dbKey'];
     }
 
     protected function setActiveQueryClass()
     {
         $this->_activeQueryClass = SqliteQuery::class;
+    }
+
+    protected function requireProperties()
+    {
+        return ['dbDir', 'dbName'];
     }
 }

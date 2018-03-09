@@ -98,9 +98,7 @@ class PasswordDb
     private function sqliteInit()
     {
         $sqlite = new Sqlite();
-        FileUtil::createFile(SQLITE_FILE);
-//        $sqlite::$dbKey = $dbKey;
-        $sqlite->init();
+        FileUtil::createFile($sqlite::getDbResource(Password::$pd->db->config['dbDir'], Password::$pd->db->config['dbName']));
         $sql = <<<EOF
 CREATE TABLE IF NOT EXISTS user (
                     id INTEGER PRIMARY KEY, 
@@ -108,7 +106,7 @@ CREATE TABLE IF NOT EXISTS user (
                     password VARCHAR(255) NOT NULL)
 EOF;
 
-        $sqlite::$db->exec($sql);
+        $sqlite::getDb()->exec($sql);
         $sql = <<<EOF
 CREATE TABLE IF NOT EXISTS password (
                     id INTEGER PRIMARY KEY, 
@@ -119,7 +117,7 @@ CREATE TABLE IF NOT EXISTS password (
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )
 EOF;
-        $sqlite::$db->exec($sql);
+        $sqlite::getDb()->exec($sql);
     }
 
     private function sqliteClear()
@@ -133,7 +131,7 @@ EOF;
         $userId = $user['id'];
         $sql .= sprintf("DELETE FROM password WHERE user_id = %d;\n", $userId);
         $sql .= sprintf("DELETE FROM user WHERE id = %d;\n", $userId);
-        Sqlite::$db->exec($sql);
+        Sqlite::getDb()->exec($sql);
     }
 
     private function sqliteFile()
@@ -144,8 +142,8 @@ EOF;
     private function yamlFileFile()
     {
         return [
-            DB_FILE_DIR . Yaml::getFromFile((new PasswordModel())->name()),
-            DB_FILE_DIR . Yaml::getFromFile((new UserModel())->name()),
+            Yaml::getDbResource(DB_FILE_DIR, (new PasswordModel())->name()),
+            Yaml::getDbResource(DB_FILE_DIR, (new UserModel())->name()),
         ];
     }
 

@@ -2,16 +2,16 @@
 
 namespace Dowte\Password\pass\db;
 
-use Dowte\Password\pass\Password;
-
-
 /**
  * Class BaseConnection
  * @package Dowte\Password\pass\db
  */
 abstract class BaseConnection
 {
-    public $config;
+    /**
+     * @var array
+     */
+    public static $config;
 
     /**
      * @var string
@@ -22,36 +22,48 @@ abstract class BaseConnection
 
     /**
      * BaseConnection constructor.
-     * @param $config
+     * @param array $config
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $this->setActiveRecordClass();
         $this->setActiveQueryClass();
         foreach ($config as $k => $item) {
             if ($k == 'class') continue;
-            if (in_array($k, $this->allowProperty())) {
-                $this->config[$k] = $item;
-            } else {
-                Password::error('The property ' . $k . ' is invalid! ');
+            $this->$k = $item;
+        }
+        foreach ($this->requireProperties() as $property) {
+            if (! isset(self::$config[$property])) {
+                DbHelper::$exception->error('The property ' . $property . ' is required!');
             }
         }
         ActiveQuery::$className = $this->_activeQueryClass;
         ActiveRecord::$className = $this->_activeRecordClass;
     }
 
+    public function __set($name, $value)
+    {
+        if (in_array($name, $this->allowProperties())) {
+            self::$config[$name] = $value;
+        } else {
+            DbHelper::$exception->error('The property ' . $name . ' is invalid! ');
+        }
+    }
+
     public function __get($name)
     {
-        if(! isset($this->config[$name])) {
-            die('error');
+        if(! isset(self::$config[$name])) {
+            DbHelper::$exception->error('The property ' . $name . ' is not exists! ');
         }
-        return $this->config[$name];
+        return self::$config[$name];
     }
+
+    abstract protected function requireProperties();
 
     /**
      * @return array
      */
-    abstract protected function allowProperty();
+    abstract protected function allowProperties();
 
     /**
      * @return void

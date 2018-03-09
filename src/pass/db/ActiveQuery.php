@@ -33,7 +33,7 @@ abstract class ActiveQuery implements QueryInterface
             }
         }
         if ($this->modelClass === null) {
-            Password::error('The Active Record create false!');
+            DbHelper::$exception->error('The Active Record create false!');
         }
     }
 
@@ -51,7 +51,7 @@ abstract class ActiveQuery implements QueryInterface
         } elseif (is_string($select)) {
             $this->select = explode(',', str_replace(['`', ' '], '', $select));
         } else {
-            Password::error('Set select error', BaseException::QUERY_CODE);
+            DbHelper::$exception->error('Set select error', BaseException::QUERY_CODE);
         }
         return $this;
     }
@@ -77,11 +77,11 @@ abstract class ActiveQuery implements QueryInterface
                     $fileWhere[trim(trim(mb_substr($item, 0, $index), '`'))] = trim(trim(mb_substr($item, $index, mb_strlen($item)), '\'"'));
 
                 } else {
-                    Password::error('Set where error', BaseException::QUERY_CODE);
+                    DbHelper::$exception->error('Set where error', BaseException::QUERY_CODE);
                 }
             }
         } else {
-            Password::error('Set where error', BaseException::QUERY_CODE);
+            DbHelper::$exception->error('Set where error', BaseException::QUERY_CODE);
         }
         return $this;
     }

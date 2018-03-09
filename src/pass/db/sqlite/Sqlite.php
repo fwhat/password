@@ -13,23 +13,31 @@ class Sqlite extends \SQLite3
      */
     private static $db;
 
-    protected static $_dbKey;
-
     public function __construct()
     {
+    }
+
+    public static function getFromFile($tableName)
+    {
+        return $tableName . '.db';
+    }
+
+    public static function getDbResource($dbDir, $from)
+    {
+        return rtrim($dbDir, '/') . '/' . self::getFromFile($from);
     }
 
     public static function getDb()
     {
         if (self::$db === null) {
-            if (file_exists(SQLITE_FILE)) {
-                self::$db = new \SQLite3(SQLITE_FILE, SQLITE3_OPEN_READWRITE, self::$_dbKey);
+            $resource = self::getDbResource(Connection::$config['dbDir'], Connection::$config['dbName']);
+            if (file_exists($resource)) {
+                self::$db = new \SQLite3($resource, SQLITE3_OPEN_READWRITE, Connection::$config['dbKey']);
 
             } else {
-                Password::error('The db file is not exists, please exec init at first', BaseException::QUERY_CODE);
+                Password::error('The db file is not exists, please exec init at first.', BaseException::QUERY_CODE);
             }
         }
-
         return self::$db;
     }
 }

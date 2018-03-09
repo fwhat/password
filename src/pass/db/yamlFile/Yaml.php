@@ -22,8 +22,8 @@ class Yaml
         file_put_contents($dbResource, Syaml::dump([$data]), FILE_APPEND);
     }
 
-    public static function getDbResource($dbDir = '', $from)
+    public static function getDbResource($dbDir, $from)
     {
-        return $dbDir . self::getFromFile($from);
+        return rtrim($dbDir, '/') . '/' . self::getFromFile($from);
     }
 }
