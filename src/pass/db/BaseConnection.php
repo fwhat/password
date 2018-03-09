@@ -52,6 +52,9 @@ abstract class BaseConnection
 
     public function __get($name)
     {
+        if ($name === 'config') {
+            return self::$config;
+        }
         if(! isset(self::$config[$name])) {
             DbHelper::$exception->error('The property ' . $name . ' is not exists! ');
         }

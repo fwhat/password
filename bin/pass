@@ -17,7 +17,7 @@ use Dowte\Password\pass\db\RegisterDb;
 // application.php
 
 require __DIR__ . '/../vendor/autoload.php';
-
+defined('PASS_ENV') or define('PASS_ENV', 'prod');
 defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
 defined('DB_FILE_DIR') or define('DB_FILE_DIR', __DIR__ . '/../data/');
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');

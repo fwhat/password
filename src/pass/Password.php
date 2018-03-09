@@ -170,6 +170,9 @@ class Password
      */
     public static function error($message, $code = BaseException::USER_CODE)
     {
+        if (PASS_ENV == 'dev') {
+            $message .= sprintf("[%s#%d]", __FILE__, __LINE__);
+        }
         self::getIo()->error($message);
         exit($code);
     }
