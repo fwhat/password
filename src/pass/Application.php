@@ -1,19 +1,27 @@
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
 
 namespace Dowte\Password\pass;
 
 use Dowte\Password\forms\PasswordForm;
-use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Application as SyApplication;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SymfonyApplication extends Application
+class Application extends SyApplication
 {
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
-        // 将为找不到的命令以搜索密码形式查找
+        // Try to search for the corresponding password when command is not defined.
         $input = new ArgvInput();
+        $name = '';
         try {
             $name = $this->getCommandName($input);
             $this->find($name);

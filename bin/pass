@@ -9,6 +9,8 @@
  */
 
 use Dowte\Password\pass\Password;
+use Dowte\Password\pass\Application;
+use Dowte\Password\pass\db\RegisterDb;
 use Dowte\Password\commands\UserCommand;
 use Dowte\Password\commands\PasswordCommand;
 use Dowte\Password\commands\FindCommand;
@@ -19,49 +21,84 @@ use Dowte\Password\commands\GenerateCommand;
 use Dowte\Password\commands\AlfredCommand;
 use Dowte\Password\commands\ImportCommand;
 use Dowte\Password\commands\ExportCommand;
-use Dowte\Password\pass\components\FileUtil;
-use Dowte\Password\pass\db\RegisterDb;
 
-// application.php
+/* -----------------------------------------------------------------------------------------------------
+ * Check PHP version and composer autoload file.
+ * -----------------------------------------------------------------------------------------------------
+ */
+if (version_compare(PHP_VERSION, '5.6', '<')) {
+    die("Password need php version not lower than 5.6\n");
+} elseif ( ! file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    die('Not found composer autoload.php');
+}
 
-require __DIR__ . '/../vendor/autoload.php';
+/* ------------------------------------------------------------------------------------------------------
+ * Require composer autoload.
+ * ------------------------------------------------------------------------------------------------------
+ */
+require(__DIR__ . '/../vendor/autoload.php');
 
+/* ------------------------------------------------------------------------------------------------------
+ * Require constant
+ * ------------------------------------------------------------------------------------------------------
+ */
+require(__DIR__ . '/../src/pass/Defind.php');
 
-defined('PASS_ENV') or define('PASS_ENV', 'prod');
-defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
-defined('DB_DIR') or define('DB_DIR', FileUtil::realPath(__DIR__ . '/../data/'));
-defined('DB_PASS') or define('DB_PASS', '');
-defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
-defined('CONF_FILE') or define('CONF_FILE', FileUtil::realPath(__DIR__ . '/../.pass-conf.yaml'));
-defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.yaml'));
-defined('ALFRED_CONF_FILE') or define('ALFRED_CONF_FILE', FileUtil::realPath(__DIR__ . '/../data/.pass'));
-
+/* ------------------------------------------------------------------------------------------------------
+ * Load config
+ * ------------------------------------------------------------------------------------------------------
+ */
 if (file_exists(CONF_FILE)) {
     $config = \Symfony\Component\Yaml\Yaml::parseFile(CONF_FILE);
     Password::init($config);
 } else {
     Password::notice('The pass-conf.php is not exists, please configure it or use init command to generate.');
 }
+
+/* ------------------------------------------------------------------------------------------------------
+ * Register DbException
+ * ------------------------------------------------------------------------------------------------------
+ */
 $registerDB = new RegisterDb();
 $registerDB->registerDbException(new \Dowte\Password\pass\exceptions\DbException());
 
-$console = new \Dowte\Password\pass\SymfonyApplication();
+/* --------------------------------------------------------------------------------------------------------
+ * Build a symfony console application.
+ *
+ * The Application will try to search for the corresponding password when the command is not defined.
+ * --------------------------------------------------------------------------------------------------------
+ */
+$app = new Application();
 
-$passCommand = new FindCommand();
+/* --------------------------------------------------------------------------------------------------------
+ * Add configuration to shell environment, if you want to use completion.
+ * --------------------------------------------------------------------------------------------------------
+ */
+$app->add(new CompletionCommand());
 
-// ... register commands
-$console->add(new InitCommand());
-$console->add(new CompletionCommand());
-$console->add(new UserCommand());
-$console->add(new PasswordCommand());
-$console->add($passCommand);
-$console->add(new ClearCommand());
-$console->add(new GenerateCommand());
-$console->add(new AlfredCommand());
-$console->add(new ImportCommand());
-$console->add(new ExportCommand());
+/* --------------------------------------------------------------------------------------------------------
+ * Add commands.
+ * --------------------------------------------------------------------------------------------------------
+ */
+$app->add(new InitCommand());
+$app->add(new UserCommand());
+$app->add(new PasswordCommand());
+$app->add(new ClearCommand());
+$app->add(new GenerateCommand());
+$app->add(new AlfredCommand());
+$app->add(new ImportCommand());
+$app->add(new ExportCommand());
+$app->add(new FindCommand());
 
-$console->setDefaultCommand($passCommand->getName());
+/* --------------------------------------------------------------------------------------------------------
+ * Set default command.
+ * --------------------------------------------------------------------------------------------------------
+ */
+$app->setDefaultCommand((new FindCommand())->getName());
 
-$console->run();
+/* --------------------------------------------------------------------------------------------------------
+ * Run the console application.
+ * --------------------------------------------------------------------------------------------------------
+ */
+$app->run();
 
