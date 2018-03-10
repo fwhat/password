@@ -26,7 +26,7 @@ class FindCommand extends Command
             ->setDescription('Get a password by keyword')
             ->setHelp('This command allows you to get a password...')
             ->addArgument('keyword', InputArgument::OPTIONAL, 'Get password by the password keyword.')
-            ->addOption('list', 'a', InputOption::VALUE_NONE, 'Get all passwords of keyword.');
+            ->addOption('list', 'a', InputOption::VALUE_NONE, 'Show passwords list.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

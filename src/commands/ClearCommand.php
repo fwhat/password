@@ -24,7 +24,7 @@ class ClearCommand extends Command
         $this->setName('clear')
             ->setDescription('Clear your password data !')
             ->setHelp('This command allows you to clear db data, ' . PHP_EOL . 'And if you want use Application after clear, you need init again.')
-            ->addOption('all', null, InputOption::VALUE_NONE, 'Clear the whole data file!');
+            ->addOption('all', null, InputOption::VALUE_NONE, 'Clear the whole config and DB records!');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

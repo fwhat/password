@@ -1,8 +1,8 @@
 # ClearCommand
 
-## 主要功能
+## Main
 
-- 清空密码仓库
+- clear the DB records
 
 ### Help
 
@@ -11,12 +11,12 @@ Usage:
   clear [options]
 
 Options:
-      --all             Clear the whole data file!
+      --all           clear the whole config and DB records!
 ```
-#### 参数详解
+#### Params info
 
 ```
---all 删除所有的配置包括数据库(默认只清除使用者的密码数据)
+--all clear the whole config and DB records (only DB records by default)
 ```
 
 ![clear](http://assest.dowte.com/imgs/pass-cli/clear-all.jpg)

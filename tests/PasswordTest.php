@@ -13,8 +13,8 @@ use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 
 error_reporting(0);
-define('CONF_FILE', __DIR__ . '/pass-conf-template.yaml');
-defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.yaml'));
+define('CONF_FILE', __DIR__ . '/pass-conf.yaml.template');
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf.yaml.template'));
 
 class PasswordTest extends \PHPUnit\Framework\TestCase
 {

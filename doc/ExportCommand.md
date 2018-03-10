@@ -1,8 +1,8 @@
 # ExportCommand
 
-## 主要功能
+## Main
 
-- 导出密码库
+- export passwords
 
 ### Help
 

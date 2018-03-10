@@ -291,17 +291,6 @@ class Password
     }
 
     /**
-     * @param $search
-     * @param $replace
-     * @param string $toFile
-     */
-    public static function rewriteConfig($search, $replace, $toFile = '')
-    {
-        $content = str_replace($search, $replace, file_get_contents(file_exists(CONF_FILE) ? CONF_FILE : CONF_FILE_TEMP));
-        file_put_contents($toFile ?: CONF_FILE, $content);
-    }
-
-    /**
      * @param $i
      * @param $total
      */

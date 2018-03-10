@@ -7,17 +7,17 @@ ___
 [![License](https://poser.pugx.org/Dowte/password/license.svg)](https://packagist.org/packages/Dowte/password)
 #### A command-line tool to help you manage your password
 
-### 一、安装及配置
+### 1、download and configure
 
-##### 1.1 下载
+##### 1.1 download
 
 + git clone https://github.com/Dowte/password.git
 
-#### 1.2 配置
+#### 1.2 configure
 + cp pass-cli/bin/pass /usr/local/bin/pass
 
 
-### 二、初始化
+### 2、Init
 
 ```php
 pass init
@@ -25,67 +25,71 @@ pass init
 
 ![init](http://assest.dowte.com/imgs/pass-cli/init.jpg)
 
-#### 配置命令行提示工具
-echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc ({{pass-cli-path}}用真实路径替换)
+#### configure the completion
+```php
+echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc 
+//{{pass-cli-path}} the real path
 source ~/.zshrc
+```
 
-### 三、创建一个用户
+### 3、Create a user
 
 ```php
 pass user -u dowte
-//将会创建一个用户名为dowte密码库, 会提示设置主密码(此密码将被加密, 查询密码库时必须提供)
+//This command will create a password library of dowte.
+//And ask your to set the master password(The master password is required)
 ```
 ![user](http://assest.dowte.com/imgs/pass-cli/user-u.jpg)
 
-### 四、存入密码
+### 4、Save a password item
 
 ```php
 pass password -g
-//-g 生成新的密码(如保存之前的密码，则无需提供该参数)
+//-g auto generate a new password(option)
 ```
 
 ![password](http://assest.dowte.com/imgs/pass-cli/password-g.jpg)
 
-### 五、查找
+### 5、find
 
 ```php
-pass find -a  | pass -a //列出所有存入的密码的名称
-pass find dowte  | pass dowte //dowte的密码
+pass find -a  | pass -a //Show password list
+pass find dowte  | pass dowte //Get a password which keyword is dowte
 ```
 ![find](http://assest.dowte.com/imgs/pass-cli/find-a.jpg)
 ![find-N](http://assest.dowte.com/imgs/pass-cli/find-N.jpg)
 
-### 六、ext
+### 6、ext
 
-#### 6.1 使用 alfred
+#### 6.1 Use alfred
 
-双击使用Pass.alfredworkflow
++ Import Pass.alfredworkflow to the alfred(Double click on the Pass.alfredworkflow)
 
 ```
 pass alfred init
 ```
 ![alfred-init](http://assest.dowte.com/imgs/pass-cli/alfred-init.jpg)
 
-#### 6.2 列表
+#### 6.2 list on alfred
 
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpeg)
 
-+ enter|cmd+enter 将选中密码复制到剪贴板
-+ cmd+4 将第4项密码复制到剪贴板
-+ alt+enter 将描述复制到剪贴板
++ enter|cmd+enter copy password to clipboard
++ cmd+4 copy the 4th password to clipboard
++ alt+enter copy description to clipboard
 
-#### 6.3 其他命令
+#### 6.3 call other command
 ```
-//在alfred中
+//on alfred window
 pass -c 
-//显示可执行的命令
-tab 键选择一个
+//show command list which can be execute
+use tab choose one 
 ```
 
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-c.jpg)
 
-##### 6.3.1 generate 随机生成密码串
+##### 6.3.1 generate: generate random passwords
 
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-generate.jpg)
 
-cmd+enter 将密码复制到剪贴板
+cmd+enter copy password to clipboard

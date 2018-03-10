@@ -1,8 +1,8 @@
 # UserCommand
 
-## 主要功能
+## Main
 
-- 创建一个使用者
+- Create a user
 
 ### Help
 
@@ -16,12 +16,12 @@ Options:
   -f, --fix                  Fix user-conf if miss the user-config
   -P, --update-password      Update the master password
 ```
-#### 参数详解
+#### Params info
 
 ```
--u 新创建的用户名 (不提供将以询问方式输入)
--f *创建的用户名将加密后存本地，用于后续查询，如丢失文件，可提供原用户名重新生成
--P 更新 master 密码
+-u The username of the password (Without provide will use ask way to set)
+-f *Fix user-conf by user the old username
+-P Update the master password
 ```
 
 ##### create

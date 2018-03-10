@@ -1,0 +1,12 @@
+#yamlFile
+components:
+    db: { class: pass\db\yamlFile\Connection, DB_DIR: /Users/dowte/tools/password/data/ }
+#mysql
+components:
+    db: { class: pass\db\mysql\Connection, DB_DSN: mysql:host=127.0.0.1;dbname=password, DB_USER: root, DB_PASS: '' }
+#sqlite
+components:
+    db: { class: pass\db\sqlite\Connection, DB_DIR: /Users/dowte/tools/password/data/ }
+#generate default config (optional)
+components:
+    generate: { class: pass\PasswordGenerate, length: 12, level: 3 }

@@ -27,7 +27,7 @@ class ImportCommand extends Command
             ->setDescription('Import passwords from yaml file')
             ->setHelp('This command help you to import passwords displace one by one set into')
             ->addArgument('file', InputArgument::REQUIRED, 'A file use to import')
-            ->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite password item if exists!');
+            ->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite password item if keyword exists!');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

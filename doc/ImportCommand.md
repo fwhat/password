@@ -1,8 +1,8 @@
 # ImportCommand
 
-## 主要功能
+## Main
 
-- 导入密码库
+- Import passwords
 
 ### Help
 
@@ -14,19 +14,19 @@ Arguments:
   file                  A file use to import
 
 Options:
-      --overwrite       Overwrite password item if exists!
+      --overwrite       Overwrite password item if keyword exists!
 ```
-#### 参数详解
+#### Params info
 
 ```
-file 需要导入的文件
---overwrite 如果keyword已存在则覆盖(默认跳过)
+file  A file use to import
+--overwrite Overwrite password item if keyword exists!
 ```
 
-#### 其他
+#### Other
 
-+ 用yaml文件，并以对应的格式 [模版](../import.yaml.template)
-+ 有需要添加|修改多个时，导入是很有效的
++ use yaml file [template](../import.yaml.template)
++ It's very useful when update or add more passwords 
 
 ##### import
 

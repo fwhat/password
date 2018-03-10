@@ -1,8 +1,8 @@
 # GenerateCommand
 
-## 主要功能
+## Main
 
-- 创建一个随机字符串
+- generate a random password string
 
 ### Help
 
@@ -16,12 +16,16 @@ Options:
   -l, --length[=LENGTH]  How length string you want generate(max 100) [default: 12]
   -L, --level[=LEVEL]    Which random string level to generate [default: 3]
 ```
-#### 参数详解
+#### Params info
 
 ```
--H 不隐藏创建出的字符串, 默认只复制入剪贴板 
--l 生成字符串的长度, 默认12位
--L 字符串的‘等级’(默认3) 1: 数字; 2: 数字+小写字母; 3: 数字+大小写字母; 4: 数字+大小写字母+特殊字符
+-H Hidden the generate result
+-l The length of new string
+-L The level of new string(default 3) 
+    1: only numbers; 
+    2: numbers and lower characters
+    3: numbers, lower characters and upper characters
+    4: numbers, lower characters, upper characters and special characters
 ```
 
 ##### generate

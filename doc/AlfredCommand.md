@@ -1,9 +1,9 @@
 # AlfredCommand
 
-## 主要功能
+## Main
 
-- 初始化 application-alfred
-- 为pass-alfred-workflow 提供快捷搜索
+- init application-alfred
+- quick search for the pass-alfred-workflow
 
 ### Help
 
@@ -15,17 +15,17 @@ Options:
       --init               Init the pass-alfred
   -k, --keyword[=KEYWORD]  Query password by keywords
 ```
-#### 参数详解
+#### Params info
 
 ```
---init 初始化pass-alfred
--k  1: 按关键词搜索密码项 
-	2: 如提供 -c 则将展示可以执行的其他命令 
-	3: 执行其他可执行的命令
+--init init application-alfred
+-k  1: keyword to serach
+	2: -c call other command
+	3: {{command}}
 ```
 
-#### 用法
-+ 使用command键+enter 复制结果至剪贴板
+#### Use
++ cmd+enter copy password to clipboard
 
 ##### --init
 

@@ -1,15 +1,15 @@
 # PasswordCommand
 
-## 主要功能
+## Main
 
-- 创建一个新的密码项
+- Add a new password item
 
 ### Help
 
 ```
 Usage:
   password [options]
-  p (短命令)
+  p (sort command)
 
 Options:
   -k, --keyword[=KEYWORD]  The keyword for password
@@ -19,19 +19,23 @@ Options:
   -l, --length[=LENGTH]    How length random string you want generate.(max 100) [default: 12]
   -L, --level[=LEVEL]      Which random string level to generate [default: 3]
 ```
-#### 参数详解
+#### Params info
 
 ```
--k 密码的关键词
--e 执行创建|更新|删除 默认创建
--D 不设置描述
--g 使用生成器自动生成新的密码(默认12位随机数字大小写字母组合)
--l 生成字符串的长度, 默认12位
--L 字符串的‘等级’(默认3) 1: 数字; 2: 数字+小写字母; 3: 数字+大小写字母; 4: 数字+大小写字母+特殊字符
+-k The keyword for password
+-e Choose update(u)|delete(d)|create(c), default create(c) [default: "c"]
+-D No set description ask
+-g Generate a random string for new password(level 3 length 12)
+-l The length of random string
+-L The level of random string(default 3) 
+    1: only numbers; 
+    2: numbers and lower characters
+    3: numbers, lower characters and upper characters
+    4: numbers, lower characters, upper characters and special characters
 ```
 
-##### 其他
-+ generate 的默认值可由.pass-conf.yaml 中配置
+##### Other
++ generate: The default value of generate could be configured in .pass-conf.yaml.
 
 ##### password
 

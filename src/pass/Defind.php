@@ -14,6 +14,6 @@ defined('DB_PASS') or define('DB_PASS', '');
 defined('PASS_ENV') or define('PASS_ENV', 'prod');
 defined('CONF_FILE') or define('CONF_FILE', FileUtil::realPath(__DIR__ . '/../../.pass-conf.yaml'));
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../../data/pass.db');
-defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../../pass-conf-template.yaml'));
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../../pass-conf.yaml.template'));
 defined('ALFRED_CONF_FILE') or define('ALFRED_CONF_FILE', FileUtil::realPath(__DIR__ . '/../../data/.pass'));
 defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../../data/');
