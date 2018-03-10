@@ -2,6 +2,7 @@
 
 namespace Dowte\Password\commands;
 
+use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,30 +26,51 @@ class UserCommand extends Command
             // the "--help" option
             ->setHelp('This command allows you to create a user...')
             ->addOption('username', 'u', InputOption::VALUE_OPTIONAL, 'New username for password')
-            ->addOption('fix', 'f',InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config');
+            ->addOption('fix', 'f', InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config')
+            ->addOption('update-password', 'P', InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $userName = $input->getOption('username');
         $fix = $input->getOption('fix');
+
+        //更新密码
+        if ($input->getOption('update-password')) {
+            $user = $this->validPassword();
+            $passwords = ExportCommand::getDePassword($user);
+            $newPassword = $this->askPassword('Set a new password!');
+            //用新的密钥重新加密
+            $total = count($passwords);
+            $i = 0;
+            $this->_io->writeln('Encrypt passwords ----');
+            foreach ($passwords as $password) {
+                Password::processOutput($i++, $total);
+                PasswordForm::pass()->update(
+                    $password['id'],
+                    Password::encryptPasswordKey($password['keyword']),
+                    Password::encryptPassword($newPassword, $password['password']),
+                    $password['description']);
+            }
+            UserForm::user()->update($user['id'], $newPassword);
+            Password::success('Update master password success!');
+        }
+
         $askNameQuestion = $fix ? 'What\'s your old username?' : 'Set a name for Pass?';
         if (! $userName) {
             $helper = $this->getHelper('question');
             $question = new Question($askNameQuestion);
             $userName = $helper->ask($input, $output, $question);
         }
+
+        //重新生成本地user conf
         if ($fix) {
             $encryptName = Password::sha256($userName);
             if ($this->validPassword('', $encryptName)) {
                 Password::userConfigure($encryptName);
             }
         } else {
-            $helper = $this->getHelper('question');
-            $question = new Question('Set a password for Pass?');
-            $question->setHidden(true);
-            $question->setHiddenFallback(false);
-            $password = $this->sha256Ask($helper, $question);
+            $password = $this->askPassword();
             if (! $password) {
                 $this->_io->error('Password could\'t be empty');
             } else {
@@ -57,5 +79,16 @@ class UserCommand extends Command
                 $this->_io->success('User created !');
             }
         }
+    }
+
+    public function askPassword($questionMessage = 'Set a password for Pass?')
+    {
+        $helper = $this->getHelper('question');
+        $question = new Question($questionMessage);
+        $question->setHidden(true);
+        $question->setHiddenFallback(false);
+        $password = $this->sha256Ask($helper, $question);
+
+        return $password;
     }
 }

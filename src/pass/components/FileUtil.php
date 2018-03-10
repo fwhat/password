@@ -8,7 +8,10 @@ class FileUtil
     public static function createFile($path, $mode = '')
     {
         foreach ((array) $path as $value) {
-            if (file_exists($value)) continue;
+            if (file_exists($value)) {
+                if ($mode) chmod($value, $mode);
+                continue;
+            };
             $fp = fopen($value, 'w+');
             fclose($fp);
             if ($mode) chmod($value, $mode);
@@ -45,7 +48,7 @@ class FileUtil
      * @param $path
      * @return string
      */
-    public static function _realPath($path)
+    public static function realPath($path)
     {
         $arr = explode('/', $path);
         $realPath = [];

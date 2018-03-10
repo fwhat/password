@@ -4,6 +4,7 @@ namespace Dowte\Password\pass;
 use Dowte\Password\pass\components\OpensslEncryptHelper;
 use Dowte\Password\pass\components\PdHelper;
 use Dowte\Password\pass\exceptions\BaseException;
+use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -258,6 +259,10 @@ class Password
         file_put_contents($toFile ?: CONF_FILE, $content);
     }
 
+    public static function processOutput($i, $total)
+    {
+        printf("progress: [%-50s] %s Done\r", str_repeat('#',$i/$total*50), $i . '/' . $total);
+    }
 
     /**
      * @param array $data

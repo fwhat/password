@@ -72,8 +72,11 @@ class PasswordCommand extends Command
                 $question = new Question('Set description for new password' . PHP_EOL);
                 $description = $helper->ask($input, $output, $question);
             }
-
-            $status = PasswordForm::pass()->createPass($user['id'], $password, Password::encryptPasswordKey($keyword), $description);
+            $enKeyword = Password::encryptPasswordKey($keyword);
+            if (PasswordForm::pass()->findOne(['keyword' => $enKeyword])) {
+                Password::error('This keyword item is already exists!');
+            }
+            $status = PasswordForm::pass()->createPass($user['id'], $password, $enKeyword, $description);
             if ($status) {
                 $this->_io->success('Create new password record success!');
             } else {

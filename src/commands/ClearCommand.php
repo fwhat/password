@@ -16,7 +16,7 @@ class ClearCommand extends Command
         $this->setName('clear')
             ->setDescription('Clear your password data !')
             ->setHelp('This command allows you to clear db data, ' . PHP_EOL . 'And if you want use Application after clear, you need init again.')
-            ->addOption('full', 'f', InputOption::VALUE_NONE, 'Clear the whole data file!');
+            ->addOption('all', null, InputOption::VALUE_NONE, 'Clear the whole data file!');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -34,7 +34,7 @@ class ClearCommand extends Command
         $way = $pdb->getDbWay();
         $pdb->setWay($way);
 
-        if ($input->getOption('full')) {
+        if ($input->getOption('all')) {
             $pdb->clear();
             $this->_io->success('Clear password data success!');
         } else {

@@ -19,7 +19,7 @@ class Sqlite extends \SQLite3
 
     public static function getFromFile($tableName)
     {
-        return $tableName . '.db';
+        return '.' . $tableName . '.db';
     }
 
     public static function getDbResource($dbDir, $from)

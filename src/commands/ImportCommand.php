@@ -32,19 +32,36 @@ class ImportCommand extends Command
             $file = exec('pwd') . $file;
         }
         if (! file_exists($file)) {
-            $this->_io->error('The file is not exists');
+            Password::error('The import file is not exists');
         }
 
         $passwords = Yaml::parseFile($file);
         $this->validImportData($passwords);
+        $successCount = 0;
+        $skipArr = [];
+        $total = count($passwords);
+        $i = 0;
         foreach ($passwords as $password) {
+            Password::processOutput($i++, $total);
+            //如果keyword 存在则跳过
+            $enKeyword = Password::encryptPasswordKey($password['keyword']);
+            if (PasswordForm::pass()->findOne(['keyword' => $enKeyword])) {
+                $skipArr[] = $password['keyword'];
+                continue;
+            }
             PasswordForm::pass()->createPass(
                 $user['id'],
                 Password::encryptPassword($user['password'], $password['password']),
-                Password::encryptPasswordKey($password['keyword']),
+                $enKeyword,
                 (isset($password['description']) ? $password['description'] : ''));
+            $successCount ++;
         }
-        $this->_io->success('Import password success!');
+        $message = 'Import password success! ';
+        if ($skipArr) {
+            $message .= sprintf("success %d skip %d\n", $successCount, count($skipArr));
+            $message .= sprintf("skip info : \n -- %s", implode(PHP_EOL . ' -- ', $skipArr));
+        }
+        $this->_io->success($message);
     }
 
     protected function getArgumentFile(CompletionContext $context)

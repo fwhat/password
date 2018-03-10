@@ -56,6 +56,7 @@ class PasswordDb
         foreach ($this->$functionName() as $value) {
             unlink($value);
         }
+        $this->clearAlfred();
         return unlink(Password::getUserConfFile());
     }
 
@@ -149,7 +150,7 @@ EOF;
 
     private function yamlFileInit()
     {
-        FileUtil::createFile($this->yamlFileFile());
+        FileUtil::createFile($this->yamlFileFile(), 0600);
     }
 
     private function yamlFileClear()
@@ -157,5 +158,10 @@ EOF;
         foreach ($this->yamlFileFile() as $file) {
             file_put_contents($file, '');
         }
+    }
+
+    private function clearAlfred()
+    {
+        unlink(ALFRED_CONF_FILE);
     }
 }

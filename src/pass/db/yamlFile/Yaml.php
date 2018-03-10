@@ -14,16 +14,21 @@ class Yaml
 
     public static function getFromFile($tableName)
     {
-        return $tableName . '.yaml';
-    }
-
-    public static function dumpInsertData($data, $dbResource)
-    {
-        file_put_contents($dbResource, Syaml::dump([$data]), FILE_APPEND);
+        return '.' . $tableName . '.yaml';
     }
 
     public static function getDbResource($dbDir, $from)
     {
         return rtrim($dbDir, '/') . '/' . self::getFromFile($from);
+    }
+
+    public function dumpInsertData($data, $dbResource)
+    {
+        file_put_contents($dbResource, Syaml::dump([$data]), FILE_APPEND);
+    }
+
+    public function updateData($data, $dbResource)
+    {
+        return file_put_contents($dbResource, Syaml::dump($data));
     }
 }

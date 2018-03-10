@@ -37,10 +37,16 @@ class AlfredCommand extends Command
         $passwordList = [
             "items" => []
         ];
+
+        //alfred 其他命令
         if ($query == '-c') {
             foreach ($this->commands as $command) {
                 $app = $this->getApplication()->find($command);
-                $passwordList['items'][] = $this->alfredItems($app->getName(), $app->getDescription(), $app->getName());
+                $passwordList['items'][] = $this->alfredItems([
+                    'title' => $app->getName(),
+                    'subtitle' => $app->getDescription(),
+                    'autoComplete' => $app->getName(),
+                ]);
             }
 
         } elseif (in_array($query, $this->commands)) {
@@ -50,7 +56,14 @@ class AlfredCommand extends Command
                     $subTitle = 'Keydown cmd+enter copy new password to clipboard';
                     for ($i = 0; $i < 10; $i ++) {
                         $newPassword = PasswordGenerate::gen()->get();
-                        $passwordList['items'][] = $this->alfredItems($newPassword, $subTitle, $app->getName(), $newPassword, '', $subTitle);
+                        $passwordList['items'][] = $this->alfredItems([
+                            'title' => $newPassword,
+                            'subtitle' => $subTitle,
+                            'autoComplete' => $app->getName(),
+                            'cmdArg' => $newPassword,
+                            'arg' => $newPassword,
+                            'cmdSubtitle' => $subTitle,
+                        ]);
                     }
             }
 
@@ -66,15 +79,32 @@ class AlfredCommand extends Command
                         continue;
                     }
                 }
-                $passwordList['items'][] = $this->alfredItems($keyword, $list['description'], $keyword, $password);
+                $passwordList['items'][] = $this->alfredItems([
+                    'title' => $keyword,
+                    'subtitle' => $list['description'],
+                    'altSubtitle' => $list['description'],
+                    'cmdSubtitle' => '**********',
+                    'autoComplete' => $keyword,
+                    'cmdArg' => $password,
+                    'altArg' => $list['description'],
+                    'arg' => $password
+                ]);
             }
         }
         $this->_io->writeln(json_encode($passwordList));
     }
 
-    protected function alfredItems($title = '', $subtitle = '', $autoComplete = '', $cmdArg = '', $arg = '', $cmdSubtitle = '', $icoPath = __DIR__ . '/../pass/icons/pass.ico',
-        $cmdValid = true, $altValid = true, $altArg = '', $altSubtitle = '', $level = 0)
+    protected function alfredItems($items = [])
     {
+        $title = $subtitle = $autoComplete = $cmdArg = $cmdSubtitle = '';
+        $icoPath = __DIR__ . '/../pass/icons/pass.ico';
+        $cmdValid = true; $altValid = true;
+        $altArg = $arg = $altSubtitle = '';
+        $level = 0;
+        foreach ($items as $k => $v) {
+            $$k = $v;
+        }
+
         $item = [
                     "title" => $title,
                     "subtitle" => $subtitle,
@@ -102,10 +132,6 @@ class AlfredCommand extends Command
 
     private function setPassword($password)
     {
-        if (! file_exists(ALFRED_CONF_FILE)) {
-            $fp = fopen(ALFRED_CONF_FILE, 'r+');
-            fclose($fp);
-        }
         file_put_contents(ALFRED_CONF_FILE, $password);
         chmod(ALFRED_CONF_FILE, '0400');
     }

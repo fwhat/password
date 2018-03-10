@@ -25,7 +25,7 @@ class FindCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('list')) {
-            $lists = PasswordForm::pass()->getDecryptedKey("<fg=green>%s          </>");
+            $lists = PasswordForm::pass()->getDecryptedKey("<fg=green>%-20s </>");
             $output->writeln(trim($lists));
             return;
         }

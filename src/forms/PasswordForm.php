@@ -42,6 +42,18 @@ class PasswordForm extends BaseForm
         return $model::find()->select($fields)->where($where)->one();
     }
 
+    public function update($id, $keyword = '', $password = '', $description = '')
+    {
+        $model = new PasswordModel();
+        $model->id = $id;
+
+        ! $keyword      or $model->keyword = $keyword;
+        ! $password     or $model->password = $password;
+        ! $description  or $model->description = $description;
+
+        return $model->save();
+    }
+
     /**
      * @param integer $userId
      * @param string $password
@@ -69,9 +81,13 @@ class PasswordForm extends BaseForm
         $user = UserForm::user()->findOne(['username' => Password::getUser()]);
         $keys = $this->findModels('keyword', ['user_id' => $user['id']]);
         $lists = '';
+        $i = 0;
         if ($sprintf) {
             foreach ($keys as $key) {
                 $lists .= sprintf($sprintf, Password::decryptedPasswordKey($key['keyword']));
+                if (++$i % 4 == 0) {
+                    $lists .= PHP_EOL;
+                }
             }
             return $lists;
         } else {

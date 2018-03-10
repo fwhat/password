@@ -46,12 +46,34 @@ class UserForm extends BaseForm
         return false;
     }
 
+    /**
+     * @param $id
+     * @param $password string after sha256
+     * @param $username string
+     * @return integer
+     */
+    public function update($id, $password = '', $username = '')
+    {
+        $model = new UserModel();
+        $model->id = $id;
+        !$username or $model->username = Password::sha256($username);
+        !$password or $model->password = password_hash($password, PASSWORD_DEFAULT);
+
+        return $model->save();
+    }
+
+    /**
+     * @param $userName
+     * @param $password
+     * @return string
+     */
     public function createUser($userName, $password)
     {
         $model = new UserModel();
         $model->username = Password::sha256($userName);
         $model->password = password_hash($password, PASSWORD_DEFAULT);
         $model->save();
+
         return $model->username;
     }
 }

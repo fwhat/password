@@ -33,6 +33,9 @@ class YamlQuery extends ActiveQuery
                 }
             }
         }
+        if (empty($itemArr)) {
+            return [];
+        }
         foreach ($where as $key => $value) {
             if (! isset($itemArr[$key])) {
                 DbHelper::$exception->error('The property ' . $key . ' is not exist');
