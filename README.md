@@ -68,7 +68,7 @@ pass alfred init
 
 #### 6.2 列表
 
-![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpg)
+![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpeg)
 
 + enter|cmd+enter 将选中密码复制到剪贴板
 + cmd+4 将第4项密码复制到剪贴板
