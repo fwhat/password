@@ -78,7 +78,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
                 if (preg_match('/\s.*PRIMARY/', strtoupper($sql), $res) && isset($res[0])) {
                     $str = explode(' ', trim($res[0]));
                     $primaryKey = array_shift($str);
-                    parent::dumpInsertNote([self::PRIMARY_KEY => $primaryKey], $resource);
+                    parent::dumpInsertNote([self::PRIMARY_KEY => strtolower($primaryKey)], $resource);
                 }
             }
         }

@@ -32,4 +32,9 @@ class Connection extends BaseConnection
     {
         return ['DB_DIR'];
     }
+
+    protected function defaultConfigs()
+    {
+        // TODO: Implement defaultConfigs() method.
+    }
 }

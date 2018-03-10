@@ -130,7 +130,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         }
         $user = UserForm::user()->findUser($user ?: Password::getUser(), $password);
         if (! $user) {
-            Password::error('Please check the master password is right!');
+            Password::error('Please check the master password is right or user is created!');
         } else {
             return $user;
         }

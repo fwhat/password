@@ -11,7 +11,7 @@ ___
 
 ##### 1.1 下载
 
-+ git clone  
++ git clone https://github.com/Dowte/password.git
 
 #### 1.2 配置
 + cp pass-cli/bin/pass /usr/local/bin/pass
@@ -20,9 +20,7 @@ ___
 ### 二、初始化
 
 ```php
-pass init -G
-//-G 自动生成密钥对, 如使用已有的密钥对请先配置pass-conf.php
-//生成的密钥对将会保存在提示的路径下
+pass init
 ```
 
 ![init](http://assest.dowte.com/imgs/pass-cli/init.jpg)
@@ -35,7 +33,7 @@ source ~/.zshrc
 
 ```php
 pass user -u dowte
-//将会创建一个用户名为dowte密码库, 会提示设置密码(此密码将被加密, 查询密码库时必须提供)
+//将会创建一个用户名为dowte密码库, 会提示设置主密码(此密码将被加密, 查询密码库时必须提供)
 ```
 ![user](http://assest.dowte.com/imgs/pass-cli/user-u.jpg)
 
@@ -73,7 +71,7 @@ pass alfred init
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpg)
 
 + enter|cmd+enter 将选中密码复制到剪贴板
-+ cmd+8 将第8项密码复制到剪贴板
++ cmd+4 将第4项密码复制到剪贴板
 + alt+enter 将描述复制到剪贴板
 
 #### 6.3 其他命令

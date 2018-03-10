@@ -93,6 +93,9 @@ class Password
     public static function userConfigure($userName)
     {
         $filename = self::getUserConfFile();
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
         FileUtil::createFile($filename);
         file_put_contents($filename, $userName);
         return chmod($filename, 0400);

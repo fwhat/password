@@ -11,6 +11,7 @@ namespace Dowte\Password\pass\db\sqlite;
 
 use Dowte\Password\pass\db\ActiveRecord;
 use Dowte\Password\pass\db\BaseActiveRecordInterface;
+use Dowte\Password\pass\db\DbHelper;
 
 class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 {
@@ -47,7 +48,20 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
 
     public static function execSql($sql)
     {
-        return parent::getDb()->exec($sql);
+        if (strpos(strtoupper($sql), 'CREATE') === 0) {
+            $sql = str_replace(['AUTO_INCREMENT', 'auto_increment'], '', $sql);
+        }
+        //删库
+        if (strpos(strtoupper($sql), 'DROP DATABASE') === 0) {
+            $table = array_pop(explode(' ', $sql));
+            return unlink(parent::getDbResource(Connection::$config['DB_DIR'], $table));
+        }
+        $con = parent::getDb();
+        $stmt = $con->prepare($sql);
+        if ($stmt->execute() === false) {
+            DbHelper::$exception->error('The sql exec false :' . $sql);
+        }
+        return true;
     }
 
     public function delete(array $conditions)

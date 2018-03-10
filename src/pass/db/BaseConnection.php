@@ -35,6 +35,7 @@ abstract class BaseConnection
     {
         $this->setActiveRecordClass();
         $this->setActiveQueryClass();
+        $config = array_merge((array)$this->defaultConfigs(), $config);
         foreach ($config as $k => $item) {
             if ($k == 'class') continue;
             $this->$k = $item;
@@ -67,6 +68,8 @@ abstract class BaseConnection
         }
         return self::$config[$name];
     }
+
+    abstract protected function defaultConfigs();
 
     /**
      * @return array

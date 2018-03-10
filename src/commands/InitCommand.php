@@ -49,10 +49,11 @@ class InitCommand extends Command
                 $question->setErrorMessage('the way %s is invalid.');
                 $way = $helper->ask($input, $output, $question);
             }
-            ! $noDb or $this->configureDb($way);
+
         } else {
             $way = $db->getDbWay();
         }
+        $noDb or $this->configureDb($way);
         $db->setWay($way)->dbInit();
         $status = $this->dumpCompletion();
         if ($status) {

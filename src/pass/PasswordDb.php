@@ -82,7 +82,7 @@ class PasswordDb
 CREATE TABLE IF NOT EXISTS user (
                     id INTEGER AUTO_INCREMENT PRIMARY KEY, 
                     username VARCHAR(255) NOT NULL, 
-                    password VARCHAR(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+                    password VARCHAR(255) NOT NULL);
 EOF;
         ActiveRecord::execSql($sql);
         $sql = <<<EOF
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS password (
                     password VARCHAR(255) NOT NULL,
                     description VARCHAR(255) NOT NULL,
                     FOREIGN KEY(user_id) REFERENCES user(id)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+                    );
 EOF;
         ActiveRecord::execSql($sql);
     }

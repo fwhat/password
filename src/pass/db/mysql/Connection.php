@@ -21,7 +21,7 @@ class Connection extends BaseConnection
 
     protected function allowProperties()
     {
-        return ['DB_DSN', 'DB_USER', 'DB_PASS'];
+        return ['DB_DSN', 'DB_USER', 'DB_PASS', 'ENGINE', 'CHARSET'];
     }
 
     public static function requireProperties()
@@ -32,5 +32,10 @@ class Connection extends BaseConnection
     protected function setActiveQueryClass()
     {
         $this->_activeQueryClass = MysqlQuery::class;
+    }
+
+    protected function defaultConfigs()
+    {
+        return['ENGINE' => 'InnoDB', 'CHARSET' => 'utf8'];
     }
 }
