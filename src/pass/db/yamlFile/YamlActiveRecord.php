@@ -5,7 +5,6 @@ namespace Dowte\Password\pass\db\yamlFile;
 use Dowte\Password\pass\db\ActiveQuery;
 use Dowte\Password\pass\db\ActiveRecordInterface;
 use Dowte\Password\pass\db\BaseActiveRecordInterface;
-use Dowte\Password\pass\Password;
 
 class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
 {
@@ -24,6 +23,9 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
      */
     protected static $_data;
 
+    /**
+     * @var string
+     */
     protected static $dbDir;
 
     /**
@@ -37,7 +39,9 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         }
     }
 
-
+    /**
+     * @return bool|int
+     */
     public function save()
     {
         //PRIMARY KEY
@@ -48,6 +52,22 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         }
     }
 
+    public function delete(array $conditions)
+    {
+        $dbResource = self::getDbResource(self::$dbDir, self::$modelClass->name());
+        $data = self::getData($dbResource);
+        foreach ($data as $k => $item) {
+            if ($this->compareConditions($conditions, $item)) {
+                unset($data[$k]);
+            }
+        }
+        return $this->updateResource(array_values($data), $dbResource);
+    }
+
+    /**
+     * @param array $conditions
+     * @return bool|int
+     */
     protected function updateOne(array $conditions = [])
     {
         $dbResource = self::getDbResource(self::$dbDir, self::$modelClass->name());
@@ -58,7 +78,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
                     if ($k === 'id') continue;
                     !self::$modelClass->$k or $item[$k] = self::$modelClass->$k;
                 }
-                return $this->updateData($data, $dbResource);
+                return $this->updateResource($data, $dbResource);
             }
         }
 
@@ -66,6 +86,11 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         return false;
     }
 
+    /**
+     * @param $conditions
+     * @param $data
+     * @return bool
+     */
     protected function compareConditions($conditions, $data)
     {
         foreach ($conditions as $k => $v) {
@@ -77,6 +102,9 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         return true;
     }
 
+    /**
+     * @return int
+     */
     protected function insert()
     {
         foreach (self::$modelClass->attributeLabels() as $k => $v) {
@@ -88,6 +116,9 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         return $insertData['id'];
     }
 
+    /**
+     * @return int
+     */
     protected static function getNextId()
     {
         $data = self::getData(parent::getDbResource(self::$dbDir, self::$modelClass->name()));

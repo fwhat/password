@@ -45,7 +45,12 @@ class FindCommand extends Command
         }
     }
 
-    protected function getOptionName(CompletionContext $context)
+    /**
+     * get options of keyword
+     * @param CompletionContext $context
+     * @return array|string
+     */
+    protected function getArgumentKeyword(CompletionContext $context)
     {
         $keys = PasswordForm::pass()->getDecryptedKey();
 

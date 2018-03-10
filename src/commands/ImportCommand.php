@@ -8,6 +8,7 @@ use Dowte\Password\pass\Password;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -18,13 +19,15 @@ class ImportCommand extends Command
         $this->setName('import')
             ->setDescription('Import passwords from yaml file')
             ->setHelp('This command help you to import passwords displace one by one set into')
-            ->addArgument('file', InputArgument::REQUIRED, 'A file use to import');
+            ->addArgument('file', InputArgument::REQUIRED, 'A file use to import')
+            ->addOption('overwrite', null, InputOption::VALUE_NONE, 'Overwrite password item if exists!');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
         $file = $input->getArgument('file');
+        $overwrite = $input->getOption('overwrite');
         if (pathinfo($file, PATHINFO_EXTENSION) !== 'yaml') {
             $this->_io->error('Please provide yaml file');
         }
@@ -42,12 +45,23 @@ class ImportCommand extends Command
         $total = count($passwords);
         $i = 0;
         foreach ($passwords as $password) {
-            Password::processOutput($i++, $total);
+            Password::processOutput(++$i, $total);
             //如果keyword 存在则跳过
             $enKeyword = Password::encryptPasswordKey($password['keyword']);
-            if (PasswordForm::pass()->findOne(['keyword' => $enKeyword])) {
-                $skipArr[] = $password['keyword'];
-                continue;
+            if (($model = PasswordForm::pass()->findOne(['keyword' => $enKeyword]))) {
+                if ($overwrite) {
+                    PasswordForm::pass()->update(
+                        $model['id'],
+                        $password['keyword'],
+                        Password::encryptPassword($user['password'], $password['password']),
+                        (isset($password['description']) ? $password['description'] : '')
+                    );
+                    $successCount ++;
+                    continue;
+                } else {
+                    $skipArr[] = $password['keyword'];
+                    continue;
+                }
             }
             PasswordForm::pass()->createPass(
                 $user['id'],

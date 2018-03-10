@@ -25,9 +25,9 @@ class UserCommand extends Command
             // the full command description shown when running the command with
             // the "--help" option
             ->setHelp('This command allows you to create a user...')
-            ->addOption('username', 'u', InputOption::VALUE_OPTIONAL, 'New username for password')
+            ->addOption('username', 'u', InputOption::VALUE_OPTIONAL, 'New username for the Password')
             ->addOption('fix', 'f', InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config')
-            ->addOption('update-password', 'P', InputOption::VALUE_NONE, 'Fix user-conf if miss the user-config');
+            ->addOption('update-password', 'P', InputOption::VALUE_NONE, 'Update the master password');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -38,25 +38,25 @@ class UserCommand extends Command
         //更新密码
         if ($input->getOption('update-password')) {
             $user = $this->validPassword();
-            $passwords = ExportCommand::getDePassword($user);
-            $newPassword = $this->askPassword('Set a new password!');
+            $passwords = ExportCommand::getDePasswords($user);
+            $masterPassword = $this->askPassword('Set a new master password!');
             //用新的密钥重新加密
             $total = count($passwords);
             $i = 0;
             $this->_io->writeln('Encrypt passwords ----');
             foreach ($passwords as $password) {
-                Password::processOutput($i++, $total);
+                Password::processOutput(++$i, $total);
                 PasswordForm::pass()->update(
                     $password['id'],
                     Password::encryptPasswordKey($password['keyword']),
-                    Password::encryptPassword($newPassword, $password['password']),
+                    Password::encryptPassword($masterPassword, $password['password']),
                     $password['description']);
             }
-            UserForm::user()->update($user['id'], $newPassword);
+            UserForm::user()->update($user['id'], $masterPassword);
             Password::success('Update master password success!');
         }
 
-        $askNameQuestion = $fix ? 'What\'s your old username?' : 'Set a name for Pass?';
+        $askNameQuestion = $fix ? 'What\'s your old username?' : 'Set the username for Password?';
         if (! $userName) {
             $helper = $this->getHelper('question');
             $question = new Question($askNameQuestion);
@@ -81,7 +81,7 @@ class UserCommand extends Command
         }
     }
 
-    public function askPassword($questionMessage = 'Set a password for Pass?')
+    public function askPassword($questionMessage = 'Set the master password: ')
     {
         $helper = $this->getHelper('question');
         $question = new Question($questionMessage);

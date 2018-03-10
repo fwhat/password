@@ -48,14 +48,14 @@ class AlfredCommand extends Command
                     'autoComplete' => $app->getName(),
                 ]);
             }
-
+        //执行可执行的命令
         } elseif (in_array($query, $this->commands)) {
             $app = $this->getApplication()->find($query);
             switch ($app->getName()) {
                 case 'generate' :
                     $subTitle = 'Keydown cmd+enter copy new password to clipboard';
                     for ($i = 0; $i < 10; $i ++) {
-                        $newPassword = PasswordGenerate::gen()->get();
+                        $newPassword = Password::$pd->generate->get();
                         $passwordList['items'][] = $this->alfredItems([
                             'title' => $newPassword,
                             'subtitle' => $subTitle,
@@ -71,6 +71,7 @@ class AlfredCommand extends Command
             $user = UserForm::user()->findOne(['username' => Password::getUser()]);
 
             $lists = PasswordForm::pass()->findModels(['keyword', 'description', 'password'], ['user_id' => $user['id']]);
+            //构造alfred 返回格式
             foreach ($lists as $list) {
                 $keyword = Password::decryptedPasswordKey($list['keyword']);
                 $password = Password::decryptedPassword($masterPassword, $list['password']);
@@ -94,6 +95,10 @@ class AlfredCommand extends Command
         $this->_io->writeln(json_encode($passwordList));
     }
 
+    /**
+     * @param array $items ['key' => 'value']
+     * @return array
+     */
     protected function alfredItems($items = [])
     {
         $title = $subtitle = $autoComplete = $cmdArg = $cmdSubtitle = '';
@@ -130,6 +135,10 @@ class AlfredCommand extends Command
         return $item;
     }
 
+    /**
+     * create a readonly password file
+     * @param $password
+     */
     private function setPassword($password)
     {
         file_put_contents(ALFRED_CONF_FILE, $password);

@@ -27,8 +27,8 @@ class Yaml
         file_put_contents($dbResource, Syaml::dump([$data]), FILE_APPEND);
     }
 
-    public function updateData($data, $dbResource)
+    public function updateResource($data, $dbResource)
     {
-        return file_put_contents($dbResource, Syaml::dump($data));
+        return file_put_contents($dbResource, empty($data) ? '' : Syaml::dump($data));
     }
 }

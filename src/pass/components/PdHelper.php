@@ -10,6 +10,7 @@ use Dowte\Password\pass\Password;
  * @package Dowte\Password\pass\components
  * @property array $params
  * @property \Dowte\Password\pass\db\BaseConnection $db
+ * @property \Dowte\Password\pass\PasswordGenerate $generate
  */
 class PdHelper
 {

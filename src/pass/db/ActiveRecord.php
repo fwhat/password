@@ -42,6 +42,11 @@ class ActiveRecord implements ActiveRecordInterface
          return $this->getAR()->save();
     }
 
+    public function delete(array $conditions = [])
+    {
+        return $this->getAR()->delete($conditions);
+    }
+
     public function __set($name, $value)
     {
         if (isset($this->attributeLabels()[$name])) {

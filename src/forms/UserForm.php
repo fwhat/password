@@ -46,6 +46,12 @@ class UserForm extends BaseForm
         return false;
     }
 
+    public function delete($id)
+    {
+        $model = new UserModel();
+        return $model->delete(['id' => $id]);
+    }
+
     /**
      * @param $id
      * @param $password string after sha256

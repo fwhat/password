@@ -45,6 +45,21 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
         }
     }
 
+    public function delete(array $conditions)
+    {
+        $where = [];
+        foreach (self::$modelClass->attributeLabels() as $k => $v) {
+            if (! isset(self::$modelClass->$k)) continue;
+            $where[$k] = self::$modelClass->$k;
+        }
+        $sql = sprintf("DELETE FROM `%s` WHERE ", self::$modelClass->name());
+
+        foreach ($where as $key => $value) {
+            $sql .= sprintf(" `%s`='%s' AND", $key, $value);
+        }
+        return self::getDb()->exec(rtrim($sql, 'AND'));
+    }
+
     protected function insert()
     {
         $header = 'INSERT INTO ' . self::$modelClass->name() . '(';
@@ -69,7 +84,7 @@ class SqliteActiveRecord extends Sqlite implements BaseActiveRecordInterface
         }
         $where = ' WHERE';
         foreach ($conditions as $k => $value) {
-            $where .= sprintf("`%s`='%s' AND", $k, $value);
+            $where .= sprintf(" `%s`='%s' AND", $k, $value);
         }
 
         return self::getDb()->query($sql . rtrim($where, 'AND'));

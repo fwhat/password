@@ -2,7 +2,6 @@
 
 namespace Dowte\Password\commands;
 
-
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +23,7 @@ class ExportCommand extends Command
     {
         $user = $this->validPassword();
 
-        $passwords = self::getDePassword($user);
+        $passwords = self::getDePasswords($user);
 
         file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump([$passwords]));
     }
@@ -33,7 +32,7 @@ class ExportCommand extends Command
      * @param array $user the Command::ValidPassword return
      * @return array
      */
-    public static function getDePassword($user)
+    public static function getDePasswords($user)
     {
         $passwords = PasswordForm::pass()->findModels(['id', 'keyword', 'password', 'description'], ['user_id' => $user['id']]);
         foreach ($passwords as &$password) {

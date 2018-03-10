@@ -27,7 +27,7 @@ class GenerateCommand extends Command
         $noHidden = $input->getOption('no-hidden');
         $length = $input->getOption('length');
         $level = $input->getOption('level');
-        $genResult = PasswordGenerate::gen()->setLength($length)->setLevel($level)->get();
+        $genResult = Password::$pd->generate->setLength($length)->setLevel($level)->get();
         if ($noHidden === true) {
             $output->write($genResult);
         }
@@ -36,6 +36,6 @@ class GenerateCommand extends Command
 
     protected function getOptionLevel(CompletionContext $context)
     {
-        return PasswordGenerate::allLevel();
+        return Password::$pd->generate->allLevel();
     }
 }

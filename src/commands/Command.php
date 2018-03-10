@@ -50,18 +50,34 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         $this->_io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * call a function getOption{{OptionName}}
+     *
+     * @param $optionName
+     * @param CompletionContext $context
+     * @return array|mixed
+     */
     protected function getOptionValues($optionName, CompletionContext $context)
     {
-        if (method_exists($this, self::GET_OPTION . ucfirst($optionName))) {
-            return call_user_func([$this, self::GET_OPTION . ucfirst($optionName)], $context);
+        $method = self::GET_OPTION . ucfirst($optionName);
+        if (method_exists($this, $method)) {
+            return call_user_func([$this, $method], $context);
         }
         return [];
     }
 
+    /**
+     * call a function getArgument{{ArgumentName}}
+     *
+     * @param $argumentName
+     * @param CompletionContext $context
+     * @return array|mixed
+     */
     protected function getArgumentValues($argumentName, CompletionContext $context)
     {
-        if (method_exists($this, self::GET_ARGUMENT . ucfirst($argumentName))) {
-            return call_user_func([$this, self::GET_ARGUMENT . ucfirst($argumentName)], $context);
+        $method = self::GET_ARGUMENT . ucfirst($argumentName);
+        if (method_exists($this, $method)) {
+            return call_user_func([$this, $method], $context);
         }
         return [];
     }
@@ -79,6 +95,12 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
         return $this->_io;
     }
 
+    /**
+     * return sha256 string from ask
+     * @param QuestionHelper $helper
+     * @param Question $question
+     * @return string
+     */
     protected function sha256Ask(QuestionHelper $helper, Question $question)
     {
         $messages = $helper->ask($this->_input, $this->_output, $question);
@@ -94,14 +116,14 @@ abstract class Command extends \Symfony\Component\Console\Command\Command implem
     {
         if (! $password) {
             $helper = $this->getHelper('question');
-            $question = new Question('What is the database password?');
+            $question = new Question('What is the database master password?');
             $question->setHidden(true);
             $question->setHiddenFallback(false);
             $password = $this->sha256Ask($helper, $question);
         }
         $user = UserForm::user()->findUser($user ?: Password::getUser(), $password);
         if (! $user) {
-            Password::error('Please check the password is right!');
+            Password::error('Please check the master password is right!');
         } else {
             return $user;
         }

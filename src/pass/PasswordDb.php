@@ -2,6 +2,7 @@
 
 namespace Dowte\Password\pass;
 
+use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\forms\UserForm;
 use Dowte\Password\models\PasswordModel;
 use Dowte\Password\models\UserModel;
@@ -47,10 +48,10 @@ class PasswordDb
         $this->$functionName();
     }
 
-    public function clear()
+    public function clear($user)
     {
         $functionName = $this->_way . 'File';
-        $this->clearDb();
+        $this->clearDb($user);
         $this->toTemplate();
         unlink($this->_configureFile);
         foreach ($this->$functionName() as $value) {
@@ -60,10 +61,10 @@ class PasswordDb
         return unlink(Password::getUserConfFile());
     }
 
-    public function clearDb()
+    public function clearDb($user)
     {
         $functionName = $this->_way . 'Clear';
-        $this->$functionName();
+        $this->$functionName($user);
     }
 
     public function setConfigureFile($file)
@@ -153,11 +154,10 @@ EOF;
         FileUtil::createFile($this->yamlFileFile(), 0600);
     }
 
-    private function yamlFileClear()
+    private function yamlFileClear($user)
     {
-        foreach ($this->yamlFileFile() as $file) {
-            file_put_contents($file, '');
-        }
+        PasswordForm::pass()->deleteByConditions(['user_id' => $user['id']]);
+        UserForm::user()->delete($user['id']);
     }
 
     private function clearAlfred()

@@ -23,6 +23,7 @@ class YamlQuery extends ActiveQuery
     {
         $findArr = [];
         $data = Yaml::getData(Yaml::getDbResource(Connection::$config['dbDir'], $this->modelClass->name()));
+        if (empty($data)) return [];
         $beforeSelectData = $data;
         $itemArr = [];
         foreach ($this->modelClass->attributeLabels() as $k => $v) {

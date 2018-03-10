@@ -42,6 +42,16 @@ class PasswordForm extends BaseForm
         return $model::find()->select($fields)->where($where)->one();
     }
 
+    public function delete($id)
+    {
+        return (new PasswordModel())->delete(['id' => $id]);
+    }
+
+    public function deleteByConditions($conditions)
+    {
+        return (new PasswordModel())->delete($conditions);
+    }
+
     public function update($id, $keyword = '', $password = '', $description = '')
     {
         $model = new PasswordModel();

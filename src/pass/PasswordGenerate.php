@@ -15,35 +15,35 @@ class PasswordGenerate
     /**
      * @var int max length 100
      */
-    protected $_length = 12;
+    public $length = 12;
 
     /**
      * @var int max level 4
      */
-    protected $_level = 3;
+    public $level = 3;
 
-    protected $_password;
-
-    public static function gen()
+    public function __construct(array $config = [])
     {
-        return new self();
+        foreach ($config as $k => $value){
+            ! property_exists($this, $k) or $this->$k = $value;
+        }
     }
 
     public function setLevel($level)
     {
-        $this->_level = $level > 4 || $level <= 0 ? $this->_level : $level;
+        $this->level = $level > 4 || $level <= 0 ? $this->level : $level;
         return $this;
     }
 
     public function setLength($length)
     {
-        $this->_length = $length > 100 || $length <= 0 ? $this->_length : $length;
+        $this->length = $length > 100 || $length <= 0 ? $this->length : $length;
         return $this;
     }
 
     public function get()
     {
-        $rand = new RandomString($this->_length);
+        $rand = new RandomString($this->length);
         foreach ($this->level() as $method) {
             $rand->$method();
         }
@@ -53,17 +53,13 @@ class PasswordGenerate
     private function level()
     {
         $levelMethod = ['setNum', 'setLower', 'setUpper', 'setSpecialChar'];
-        for ($i = 0; $i < $this->_level; $i ++) {
+        for ($i = 0; $i < $this->level; $i ++) {
             yield $levelMethod[$i];
         }
     }
 
-    public static function allLevel()
+    public function allLevel()
     {
         return [self::LEVEL_ONE, self::LEVEL_TWO, self::LEVEL_THREE, self::LEVEL_FOUR];
-    }
-
-    private function __construct()
-    {
     }
 }

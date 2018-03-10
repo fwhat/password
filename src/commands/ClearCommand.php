@@ -29,16 +29,15 @@ class ClearCommand extends Command
         if ($way !== true) {
             return;
         }
-        $this->validPassword();
+        $user = $this->validPassword();
         $pdb = new PasswordDb();
-        $way = $pdb->getDbWay();
-        $pdb->setWay($way);
+        $pdb->setWay($pdb->getDbWay());
 
         if ($input->getOption('all')) {
-            $pdb->clear();
+            $pdb->clear($user);
             $this->_io->success('Clear password data success!');
         } else {
-            $pdb->clearDb();
+            $pdb->clearDb($user);
             $this->_io->success('Clear password db data success!');
         }
     }
