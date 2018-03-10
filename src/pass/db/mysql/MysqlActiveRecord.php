@@ -50,8 +50,8 @@ class MysqlActiveRecord extends Mysql implements BaseActiveRecordInterface
         $where = [];
         $bindValues = [];
         foreach (self::$modelClass->attributeLabels() as $k => $v) {
-            if (! isset(self::$modelClass->$k)) continue;
-            $where[$k] = self::$modelClass->$k;
+            if (! isset($conditions[$k])) continue;
+            $where[$k] = $conditions[$k];
         }
         $sql = sprintf("DELETE FROM `%s` WHERE ", self::$modelClass->name());
 
@@ -80,7 +80,8 @@ class MysqlActiveRecord extends Mysql implements BaseActiveRecordInterface
         $bindValues = [];
         foreach (self::$modelClass->attributeLabels() as $k => $v) {
             if ($k === 'id') continue;
-            $sql .= sprintf("`%s`=:set%s", $k, $k);
+            if (self::$modelClass->$k === null) continue;
+            $sql .= sprintf("`%s`=:set%s,", $k, $k);
             $bindValues[':set' . $k] = self::$modelClass->$k;
         }
         $where = ' WHERE';
@@ -88,7 +89,8 @@ class MysqlActiveRecord extends Mysql implements BaseActiveRecordInterface
             $where .= sprintf(" `%s`=:where%s AND", $k, $k);
             $bindValues[':where' . $k] = $value;
         }
-        $stmt = parent::getCon()->prepare($sql . rtrim($where, 'AND'));
+        $sql = rtrim($sql, ',') . rtrim($where, 'AND');
+        $stmt = parent::getCon()->prepare($sql);
         if ($stmt->execute($bindValues) === false) {
             DbHelper::$exception->error('The sql exec false : '. $stmt->queryString . PHP_EOL . print_r($stmt->errorInfo(), 1));
         }

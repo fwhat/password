@@ -58,8 +58,8 @@ class PasswordDb
         $this->dropTable();
 
         //删除alfred 配置 和用户配置
-        unlink(ALFRED_CONF_FILE);
-        unlink(Password::getUserConfFile());
+        @unlink(ALFRED_CONF_FILE);
+        @unlink(Password::getUserConfFile());
         return true;
     }
 
@@ -111,8 +111,8 @@ EOF;
 
     public function dropTable()
     {
-        ActiveRecord::execSql("DROP TABLE IF EXISTS user");
         ActiveRecord::execSql("DROP TABLE IF EXISTS password");
+        ActiveRecord::execSql("DROP TABLE IF EXISTS user");
         if (isset(Password::$pd->db->config['DB_NAME']) && ! empty(Password::$pd->db->config['DB_NAME'])) {
             ActiveRecord::execSql("DROP DATABASE IF EXISTS " . Password::$pd->db->config['DB_NAME']);
         }

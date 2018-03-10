@@ -9,6 +9,7 @@
 
 namespace Dowte\Password\pass\db\mysql;
 
+use \PDO;
 use Dowte\Password\pass\db\ActiveQuery;
 
 class MysqlQuery extends ActiveQuery
@@ -23,7 +24,7 @@ class MysqlQuery extends ActiveQuery
 
         $stmt = $this->prepare($sql);
         if ($stmt->execute()) {
-            self::$_data = $stmt->fetchAll();
+            self::$_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         return self::$_data ? self::$_data[0] : [];
     }
@@ -34,7 +35,7 @@ class MysqlQuery extends ActiveQuery
 
         $stmt = $this->prepare($sql);
         if ($stmt->execute()) {
-            self::$_data = $stmt->fetchAll();
+            self::$_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
         return self::$_data;

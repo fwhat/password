@@ -60,7 +60,7 @@ class ImportCommand extends Command
                 if ($overwrite) {
                     PasswordForm::pass()->update(
                         $model['id'],
-                        $password['keyword'],
+                        $enKeyword,
                         Password::encryptPassword($user['password'], $password['password']),
                         (isset($password['description']) ? $password['description'] : '')
                     );

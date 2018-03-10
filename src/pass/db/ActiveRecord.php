@@ -73,8 +73,8 @@ class ActiveRecord implements ActiveRecordInterface
 
     public function __get($name)
     {
-        if (isset($this->_attributeLabels[$name]) || $this->_attributeLabels[$name] === null) {
-            return $this->_attributeLabels[$name];
+        if (isset($this->attributeLabels()[$name])) {
+            return isset($this->_attributeLabels[$name]) ? $this->_attributeLabels[$name] : null;
 
         } else {
             throw new \Exception('Undefined property: ' . $name);

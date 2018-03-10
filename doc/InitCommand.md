@@ -11,14 +11,17 @@ Usage:
   init [options]
 
 Options:
-  -w, --way[=WAY]        Which way for save password records.
-  -G, --generate-secret  Generate new openssl secret keys.
+  -w, --way[=WAY]       Which way for save password records.
+  -d, --no-db           No DB config ask.
 ```
 #### 参数详解
 
 ```
--w 选择一个数据存储方式 0:sqlite (不提供将以询问方式选择)
--G 是否生成新的加密对 (不提供则需自行配置pass-conf.php 秘钥对选项)
+-w 选择一个数据存储方式(不提供将以询问方式选择)
+	0:sqlite 
+	1:yamlFile (无需其他扩展, 以yaml格式的文件存储)
+	2:mysql
+-d 不进行db配置的询问(必须已经配置好.pass-conf.yaml)
 ```
 
 #### 其他
@@ -26,7 +29,7 @@ Options:
   + 1. 在~/.zshrc 文件最后添加 source {{application-path}}pass-cli.bash
   + 2. 执行source ~/.zshrc
 
-![init](http://assest.dowte.com/imgs/pass-cli/init-G.jpg)
+![init](http://assest.dowte.com/imgs/pass-cli/init.jpg)
 
 
 

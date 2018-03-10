@@ -29,24 +29,30 @@ class InitCommand extends Command
         $this->setName('init')
             ->setDescription('DbInit pass settings')
             ->setHelp('This command could help you init this application! ')
-            ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.');
+            ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.')
+            ->addOption('no-db', 'd', InputOption::VALUE_NONE, 'No DB config ask.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
         $way = $input->getOption('way');
+        $noDb = $input->getOption('no-db');
         $db = new PasswordDb();
-        if (empty($way) || ! in_array($way, PasswordDb::ways())) {
-            $question = new ChoiceQuestion(
-                '请选择储存密码文件的方式 (默认0)',
-                $db::ways(),
-                0
-            );
-            $question->setErrorMessage('the way %s is invalid.');
-            $way = $helper->ask($input, $output, $question);
+        if (! $noDb) {
+            if (empty($way) || ! in_array($way, PasswordDb::ways())) {
+                $question = new ChoiceQuestion(
+                    '请选择储存密码文件的方式 (默认0)',
+                    $db::ways(),
+                    0
+                );
+                $question->setErrorMessage('the way %s is invalid.');
+                $way = $helper->ask($input, $output, $question);
+            }
+            ! $noDb or $this->configureDb($way);
+        } else {
+            $way = $db->getDbWay();
         }
-        $this->configureDb($way);
         $db->setWay($way)->dbInit();
         $status = $this->dumpCompletion();
         if ($status) {

@@ -10,6 +10,7 @@
 namespace Dowte\Password\commands;
 
 use Dowte\Password\forms\PasswordForm;
+use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\Password;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,20 +30,24 @@ class ExportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->validPassword();
+        $passwords = self::getDePasswords($user, true);
 
-        $passwords = self::getDePasswords($user);
+        $file = FileUtil::realPath(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml');
+        file_put_contents($file, Yaml::dump(array_values($passwords)));
 
-        file_put_contents(self::PASSWORD_YAML_DIR . 'password-' . time() . '.yaml', Yaml::dump([$passwords]));
+        $this->_io->success('Export success, detail see ' . $file);
     }
 
     /**
      * @param array $user the Command::ValidPassword return
+     * @param bool $process
      * @return array
      */
-    public static function getDePasswords($user)
+    public static function getDePasswords($user, $process = false)
     {
         $passwords = PasswordForm::pass()->findModels(['id', 'keyword', 'password', 'description'], ['user_id' => $user['id']]);
-        foreach ($passwords as &$password) {
+        foreach ($passwords as $k => &$password) {
+            ! $process or Password::processOutput($k + 1, count($passwords));
             $password['keyword'] = Password::decryptedPasswordKey($password['keyword']);
             $password['password'] = Password::decryptedPassword($user['password'], $password['password']);
         }

@@ -9,10 +9,10 @@
 
 namespace Dowte\Password\pass;
 
+use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\components\OpensslEncryptHelper;
 use Dowte\Password\pass\components\PdHelper;
 use Dowte\Password\pass\exceptions\BaseException;
-use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -55,6 +55,17 @@ class Password
         new self($config);
     }
 
+    public function defaultComponents()
+    {
+        return [
+            'generate' => [
+                'class' => 'pass\PasswordGenerate',
+                'level' => 3,
+                'length' => 12
+            ]
+        ];
+    }
+
     /**
      * @return string
      */
@@ -82,6 +93,7 @@ class Password
     public static function userConfigure($userName)
     {
         $filename = self::getUserConfFile();
+        FileUtil::createFile($filename);
         file_put_contents($filename, $userName);
         return chmod($filename, 0400);
     }
@@ -150,6 +162,7 @@ class Password
      */
     protected function loadComponents(array $configs)
     {
+        $configs = array_merge($this->defaultComponents(), $configs);
         foreach ((array) $configs as $name => $config) {
             if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
                 $this->getPd()->$name = self::newObject(self::BASE_NAMESPACE . $config['class'], $config);

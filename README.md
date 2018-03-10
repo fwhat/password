@@ -14,7 +14,7 @@ ___
 + git clone  
 
 #### 1.2 配置
-+ cp pass-cli/bin/pass-cli /usr/local/bin/pass
++ cp pass-cli/bin/pass /usr/local/bin/pass
 
 
 ### 二、初始化
@@ -25,7 +25,7 @@ pass init -G
 //生成的密钥对将会保存在提示的路径下
 ```
 
-![init](http://assest.dowte.com/imgs/pass-cli/init-G.jpg)
+![init](http://assest.dowte.com/imgs/pass-cli/init.jpg)
 
 #### 配置命令行提示工具
 echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc ({{pass-cli-path}}用真实路径替换)
@@ -42,12 +42,11 @@ pass user -u dowte
 ### 四、存入密码
 
 ```php
-pass password -g -D
+pass password -g
 //-g 生成新的密码(如保存之前的密码，则无需提供该参数)
-//-D 不设置密码项描述
 ```
 
-![password](http://assest.dowte.com/imgs/pass-cli/password-g-D.jpg)
+![password](http://assest.dowte.com/imgs/pass-cli/password-g.jpg)
 
 ### 五、查找
 
@@ -73,7 +72,9 @@ pass alfred init
 
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpg)
 
-cmd+enter 将密码复制到剪贴板
+enter|cmd+enter 将选中密码复制到剪贴板
+cmd+8 将第8项密码复制到剪贴板
+alt+enter 将描述复制到剪贴板
 
 #### 6.3 其他命令
 ```
