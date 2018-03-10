@@ -7,7 +7,7 @@ ___
 [![License](https://poser.pugx.org/Dowte/password/license.svg)](https://packagist.org/packages/Dowte/password)
 #### A command-line tool to help you manage your password
 
-### 1、download and configure
+### 1、Download and configure
 
 ##### 1.1 download
 
@@ -56,7 +56,7 @@ pass password -g
 pass find -a  | pass -a //Show password list
 pass find dowte  | pass dowte //Get a password which keyword is dowte
 ```
-![find](http://assest.dowte.com/imgs/pass-cli/find-a.jpg)
+![find](http://assest.dowte.com/imgs/pass-cli/find-list.jpg)
 ![find-N](http://assest.dowte.com/imgs/pass-cli/find-N.jpg)
 
 ### 6、ext
