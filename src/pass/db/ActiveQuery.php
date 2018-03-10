@@ -15,6 +15,9 @@ abstract class ActiveQuery implements QueryInterface
 
     public $keyWords = ['like'];
 
+    /**
+     * @var string $className the ActiveQuery class name
+     */
     public static $className;
 
     /**

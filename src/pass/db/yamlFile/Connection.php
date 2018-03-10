@@ -13,7 +13,7 @@ class Connection extends BaseConnection
 
     protected function allowProperties()
     {
-        return ['dbDir'];
+        return ['DB_DIR'];
     }
 
     protected function setActiveQueryClass()
@@ -21,8 +21,8 @@ class Connection extends BaseConnection
         $this->_activeQueryClass = YamlQuery::class;
     }
 
-    protected function requireProperties()
+    public static function requireProperties()
     {
-        return ['dbDir'];
+        return ['DB_DIR'];
     }
 }

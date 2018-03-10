@@ -47,7 +47,6 @@ class Password
         new self($config);
     }
 
-
     /**
      * @return string
      */
@@ -197,16 +196,30 @@ class Password
         exit(0);
     }
 
+    /**
+     * @param $data
+     * @return string
+     */
     public static function sha256($data)
     {
         return hash('sha256', $data);
     }
 
+    /**
+     * @param $masterPassword
+     * @param $password
+     * @return string
+     */
     public static function encryptPassword($masterPassword, $password)
     {
         return OpensslEncryptHelper::cipher()->setPassword($masterPassword)->encryptWithOpenssl($password);
     }
 
+    /**
+     * @param $masterPassword
+     * @param $password
+     * @return string
+     */
     public static function decryptedPassword($masterPassword, $password)
     {
         return OpensslEncryptHelper::cipher()->setPassword($masterPassword)->decryptWithOpenssl($password);
@@ -253,12 +266,21 @@ class Password
         return $param ? new $class($param) : new $class();
     }
 
+    /**
+     * @param $search
+     * @param $replace
+     * @param string $toFile
+     */
     public static function rewriteConfig($search, $replace, $toFile = '')
     {
         $content = str_replace($search, $replace, file_get_contents(file_exists(CONF_FILE) ? CONF_FILE : CONF_FILE_TEMP));
         file_put_contents($toFile ?: CONF_FILE, $content);
     }
 
+    /**
+     * @param $i
+     * @param $total
+     */
     public static function processOutput($i, $total)
     {
         printf("progress: [%-50s] %s Done\r", str_repeat('#',$i/$total*50), $i . '/' . $total);

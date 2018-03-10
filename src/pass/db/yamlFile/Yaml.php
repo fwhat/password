@@ -14,12 +14,22 @@ class Yaml
 
     public static function getFromFile($tableName)
     {
-        return '.' . $tableName . '.yaml';
+        return '.' . strtolower($tableName) . '.yaml';
     }
 
-    public static function getDbResource($dbDir, $from)
+    public static function getDbResource($dbDir, $tableName)
     {
-        return rtrim($dbDir, '/') . '/' . self::getFromFile($from);
+        $resource = rtrim($dbDir, '/') . '/' . self::getFromFile($tableName);
+        if (! file_exists($resource)) {
+            file_put_contents($resource, '');
+            chmod($resource, 0600);
+        }
+        return $resource;
+    }
+
+    public static function dumpInsertNote($data, $dbResource)
+    {
+        file_put_contents($dbResource, '#' . Syaml::dump($data, 0) . PHP_EOL, FILE_APPEND);
     }
 
     public function dumpInsertData($data, $dbResource)

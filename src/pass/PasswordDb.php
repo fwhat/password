@@ -4,20 +4,13 @@ namespace Dowte\Password\pass;
 
 use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\forms\UserForm;
-use Dowte\Password\models\PasswordModel;
-use Dowte\Password\models\UserModel;
-use Dowte\Password\pass\components\FileUtil;
 use Dowte\Password\pass\db\ActiveRecord;
-use Dowte\Password\pass\db\sqlite\Sqlite;
-use Dowte\Password\pass\db\yamlFile\Yaml;
 
 class PasswordDb
 {
     const SQLITE = 'sqlite';
     const MYSQL = 'mysql';
     const YAML_FILE = 'yamlFile';
-
-    const DB_CLASS_MATCH = '%dbClass%';
 
     protected $_way;
 
@@ -27,11 +20,18 @@ class PasswordDb
     {
     }
 
+    /**
+     * @return array
+     */
     public static function ways()
     {
-        return [self::SQLITE, self::YAML_FILE];
+        return [self::SQLITE, self::YAML_FILE, self::MYSQL];
     }
 
+    /**
+     * @param $way
+     * @return $this
+     */
     public function setWay($way)
     {
         if (! in_array($way, self::ways())) {
@@ -41,36 +41,19 @@ class PasswordDb
         return $this;
     }
 
-    public function init()
-    {
-        $functionName = $this->_way . 'Init';
-        $this->configureDb();
-        $this->$functionName();
-    }
-
+    /**
+     * @param $user
+     * @return bool
+     */
     public function clear($user)
     {
-        $functionName = $this->_way . 'File';
-        $this->clearDb($user);
-        $this->toTemplate();
-        unlink($this->_configureFile);
-        foreach ($this->$functionName() as $value) {
-            unlink($value);
-        }
-        $this->clearAlfred();
-        return unlink(Password::getUserConfFile());
-    }
+        $this->dbClear($user);
+        $this->dropTable();
 
-    public function clearDb($user)
-    {
-        $functionName = $this->_way . 'Clear';
-        $this->$functionName($user);
-    }
-
-    public function setConfigureFile($file)
-    {
-        ! file_exists($file) or $this->_configureFile = $file;
-        return $this;
+        //删除alfred 配置 和用户配置
+        unlink(ALFRED_CONF_FILE);
+        unlink(Password::getUserConfFile());
+        return true;
     }
 
     /**
@@ -86,82 +69,45 @@ class PasswordDb
         Password::error('The db way not found, please configure at first in ' . CONF_FILE);
     }
 
-    protected function configureDb()
+    public function dbInit()
     {
-        Password::rewriteConfig(self::DB_CLASS_MATCH, $this->_way, $this->_configureFile);
-    }
-
-    protected function toTemplate()
-    {
-        $config = str_replace(ActiveRecord::$className, str_replace($this->_way, self::DB_CLASS_MATCH, ActiveRecord::$className), file_get_contents($this->_configureFile));
-        file_put_contents($this->_configureFile, $config);
-    }
-
-    private function sqliteInit()
-    {
-        $sqlite = new Sqlite();
-        FileUtil::createFile($sqlite::getDbResource(Password::$pd->db->config['dbDir'], Password::$pd->db->config['dbName']));
         $sql = <<<EOF
 CREATE TABLE IF NOT EXISTS user (
-                    id INTEGER PRIMARY KEY, 
+                    id INTEGER AUTO_INCREMENT PRIMARY KEY, 
                     username VARCHAR(255) NOT NULL, 
-                    password VARCHAR(255) NOT NULL)
+                    password VARCHAR(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 EOF;
-
-        $sqlite::getDb()->exec($sql);
+        ActiveRecord::execSql($sql);
         $sql = <<<EOF
 CREATE TABLE IF NOT EXISTS password (
-                    id INTEGER PRIMARY KEY, 
+                    id INTEGER AUTO_INCREMENT PRIMARY KEY, 
                     user_id INTEGER NOT NULL, 
                     keyword VARCHAR(255) NOT NULL,
                     password VARCHAR(255) NOT NULL,
                     description VARCHAR(255) NOT NULL,
                     FOREIGN KEY(user_id) REFERENCES user(id)
-                    )
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 EOF;
-        $sqlite::getDb()->exec($sql);
+        ActiveRecord::execSql($sql);
     }
 
-    private function sqliteClear()
+    public function dbClear($user)
     {
-        $sql = '';
-        $user = @file_get_contents(Password::getUserConfFile());
-        $user = UserForm::user()->findOne(['username' => $user], ['id']);
-        if (! $user) {
-            return;
+        if (! $user || ! isset($user['id'])) {
+            return false;
         }
-        $userId = $user['id'];
-        $sql .= sprintf("DELETE FROM password WHERE user_id = %d;\n", $userId);
-        $sql .= sprintf("DELETE FROM user WHERE id = %d;\n", $userId);
-        Sqlite::getDb()->exec($sql);
-    }
-
-    private function sqliteFile()
-    {
-        return [SQLITE_FILE];
-    }
-
-    private function yamlFileFile()
-    {
-        return [
-            Yaml::getDbResource(DB_FILE_DIR, (new PasswordModel())->name()),
-            Yaml::getDbResource(DB_FILE_DIR, (new UserModel())->name()),
-        ];
-    }
-
-    private function yamlFileInit()
-    {
-        FileUtil::createFile($this->yamlFileFile(), 0600);
-    }
-
-    private function yamlFileClear($user)
-    {
         PasswordForm::pass()->deleteByConditions(['user_id' => $user['id']]);
         UserForm::user()->delete($user['id']);
+        unlink(Password::getUserConfFile());
+        return true;
     }
 
-    private function clearAlfred()
+    public function dropTable()
     {
-        unlink(ALFRED_CONF_FILE);
+        ActiveRecord::execSql("DROP TABLE IF EXISTS user");
+        ActiveRecord::execSql("DROP TABLE IF EXISTS password");
+        if (isset(Password::$pd->db->config['DB_NAME']) && ! empty(Password::$pd->db->config['DB_NAME'])) {
+            ActiveRecord::execSql("DROP DATABASE IF EXISTS " . Password::$pd->db->config['DB_NAME']);
+        }
     }
 }

@@ -32,7 +32,7 @@ abstract class BaseConnection
             if ($k == 'class') continue;
             $this->$k = $item;
         }
-        foreach ($this->requireProperties() as $property) {
+        foreach (self::requireProperties() as $property) {
             if (! isset(self::$config[$property])) {
                 DbHelper::$exception->error('The property ' . $property . ' is required!');
             }
@@ -61,7 +61,13 @@ abstract class BaseConnection
         return self::$config[$name];
     }
 
-    abstract protected function requireProperties();
+    /**
+     * @return array
+     */
+    public static function requireProperties()
+    {
+        return [];
+    }
 
     /**
      * @return array

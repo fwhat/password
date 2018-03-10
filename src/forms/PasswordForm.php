@@ -9,15 +9,19 @@ use Dowte\Password\models\PasswordModel;
 
 class PasswordForm extends BaseForm
 {
-    private function __construct()
-    {
-    }
-
+    /**
+     * @return PasswordForm
+     */
     public static function pass()
     {
         return (new self());
     }
 
+    /**
+     * @param $userId
+     * @param $name
+     * @return bool
+     */
     public function findPassword($userId, $name)
     {
         $model = new PasswordModel();
@@ -30,28 +34,53 @@ class PasswordForm extends BaseForm
         return false;
     }
 
+    /**
+     * @param $fields
+     * @param array $where
+     * @return array
+     */
     public function findModels($fields, $where = [])
     {
         $model = new PasswordModel();
         return $model::find()->select($fields)->where($where)->all();
     }
 
+    /**
+     * @param array $where
+     * @param string $fields
+     * @return array
+     */
     public function findOne($where = [], $fields = '*')
     {
         $model = new PasswordModel();
         return $model::find()->select($fields)->where($where)->one();
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function delete($id)
     {
-        return (new PasswordModel())->delete(['id' => $id]);
+        return self::deleteByConditions(['id' => $id]);
     }
 
+    /**
+     * @param $conditions
+     * @return bool
+     */
     public function deleteByConditions($conditions)
     {
         return (new PasswordModel())->delete($conditions);
     }
 
+    /**
+     * @param $id
+     * @param string $keyword
+     * @param string $password
+     * @param string $description
+     * @return int
+     */
     public function update($id, $keyword = '', $password = '', $description = '')
     {
         $model = new PasswordModel();
@@ -105,5 +134,9 @@ class PasswordForm extends BaseForm
                 return Password::decryptedPasswordKey($arr['keyword']);
             }, $keys);
         }
+    }
+
+    private function __construct()
+    {
     }
 }

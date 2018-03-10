@@ -7,15 +7,19 @@ use Dowte\Password\pass\Password;
 
 class UserForm extends BaseForm
 {
-    private function __construct()
-    {
-    }
-
+    /**
+     * @return UserForm
+     */
     public static function user()
     {
         return (new self());
     }
 
+    /**
+     * @param array $where ['key' => 'value']
+     * @param string $fields
+     * @return array
+     */
     public function findOne($where, $fields = '*')
     {
         $model = new UserModel();
@@ -46,6 +50,10 @@ class UserForm extends BaseForm
         return false;
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function delete($id)
     {
         $model = new UserModel();
@@ -81,5 +89,9 @@ class UserForm extends BaseForm
         $model->save();
 
         return $model->username;
+    }
+
+    private function __construct()
+    {
     }
 }

@@ -4,8 +4,6 @@ namespace Dowte\Password\models;
 
 
 use Dowte\Password\pass\BaseModel;
-use Dowte\Password\pass\db\ActiveRecord;
-
 
 /**
  * Class PasswordModel

@@ -2,7 +2,6 @@
 
 namespace Dowte\Password\pass;
 
-
 use Dowte\Password\pass\components\RandomString;
 
 class PasswordGenerate
@@ -29,18 +28,29 @@ class PasswordGenerate
         }
     }
 
+    /**
+     * @param $level
+     * @return $this
+     */
     public function setLevel($level)
     {
         $this->level = $level > 4 || $level <= 0 ? $this->level : $level;
         return $this;
     }
 
+    /**
+     * @param $length
+     * @return $this
+     */
     public function setLength($length)
     {
         $this->length = $length > 100 || $length <= 0 ? $this->length : $length;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function get()
     {
         $rand = new RandomString($this->length);
@@ -50,6 +60,9 @@ class PasswordGenerate
         return $rand->generate();
     }
 
+    /**
+     * @return \Generator
+     */
     private function level()
     {
         $levelMethod = ['setNum', 'setLower', 'setUpper', 'setSpecialChar'];
@@ -58,6 +71,9 @@ class PasswordGenerate
         }
     }
 
+    /**
+     * @return array
+     */
     public function allLevel()
     {
         return [self::LEVEL_ONE, self::LEVEL_TWO, self::LEVEL_THREE, self::LEVEL_FOUR];

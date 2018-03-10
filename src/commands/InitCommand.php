@@ -1,7 +1,15 @@
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
 
 namespace Dowte\Password\commands;
 
+use Dowte\Password\pass\db\BaseConnection;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -11,6 +19,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Yaml\Yaml;
 
 class InitCommand extends Command
 {
@@ -36,7 +46,8 @@ class InitCommand extends Command
             $question->setErrorMessage('the way %s is invalid.');
             $way = $helper->ask($input, $output, $question);
         }
-        $db->setWay($way)->init();
+        $this->configureDb($way);
+        $db->setWay($way)->dbInit();
         $status = $this->dumpCompletion();
         if ($status) {
             $this->_io->success('DbInit Success !');
@@ -44,6 +55,45 @@ class InitCommand extends Command
         } else {
             $this->_io->error('DbInit Error !');
         }
+    }
+
+    protected function configureDb($way)
+    {
+        $className = sprintf("pass\db\%s\Connection", $way);
+        /** @var BaseConnection $class*/
+        $class = Password::BASE_NAMESPACE . $className;
+        $config = [
+            'components' => [
+                'db' => [
+                    'class' => $className
+                ]
+            ]
+        ];
+        $requires = $class::requireProperties();
+        $helper = $this->getHelper('question');
+        foreach ($requires as $require) {
+            $mainMessage = sprintf("set %s %s ", $way, $require);
+            if (defined($require)) {
+                $questionMessage = $mainMessage . sprintf("(default value %s)", constant($require));
+                $question = new Question($questionMessage . PHP_EOL);
+                $answer = $helper->ask($this->_input, $this->_output, $question);
+                $config['components']['db'][$require] = $answer ?: constant($require);
+            } else {
+                do {
+                    $questionMessage = $mainMessage . sprintf("(%s is required)", $require);
+                    $question = new Question($questionMessage . PHP_EOL);
+                    $answer = $helper->ask($this->_input, $this->_output, $question);
+                } while (!$answer);
+                $config['components']['db'][$require] = $answer;
+            }
+        }
+        $oldConfig = [];
+        if (file_exists(CONF_FILE)) {
+            $oldConfig = Yaml::parseFile(CONF_FILE);
+        }
+        $newConfig = array_merge($oldConfig, $config);
+        file_put_contents(CONF_FILE, Yaml::dump($newConfig));
+        Password::init($newConfig);
     }
 
     protected function getOptionWay(CompletionContext $context)

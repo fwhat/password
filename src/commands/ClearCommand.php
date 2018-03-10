@@ -1,8 +1,16 @@
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
 
 namespace Dowte\Password\commands;
 
 
+use Dowte\Password\forms\PasswordForm;
 use Dowte\Password\pass\PasswordDb;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,11 +42,27 @@ class ClearCommand extends Command
         $pdb->setWay($pdb->getDbWay());
 
         if ($input->getOption('all')) {
-            $pdb->clear($user);
-            $this->_io->success('Clear password data success!');
+            //有其他使用者时不允许清空库
+            if ($this->checkClearDb()) {
+                $pdb->clear($user);
+                $this->_io->success('Clear password data success!');
+            } else {
+                $this->_io->error('The database has more then one owner, can not be clear!');
+            }
         } else {
-            $pdb->clearDb($user);
+            $pdb->dbClear($user);
             $this->_io->success('Clear password db data success!');
         }
+    }
+
+    protected function checkClearDb()
+    {
+        $passwords = PasswordForm::pass()->findModels(['*']);
+        $users = [];
+        foreach ($passwords as $password) {
+            $users[$password['user_id']] = true;
+        }
+
+        return count($users) <= 1 ? true : false;
     }
 }

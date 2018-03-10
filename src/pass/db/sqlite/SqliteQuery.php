@@ -7,7 +7,7 @@ use Dowte\Password\pass\db\ActiveQuery;
 
 class SqliteQuery extends ActiveQuery
 {
-    public static $_data;
+    protected static $_data;
 
     public function one()
     {

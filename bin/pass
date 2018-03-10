@@ -1,5 +1,13 @@
 #!/usr/bin/env php
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
+
 use Dowte\Password\pass\Password;
 use Dowte\Password\commands\UserCommand;
 use Dowte\Password\commands\PasswordCommand;
@@ -17,19 +25,22 @@ use Dowte\Password\pass\db\RegisterDb;
 // application.php
 
 require __DIR__ . '/../vendor/autoload.php';
+
+
 defined('PASS_ENV') or define('PASS_ENV', 'prod');
 defined('PASS_USER_CONF_DIR') or define('PASS_USER_CONF_DIR', __DIR__ . '/../data/');
-defined('DB_FILE_DIR') or define('DB_FILE_DIR', __DIR__ . '/../data/');
+defined('DB_DIR') or define('DB_DIR', FileUtil::realPath(__DIR__ . '/../data/'));
+defined('DB_PASS') or define('DB_PASS', '');
 defined('SQLITE_FILE') or define('SQLITE_FILE', __DIR__ . '/../data/pass.db');
-defined('CONF_FILE') or define('CONF_FILE', __DIR__ . '/../pass-conf.php');
-defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
+defined('CONF_FILE') or define('CONF_FILE', FileUtil::realPath(__DIR__ . '/../.pass-conf.yaml'));
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.yaml'));
 defined('ALFRED_CONF_FILE') or define('ALFRED_CONF_FILE', FileUtil::realPath(__DIR__ . '/../data/.pass'));
 
 if (file_exists(CONF_FILE)) {
-    $config = require CONF_FILE;
+    $config = \Symfony\Component\Yaml\Yaml::parseFile(CONF_FILE);
     Password::init($config);
 } else {
-    Password::notice('The pass-conf.php is not exists, please configure it or use init -G command to generate.');
+    Password::notice('The pass-conf.php is not exists, please configure it or use init command to generate.');
 }
 $registerDB = new RegisterDb();
 $registerDB->registerDbException(new \Dowte\Password\pass\exceptions\DbException());

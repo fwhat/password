@@ -30,13 +30,12 @@ class Sqlite extends \SQLite3
     public static function getDb()
     {
         if (self::$db === null) {
-            $resource = self::getDbResource(Connection::$config['dbDir'], Connection::$config['dbName']);
-            if (file_exists($resource)) {
-                self::$db = new \SQLite3($resource, SQLITE3_OPEN_READWRITE, Connection::$config['dbKey']);
-
-            } else {
-                Password::error('The db file is not exists, please exec init at first.', BaseException::QUERY_CODE);
+            $resource = self::getDbResource(Connection::$config['DB_DIR'], Connection::$config['DB_NAME']);
+            if (! file_exists($resource)) {
+                file_put_contents($resource, '');
+                chmod($resource, 0600);
             }
+            self::$db = new \SQLite3($resource, SQLITE3_OPEN_READWRITE, isset(Connection::$config['DB_KEY']) ? Connection::$config['DB_KEY'] : null);
         }
         return self::$db;
     }

@@ -1,24 +1,16 @@
 <?php
 namespace Tests;
 
-use Dowte\Password\pass\components\FileUtil;
-use Dowte\Password\pass\PassSecret;
 use Dowte\Password\pass\Password;
 use Dowte\Password\pass\PasswordDb;
 
 error_reporting(0);
-define(CONF_FILE, __DIR__ . '/pass-conf-template.php');
-defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.php'));
-defined('SQLITE_FILE') or define('SQLITE_FILE', FileUtil::realPath(__DIR__ . '/../tests/sqlite_test.db'));
+define('CONF_FILE', __DIR__ . '/pass-conf-template.yaml');
+defined('CONF_FILE_TEMP') or define('CONF_FILE_TEMP', realpath(__DIR__ . '/../pass-conf-template.yaml'));
 
 class PasswordTest extends \PHPUnit\Framework\TestCase
 {
     const VALID_STR = 'DOWTE';
-
-    /**
-     * @var PassSecret
-     */
-    public $secret;
 
     /**
      * @var PasswordDb

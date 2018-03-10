@@ -1,4 +1,11 @@
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
 
 namespace Dowte\Password\commands;
 
@@ -49,6 +56,7 @@ class ImportCommand extends Command
             //如果keyword 存在则跳过
             $enKeyword = Password::encryptPasswordKey($password['keyword']);
             if (($model = PasswordForm::pass()->findOne(['keyword' => $enKeyword]))) {
+                //是否覆盖存在项
                 if ($overwrite) {
                     PasswordForm::pass()->update(
                         $model['id'],

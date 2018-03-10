@@ -42,6 +42,13 @@ class ActiveRecord implements ActiveRecordInterface
          return $this->getAR()->save();
     }
 
+    public static function execSql($sql)
+    {
+        /* @var $AR ActiveRecordInterface */
+        $AR = Password::newObject(ActiveRecord::$className, Password::$pd->db->config);
+        return $AR->execSql($sql);
+    }
+
     public function delete(array $conditions = [])
     {
         return $this->getAR()->delete($conditions);

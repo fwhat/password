@@ -15,4 +15,10 @@ interface BaseActiveRecordInterface
      * @return bool
      */
     public function delete(array $conditions);
+
+    /**
+     * @param $sql
+     * @return bool
+     */
+    public static function execSql($sql);
 }

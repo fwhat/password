@@ -13,7 +13,7 @@ class Connection extends BaseConnection
 
     protected function allowProperties()
     {
-        return ['dbDir', 'dbName', 'dbKey'];
+        return ['DB_DIR', 'DB_NAME', 'DB_KEY'];
     }
 
     protected function setActiveQueryClass()
@@ -21,8 +21,8 @@ class Connection extends BaseConnection
         $this->_activeQueryClass = SqliteQuery::class;
     }
 
-    protected function requireProperties()
+    public static function requireProperties()
     {
-        return ['dbDir', 'dbName'];
+        return ['DB_DIR', 'DB_NAME'];
     }
 }

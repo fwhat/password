@@ -12,10 +12,4 @@ class BaseModel extends ActiveRecord
             $this->$k = $v;
         }
     }
-
-//    public function init()
-//    {
-//        self::$_db = new Password::$dbClass(array_merge(Password::$dbConfig,
-//            ['name' => $this->name(), 'model' => $this]));
-//    }
 }

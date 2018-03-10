@@ -5,9 +5,12 @@ namespace Dowte\Password\pass\db\yamlFile;
 use Dowte\Password\pass\db\ActiveQuery;
 use Dowte\Password\pass\db\ActiveRecordInterface;
 use Dowte\Password\pass\db\BaseActiveRecordInterface;
+use Dowte\Password\pass\db\DbHelper;
 
 class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
 {
+    const PRIMARY_KEY = 'PRIMARY_KEY';
+
     /**
      * @var ActiveQuery
      */
@@ -26,7 +29,9 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
     /**
      * @var string
      */
-    protected static $dbDir;
+    protected static $DB_DIR;
+
+    protected static $primaryKey;
 
     /**
      * SqliteActiveRecord constructor.
@@ -45,16 +50,44 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
     public function save()
     {
         //PRIMARY KEY
-        if (self::$modelClass->id !== null) {
-            return $this->updateOne(['id' => self::$modelClass->id]);
+        $primaryKey = self::getPrimaryKey();
+        if (self::$modelClass->$primaryKey !== null) {
+            return $this->updateOne([$primaryKey => self::$modelClass->$primaryKey]);
         } else {
             return $this->insert();
         }
     }
 
+    public static function execSql($sql)
+    {
+        //create
+        if (strpos(strtoupper($sql), 'CREATE') === 0) {
+            if (preg_match('/\s([a-zA-Z]*)\s\(/', $sql, $res) && isset($res[1])) {
+                if (file_exists(rtrim(self::$DB_DIR, '/') . '/' . self::getFromFile($res[1]))) {
+                    DbHelper::$exception->error('The table ' . $res[1] . ' is already exists');
+                }
+                $resource = parent::getDbResource(self::$DB_DIR, $res[1]);
+
+                if (preg_match('/\s.*PRIMARY/', strtoupper($sql), $res) && isset($res[0])) {
+                    $str = explode(' ', trim($res[0]));
+                    $primaryKey = array_shift($str);
+                    parent::dumpInsertNote([self::PRIMARY_KEY => $primaryKey], $resource);
+                }
+            }
+        }
+
+        //drop
+        if (strpos(strtoupper($sql), 'DROP') === 0) {
+            $table = array_pop(explode(' ', $sql));
+            unlink(parent::getDbResource(self::$DB_DIR, $table));
+        }
+
+        //other todo
+    }
+
     public function delete(array $conditions)
     {
-        $dbResource = self::getDbResource(self::$dbDir, self::$modelClass->name());
+        $dbResource = self::getDbResource(self::$DB_DIR, self::$modelClass->name());
         $data = self::getData($dbResource);
         foreach ($data as $k => $item) {
             if ($this->compareConditions($conditions, $item)) {
@@ -70,12 +103,11 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
      */
     protected function updateOne(array $conditions = [])
     {
-        $dbResource = self::getDbResource(self::$dbDir, self::$modelClass->name());
+        $dbResource = self::getDbResource(self::$DB_DIR, self::$modelClass->name());
         $data = self::getData($dbResource);
         foreach ($data as &$item) {
             if ($this->compareConditions($conditions, $item)) {
                 foreach (self::$modelClass->attributeLabels() as $k => $v) {
-                    if ($k === 'id') continue;
                     !self::$modelClass->$k or $item[$k] = self::$modelClass->$k;
                 }
                 return $this->updateResource($data, $dbResource);
@@ -112,7 +144,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
             $insertData[$k] = self::$modelClass->$k;
         }
         $insertData['id'] = self::getNextId();
-        $this->dumpInsertData($insertData, self::getDbResource(self::$dbDir, self::$modelClass->name()));
+        $this->dumpInsertData($insertData, self::getDbResource(self::$DB_DIR, self::$modelClass->name()));
         return $insertData['id'];
     }
 
@@ -121,8 +153,20 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
      */
     protected static function getNextId()
     {
-        $data = self::getData(parent::getDbResource(self::$dbDir, self::$modelClass->name()));
+        $data = self::getData(parent::getDbResource(self::$DB_DIR, self::$modelClass->name()));
         if (empty($data)) return 1;
         return ++array_pop($data)['id'];
+    }
+
+    protected function getPrimaryKey()
+    {
+        if (self::$primaryKey === null) {
+            $fp =fopen(parent::getDbResource(self::$DB_DIR, self::$modelClass->name()), 'r');
+            $line = ltrim(fgets($fp), '#');
+            $description = \Symfony\Component\Yaml\Yaml::parse($line);
+            self::$primaryKey = isset($description[self::PRIMARY_KEY]) ? $description[self::PRIMARY_KEY] : 'id';
+        }
+
+        return self::$primaryKey;
     }
 }

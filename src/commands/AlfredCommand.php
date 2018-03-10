@@ -1,4 +1,11 @@
 <?php
+/**
+ * Password - A command-line tool to help you manage your password
+ *
+ * @author  admin@dowte.com
+ * @link    https://github.com/dowte/password
+ * @license https://opensource.org/licenses/MIT
+ */
 
 namespace Dowte\Password\commands;
 
@@ -70,6 +77,7 @@ class AlfredCommand extends Command
         } else {
             $user = UserForm::user()->findOne(['username' => Password::getUser()]);
 
+            //todo use like
             $lists = PasswordForm::pass()->findModels(['keyword', 'description', 'password'], ['user_id' => $user['id']]);
             //构造alfred 返回格式
             foreach ($lists as $list) {
