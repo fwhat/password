@@ -9,11 +9,11 @@ ___
 
 #### Show in console
 
-![show](https://github.com/Dowte/imgs/blob/master/pass-cli/console.gif?raw=true)
+![show](https://raw.githubusercontent.com/Dowte/imgs/master/pass-cli/console.gif)
 
 #### Show in browser
 
-![show](https://github.com/Dowte/imgs/blob/master/pass-cli/browser.gif?raw=true)
+![show](https://raw.githubusercontent.com/Dowte/imgs/master/pass-cli/browser.gif)
 
 ### 1、Download and configure
 
