@@ -5,15 +5,16 @@ ___
 [![Total Downloads](https://poser.pugx.org/Dowte/password/downloads.svg)](https://packagist.org/packages/Dowte/password) 
 [![Latest Unstable Version](https://poser.pugx.org/Dowte/password/v/unstable.svg)](https://packagist.org/packages/Dowte/password) 
 [![License](https://poser.pugx.org/Dowte/password/license.svg)](https://packagist.org/packages/Dowte/password)
+
 #### A command-line tool to help you manage your password
 
 #### Show in console
 
-![show](https://raw.githubusercontent.com/Dowte/imgs/master/pass-cli/console.gif)
+![show](http://assest.dowte.com/imgs/pass-cli/console-q2.gif)
 
 #### Show in browser
 
-![show](https://raw.githubusercontent.com/Dowte/imgs/master/pass-cli/browser.gif)
+![show](http://assest.dowte.com/imgs/pass-cli/browser-q.gif)
 
 ### 1、Download and configure
 
@@ -31,7 +32,7 @@ ___
 pass init
 ```
 
-![init](http://assest.dowte.com/imgs/pass-cli/init.jpg)
+![init](http://assest.dowte.com/imgs/pass-cli/init-new.jpg)
 
 #### configure the completion
 ```php
@@ -47,7 +48,7 @@ pass user -u dowte
 //This command will create a password library of dowte.
 //And ask your to set the master password(The master password is required)
 ```
-![user](http://assest.dowte.com/imgs/pass-cli/user-u.jpg)
+![user](http://assest.dowte.com/imgs/pass-cli/user-u-new.jpg)
 
 ### 4、Save a password item
 
@@ -56,7 +57,7 @@ pass password -g
 //-g auto generate a new password(option)
 ```
 
-![password](http://assest.dowte.com/imgs/pass-cli/password-g.jpg)
+![password](http://assest.dowte.com/imgs/pass-cli/password-g-new.jpg)
 
 ### 5、find
 
@@ -64,8 +65,8 @@ pass password -g
 pass find -a  | pass -a //Show password list
 pass find dowte  | pass dowte //Get a password which keyword is dowte
 ```
-![find](http://assest.dowte.com/imgs/pass-cli/find-list.jpg)
-![find-N](http://assest.dowte.com/imgs/pass-cli/find-N.jpg)
+![find](http://assest.dowte.com/imgs/pass-cli/find-list-new.jpg)
+![find-N](http://assest.dowte.com/imgs/pass-cli/find-N-new.jpg)
 
 ### 6、ext
 
@@ -76,11 +77,11 @@ pass find dowte  | pass dowte //Get a password which keyword is dowte
 ```
 pass alfred init
 ```
-![alfred-init](http://assest.dowte.com/imgs/pass-cli/alfred-init.jpg)
+![alfred-init](http://assest.dowte.com/imgs/pass-cli/alfred-init-new.jpg)
 
 #### 6.2 list on alfred
 
-![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred.jpeg)
+![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-new.jpeg)
 
 + enter|cmd+enter copy password to clipboard
 + cmd+4 copy the 4th password to clipboard
@@ -94,11 +95,11 @@ pass -c
 use tab choose one 
 ```
 
-![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-c.jpg)
+![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-c-new.jpg)
 
 ##### 6.3.1 generate: generate random passwords
 
-![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-generate.jpg)
+![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-generate-new.jpg)
 
 cmd+enter copy password to clipboard
 
