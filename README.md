@@ -7,6 +7,14 @@ ___
 [![License](https://poser.pugx.org/Dowte/password/license.svg)](https://packagist.org/packages/Dowte/password)
 #### A command-line tool to help you manage your password
 
+#### Show in console
+
+![show](http://assest.dowte.com/imgs/pass-cli/console.gif)
+
+#### Show in browser
+
+![show](http://assest.dowte.com/imgs/pass-cli/browser.gif)
+
 ### 1、Download and configure
 
 ##### 1.1 download
@@ -93,3 +101,5 @@ use tab choose one
 ![alfred-list](http://assest.dowte.com/imgs/pass-cli/alfred-k-generate.jpg)
 
 cmd+enter copy password to clipboard
+
+##### more documents ses [docs](./doc)
