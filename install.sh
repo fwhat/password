@@ -5,7 +5,7 @@ alfred=${2:-'true'}
 completion=${3:-'true'}
 #set pass user name default timestamp
 uname=$4:-`date +%s`
-if [ ${way}>2 ] || [ ${way}<0 ]; then
+if [ ${way} -gt 2 ] || [ ${way} -lt 0 ]; then
     way=0
 fi
 #get install.sh dir
