@@ -36,11 +36,15 @@ class InitCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
+        $ways = PasswordDb::ways();
         $way = $input->getOption('way');
+        if (is_numeric($way) && isset($ways[$way])) {
+            $way = $ways[$way];
+        }
         $noDb = $input->getOption('no-db');
         $db = new PasswordDb();
         if (! $noDb) {
-            if (empty($way) || ! in_array($way, PasswordDb::ways())) {
+            if (empty($way) || ! in_array($way, $ways)) {
                 $question = new ChoiceQuestion(
                     '请选择储存密码文件的方式 (默认0)',
                     $db::ways(),
