@@ -52,9 +52,9 @@ class PasswordDb
      * @param $user
      * @return bool
      */
-    public function clear($user)
+    public function clean($user)
     {
-        $this->dbClear($user);
+        $this->dbClean($user);
         $this->dropTable();
 
         //删除alfred 配置 和用户配置
@@ -98,7 +98,7 @@ EOF;
         ActiveRecord::execSql($sql);
     }
 
-    public function dbClear($user)
+    public function dbClean($user)
     {
         if (! $user || ! isset($user['id'])) {
             return false;
