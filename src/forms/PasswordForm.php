@@ -125,6 +125,7 @@ class PasswordForm extends BaseForm
     public function getDecryptedKey($sprintf = '')
     {
         $user = UserForm::user()->findOne(['username' => Password::getUser()]);
+        if (! $user) return [];
         $keys = $this->findModels('keyword', ['user_id' => $user['id']]);
         $lists = '';
         $i = 0;

@@ -75,6 +75,7 @@ class UserCommand extends Command
             $encryptName = Password::sha256($userName);
             if ($this->validPassword('', $encryptName)) {
                 Password::userConfigure($encryptName);
+                $this->_io->success('User fix success !');
             }
         } else {
             $password = $this->askPassword();
