@@ -33,7 +33,11 @@ class FindCommand extends Command
     {
         if ($input->getOption('list')) {
             $lists = PasswordForm::pass()->getDecryptedKey("<fg=green>%-20s </>");
-            $output->writeln(trim($lists));
+            if ($lists) {
+                $output->writeln(trim($lists));
+            } else {
+                $this->_io->note('No password exists');
+            }
             return;
         }
 

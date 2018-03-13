@@ -43,13 +43,19 @@ for i in $*
 do
     validArg ${i}
 done
-if [ ${way} -gt 2 ] || [ ${way} -lt 0 ]; then
-    way=0
-fi
-#get install.sh dir
 installPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# echo ${installPath}
+# exit
 cd ${installPath}
-composer install --no-dev
+composer update --no-dev
+#set into env command
+ln -s ${installPath}"/bin/pass" /usr/local/bin/pass
+#pass init
+if [ ${default} -eq 1 ]; then
+    pass init -w ${way} --default
+    else
+    pass init -w ${way}
+fi
 #completion
 if [ ${completion} -eq 1 ]; then
     case ${SHELL} in
@@ -61,17 +67,9 @@ if [ ${completion} -eq 1 ]; then
         ;;
     esac
 fi
-#pass init
-if [ default -eq 1 ]; then
-    pass init -w ${way} --default
-    else
-    pass init -w ${way}
-fi
 #pass create user
-pass user -u uname
-#set into env command
-ln -s ${installPath}"/bin/pass" /usr/local/bin/pass
+pass user -u ${uname}
 #pass alfred init
-if [ alfred -eq 1 ]; then
+if [ ${alfred} -eq 1 ]; then
     pass alfred --init
 fi
