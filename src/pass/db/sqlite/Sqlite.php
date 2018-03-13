@@ -9,10 +9,7 @@
 
 namespace Dowte\Password\pass\db\sqlite;
 
-
 use Dowte\Password\pass\components\FileUtil;
-use Dowte\Password\pass\exceptions\BaseException;
-use Dowte\Password\pass\Password;
 
 class Sqlite extends \SQLite3
 {

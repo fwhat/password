@@ -13,6 +13,7 @@ Usage:
 Options:
   -w, --way[=WAY]       Which way for save password records.
   -d, --no-db           No DB config ask.
+      --default         Default configure
 ```
 #### Params info
 
@@ -22,6 +23,7 @@ Options:
 	1:yamlFile (without any extension, use yaml file to save)
 	2:mysql
 -d  no DB config ask (But the DB conf must already in .pass-conf.yaml)
+--default use default option for DB config
 ```
 
 #### Other
