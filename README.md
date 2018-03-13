@@ -18,39 +18,15 @@ ___
 
 ### 1、Download and configure
 
-##### 1.1 download
++ git clone https://github.com/Dowte/password.git && password/install.sh 
+    + install.sh arguments
+        + --way=sqlite (default yamlFile)
+        + --default=false (default true)
+        + --completion=false (default true)
+        + --alfred=false (default false)
+        + --uname=dowte (default timestamp)
 
-+ git clone https://github.com/Dowte/password.git
-
-#### 1.2 configure
-+ cp pass-cli/bin/pass /usr/local/bin/pass
-
-
-### 2、Init
-
-```php
-pass init
-```
-
-![init](http://assest.dowte.com/imgs/pass-cli/init-new.jpg)
-
-#### configure the completion
-```php
-echo "source {{pass-cli-path}}pass-cli.bash" >> ~/.zshrc 
-//{{pass-cli-path}} the real path
-source ~/.zshrc
-```
-
-### 3、Create a user
-
-```php
-pass user -u dowte
-//This command will create a password library of dowte.
-//And ask your to set the master password(The master password is required)
-```
-![user](http://assest.dowte.com/imgs/pass-cli/user-u-new.jpg)
-
-### 4、Save a password item
+### 2、Save a password item
 
 ```php
 pass password -g
@@ -59,7 +35,7 @@ pass password -g
 
 ![password](http://assest.dowte.com/imgs/pass-cli/password-g-new.jpg)
 
-### 5、find
+### 3、find
 
 ```php
 pass find -a  | pass -a //Show password list
@@ -68,9 +44,9 @@ pass find dowte  | pass dowte //Get a password which keyword is dowte
 ![find](http://assest.dowte.com/imgs/pass-cli/find-list-new.jpg)
 ![find-N](http://assest.dowte.com/imgs/pass-cli/find-N-new.jpg)
 
-### 6、ext
+### 4、ext
 
-#### 6.1 Use alfred
+#### 4.1 Use alfred
 
 + Import Pass.alfredworkflow to the alfred(Double click on the Pass.alfredworkflow)
 
