@@ -19,9 +19,17 @@ class FileUtil
                 if ($mode) chmod($value, $mode);
                 continue;
             };
+            self::createDir(dirname($path));
             $fp = fopen($value, 'w+');
             fclose($fp);
             if ($mode) chmod($value, $mode);
+        }
+    }
+
+    public static function createDir($dir)
+    {
+        if (! file_exists($dir)) {
+            mkdir($dir);
         }
     }
 

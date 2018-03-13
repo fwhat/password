@@ -9,9 +9,7 @@
 
 namespace Dowte\Password\pass\db\sqlite;
 
-
-use Dowte\Password\pass\exceptions\BaseException;
-use Dowte\Password\pass\Password;
+use Dowte\Password\pass\components\FileUtil;
 
 class Sqlite extends \SQLite3
 {
@@ -39,6 +37,7 @@ class Sqlite extends \SQLite3
         if (self::$db === null) {
             $resource = self::getDbResource(Connection::$config['DB_DIR'], Connection::$config['DB_NAME']);
             if (! file_exists($resource)) {
+                FileUtil::createDir($resource);
                 file_put_contents($resource, '');
                 chmod($resource, 0600);
             }

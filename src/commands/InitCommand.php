@@ -30,17 +30,23 @@ class InitCommand extends Command
             ->setDescription('DbInit pass settings')
             ->setHelp('This command could help you init this application! ')
             ->addOption('way', 'w', InputOption::VALUE_OPTIONAL, 'Which way for save password records.')
-            ->addOption('no-db', 'd', InputOption::VALUE_NONE, 'No DB config ask.');
+            ->addOption('no-db', 'd', InputOption::VALUE_NONE, 'No DB config ask.')
+            ->addOption('default', null, InputOption::VALUE_NONE, 'Default configure');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
+        $ways = PasswordDb::ways();
         $way = $input->getOption('way');
+        $default = $input->getOption('default');
+        if (is_numeric($way) && isset($ways[$way])) {
+            $way = $ways[$way];
+        }
         $noDb = $input->getOption('no-db');
         $db = new PasswordDb();
         if (! $noDb) {
-            if (empty($way) || ! in_array($way, PasswordDb::ways())) {
+            if (empty($way) || ! in_array($way, $ways)) {
                 $question = new ChoiceQuestion(
                     '请选择储存密码文件的方式 (默认0)',
                     $db::ways(),
@@ -53,7 +59,7 @@ class InitCommand extends Command
         } else {
             $way = $db->getDbWay();
         }
-        $noDb or $this->configureDb($way);
+        $noDb or $this->configureDb($way, $default);
         $db->setWay($way)->dbInit();
         $status = $this->dumpCompletion();
         if ($status) {
@@ -64,7 +70,7 @@ class InitCommand extends Command
         }
     }
 
-    protected function configureDb($way)
+    protected function configureDb($way, $default = false)
     {
         $className = sprintf("pass\db\%s\Connection", $way);
         /** @var BaseConnection $class*/
@@ -76,22 +82,26 @@ class InitCommand extends Command
                 ]
             ]
         ];
-        $requires = $class::requireProperties();
-        $helper = $this->getHelper('question');
-        foreach ($requires as $require) {
-            $mainMessage = sprintf("set %s %s ", $way, $require);
-            if (defined($require)) {
-                $questionMessage = $mainMessage . sprintf("(default value %s)", constant($require));
-                $question = new Question($questionMessage . PHP_EOL);
-                $answer = $helper->ask($this->_input, $this->_output, $question);
-                $config['components']['db'][$require] = $answer ?: constant($require);
-            } else {
-                do {
-                    $questionMessage = $mainMessage . sprintf("(%s is required)", $require);
+        if ($default) {
+            $config['components']['db'] = array_merge($config['components']['db'], $this->defaultConfigs()[$way]);
+        } else {
+            $requires = $class::requireProperties();
+            $helper = $this->getHelper('question');
+            foreach ($requires as $require) {
+                $mainMessage = sprintf("set %s %s ", $way, $require);
+                if (defined($require)) {
+                    $questionMessage = $mainMessage . sprintf("(default value %s)", constant($require));
                     $question = new Question($questionMessage . PHP_EOL);
                     $answer = $helper->ask($this->_input, $this->_output, $question);
-                } while (!$answer);
-                $config['components']['db'][$require] = $answer;
+                    $config['components']['db'][$require] = $answer ?: constant($require);
+                } else {
+                    do {
+                        $questionMessage = $mainMessage . sprintf("(%s is required)", $require);
+                        $question = new Question($questionMessage . PHP_EOL);
+                        $answer = $helper->ask($this->_input, $this->_output, $question);
+                    } while (!$answer);
+                    $config['components']['db'][$require] = $answer;
+                }
             }
         }
         $oldConfig = [];
@@ -106,6 +116,24 @@ class InitCommand extends Command
     protected function getOptionWay(CompletionContext $context)
     {
         return Password::ways();
+    }
+
+    protected function defaultConfigs()
+    {
+        return [
+            'mysql' => [
+                'DB_DSN' => 'mysql:host=127.0.0.1;dbname=password',
+                'DB_USER' => 'root',
+                'DB_PASS' => ''
+            ],
+            'sqlite' => [
+                'DB_DIR' => DB_DIR,
+                'DB_NAME' => 'password'
+            ],
+            'yamlFile' => [
+                'DB_DIR' => DB_DIR,
+            ]
+        ];
     }
 
     /**

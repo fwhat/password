@@ -16,7 +16,7 @@ use Dowte\Password\commands\PasswordCommand;
 use Dowte\Password\commands\FindCommand;
 use Dowte\Password\commands\InitCommand;
 use Dowte\Password\commands\CompletionCommand;
-use Dowte\Password\commands\ClearCommand;
+use Dowte\Password\commands\CleanCommand;
 use Dowte\Password\commands\GenerateCommand;
 use Dowte\Password\commands\AlfredCommand;
 use Dowte\Password\commands\ImportCommand;
@@ -42,7 +42,7 @@ require(__DIR__ . '/../vendor/autoload.php');
  * Require constant
  * ------------------------------------------------------------------------------------------------------
  */
-require(__DIR__ . '/../src/pass/Defind.php');
+require(__DIR__ . '/../src/pass/Define.php');
 
 /* ------------------------------------------------------------------------------------------------------
  * Load config
@@ -83,7 +83,7 @@ $app->add(new CompletionCommand());
 $app->add(new InitCommand());
 $app->add(new UserCommand());
 $app->add(new PasswordCommand());
-$app->add(new ClearCommand());
+$app->add(new CleanCommand());
 $app->add(new GenerateCommand());
 $app->add(new AlfredCommand());
 $app->add(new ImportCommand());
