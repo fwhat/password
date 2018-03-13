@@ -60,10 +60,10 @@ fi
 if [ ${completion} -eq 1 ]; then
     case ${SHELL} in
         "/bin/zsh") echo source ${installPath}"/pass-cli.bash" >> ~/.zshrc
-                    `source ~/.zshrc`
+#                    `source ~/.zshrc`
         ;;
         "/bin/bash") echo source ${installPath}"/pass-cli.bash" >> ~/.bashrc
-                    `source ~/.bashrc`
+#                    `source ~/.bashrc`
         ;;
     esac
 fi
