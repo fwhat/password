@@ -60,10 +60,10 @@ fi
 if [ ${completion} -eq 1 ]; then
     case ${SHELL} in
         "/bin/zsh") echo source ${installPath}"/pass-cli.bash" >> ~/.zshrc
-#                    `source ~/.zshrc`
+                    /bin/zsh -c 'source ~/.zshrc' >> /dev/null
         ;;
         "/bin/bash") echo source ${installPath}"/pass-cli.bash" >> ~/.bashrc
-#                    `source ~/.bashrc`
+                   /bin/bash -c 'source ~/.bashrc' >> /dev/null
         ;;
     esac
 fi
@@ -73,3 +73,6 @@ pass user -u ${uname}
 if [ ${alfred} -eq 1 ]; then
     pass alfred --init
 fi
+#import template
+cp ./import.yaml.template ./import.yaml
+pass import import.yaml

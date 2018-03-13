@@ -1,4 +1,40 @@
 -
-    keyword: 163mail
+    keyword: 163mail1
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail2
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail3
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail4
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail5
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail6
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail7
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail8
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail9
+    password: 123456
+    description: 123456@163.com
+-
+    keyword: 163mail10
     password: 123456
     description: 123456@163.com

@@ -73,12 +73,12 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
                 if (file_exists(rtrim(self::$DB_DIR, '/') . '/' . self::getFromFile($res[1]))) {
                     DbHelper::$exception->error('The table ' . $res[1] . ' is already exists');
                 }
-                $resource = parent::getDbResource(self::$DB_DIR, $res[1]);
+                $file = parent::getDbFile(self::$DB_DIR, $res[1]);
 
                 if (preg_match('/\s.*PRIMARY/', strtoupper($sql), $res) && isset($res[0])) {
                     $str = explode(' ', trim($res[0]));
                     $primaryKey = array_shift($str);
-                    parent::dumpInsertNote([self::PRIMARY_KEY => strtolower($primaryKey)], $resource);
+                    parent::dumpInsertNote([self::PRIMARY_KEY => strtolower($primaryKey)], $file);
                 }
             }
         }
@@ -86,7 +86,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
         //drop
         if (strpos(strtoupper($sql), 'DROP') === 0) {
             $table = array_pop(explode(' ', $sql));
-            unlink(parent::getDbResource(self::$DB_DIR, $table));
+            unlink(parent::getDbFile(self::$DB_DIR, $table));
         }
 
         //other todo
@@ -94,14 +94,14 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
 
     public function delete(array $conditions)
     {
-        $dbResource = self::getDbResource(self::$DB_DIR, self::$modelClass->name());
-        $data = self::getData($dbResource);
+        $file = self::getDbFile(self::$DB_DIR, self::$modelClass->name());
+        $data = self::getData($file);
         foreach ($data as $k => $item) {
             if ($this->compareConditions($conditions, $item)) {
                 unset($data[$k]);
             }
         }
-        return $this->updateResource(array_values($data), $dbResource);
+        return $this->updateResource(array_values($data), $file);
     }
 
     /**
@@ -110,14 +110,14 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
      */
     protected function updateOne(array $conditions = [])
     {
-        $dbResource = self::getDbResource(self::$DB_DIR, self::$modelClass->name());
-        $data = self::getData($dbResource);
+        $file = self::getDbFile(self::$DB_DIR, self::$modelClass->name());
+        $data = self::getData($file);
         foreach ($data as &$item) {
             if ($this->compareConditions($conditions, $item)) {
                 foreach (self::$modelClass->attributeLabels() as $k => $v) {
                     !self::$modelClass->$k or $item[$k] = self::$modelClass->$k;
                 }
-                return $this->updateResource($data, $dbResource);
+                return $this->updateResource($data, $file);
             }
         }
 
@@ -151,7 +151,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
             $insertData[$k] = self::$modelClass->$k;
         }
         $insertData['id'] = self::getNextId();
-        $this->dumpInsertData($insertData, self::getDbResource(self::$DB_DIR, self::$modelClass->name()));
+        $this->dumpInsertData($insertData, self::getDbFile(self::$DB_DIR, self::$modelClass->name()));
         return $insertData['id'];
     }
 
@@ -160,7 +160,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
      */
     protected static function getNextId()
     {
-        $data = self::getData(parent::getDbResource(self::$DB_DIR, self::$modelClass->name()));
+        $data = self::getData(parent::getDbFile(self::$DB_DIR, self::$modelClass->name()));
         if (empty($data)) return 1;
         return ++array_pop($data)['id'];
     }
@@ -168,7 +168,7 @@ class YamlActiveRecord extends Yaml implements BaseActiveRecordInterface
     protected function getPrimaryKey()
     {
         if (self::$primaryKey === null) {
-            $fp =fopen(parent::getDbResource(self::$DB_DIR, self::$modelClass->name()), 'r');
+            $fp =fopen(parent::getDbFile(self::$DB_DIR, self::$modelClass->name()), 'r');
             $line = ltrim(fgets($fp), '#');
             $description = \Symfony\Component\Yaml\Yaml::parse($line);
             self::$primaryKey = isset($description[self::PRIMARY_KEY]) ? $description[self::PRIMARY_KEY] : 'id';

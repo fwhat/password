@@ -49,33 +49,34 @@ class ImportCommand extends Command
         $this->validImportData($passwords);
         $successCount = 0;
         $skipArr = [];
-        $total = count($passwords);
         $i = 0;
-        foreach ($passwords as $password) {
-            Password::processOutput(++$i, $total);
-            //如果keyword 存在则跳过
-            $enKeyword = Password::encryptPasswordKey($password['keyword']);
-            if (($model = PasswordForm::pass()->findOne(['keyword' => $enKeyword]))) {
-                //是否覆盖存在项
-                if ($overwrite) {
-                    PasswordForm::pass()->update(
-                        $model['id'],
-                        $enKeyword,
-                        Password::encryptPassword($user['password'], $password['password']),
-                        (isset($password['description']) ? $password['description'] : '')
-                    );
-                    $successCount ++;
-                    continue;
-                } else {
-                    $skipArr[] = $password['keyword'];
-                    continue;
-                }
+        $passwordItems = $this->getClassifyPasswords($passwords, $user);
+        $total = $overwrite ? count($passwords) : count($passwordItems['no_exists']);
+
+        //覆盖存在项  todo more fast
+        if ($overwrite) {
+            foreach ($passwordItems['exists'] as $item) {
+                Password::processOutput(++$i, $total);
+                PasswordForm::pass()->update(
+                    $item['id'],
+                    $item['keyword'],
+                    Password::encryptPassword($user['password'], $item['password']),
+                    (isset($item['description']) ? $item['description'] : '')
+                );
+                $successCount ++;
             }
+        } else {
+            $skipArr = array_keys($passwordItems['exists']);
+        }
+
+        //插入
+        foreach ($passwordItems['no_exists'] as $item) {
+            Password::processOutput(++$i, $total);
             PasswordForm::pass()->createPass(
                 $user['id'],
-                Password::encryptPassword($user['password'], $password['password']),
-                $enKeyword,
-                (isset($password['description']) ? $password['description'] : ''));
+                Password::encryptPassword($user['password'], $item['password']),
+                $item['keyword'],
+                (isset($item['description']) ? $item['description'] : ''));
             $successCount ++;
         }
         $message = 'Import password success! ';
@@ -91,6 +92,29 @@ class ImportCommand extends Command
         return FileUtil::getFiles(exec('pwd'), 'yaml');
     }
 
+    protected function getClassifyPasswords($passwords, $user)
+    {
+        $item = ['exists' => [], 'no_exists' => []];
+        $models = PasswordForm::pass()->findModels('*', ['user_id' => $user['id']]);
+        $newPassword = $oldKeywords= [];
+        foreach ($passwords as $password) {
+            $newPassword[$password['keyword']] = $password;
+        }
+        foreach ($models as $model) {
+            $oldKeywords[$model['keyword']] = $model;
+        }
+        foreach ($newPassword as $password) {
+            $password['keyword'] = Password::encryptPasswordKey($password['keyword']);
+            if (isset($oldKeywords[$password['keyword']])) {
+                $item['exists'][$password['keyword']] = array_merge($password, ['id' => $oldKeywords[$password['keyword']]['id']]);
+            } else {
+                $item['no_exists'][$password['keyword']] = $password;
+            }
+        }
+
+        return $item;
+    }
+
     private function validImportData($passwords)
     {
         foreach ($passwords as $password) {
@@ -99,4 +123,5 @@ class ImportCommand extends Command
             }
         }
     }
+
 }

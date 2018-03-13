@@ -39,7 +39,8 @@ class PasswordCommand extends Command
             ->addOption('no-description', 'D', InputOption::VALUE_NONE, 'Don\'t set description for new password')
             ->addOption('generate', 'g', InputOption::VALUE_NONE, 'Generate a random string for new password(level 3 length 12)')
             ->addOption('length', 'l', InputOption::VALUE_OPTIONAL, 'How length random string you want generate.(max 100)', 12)
-            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which random string level to generate', PasswordGenerate::LEVEL_THREE);
+            ->addOption('level', 'L', InputOption::VALUE_OPTIONAL, 'Which random string level to generate', PasswordGenerate::LEVEL_THREE)
+            ->addOption('all', null, InputOption::VALUE_NONE, 'Delete all passwords when user --exec=delete command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -51,6 +52,7 @@ class PasswordCommand extends Command
         $length = $input->getOption('length');
         $level = $input->getOption('level');
         $exec = $input->getOption('exec');
+        $all = $input->getOption('all');
         $description = '';
         $newPassword = $generate === true ? Password::$pd->generate->setLength($length)->setLevel($level)->get() : '';
 
@@ -58,6 +60,11 @@ class PasswordCommand extends Command
         if ($newPassword) {
             $password = Password::encryptPassword($user['password'], $newPassword);
             Password::toPaste($newPassword, $this->_io, 'The new password is set into clipboard.');
+        }
+        if ($all && ($exec == 'delete' || $exec == 'd')) {
+            if (PasswordForm::pass()->deleteByConditions(['user_id' => $user['id']]) !== false) {
+                Password::success('Delete all success!');
+            }
         }
         while (empty($keyword)) {
             $helper = $this->getHelper('question');

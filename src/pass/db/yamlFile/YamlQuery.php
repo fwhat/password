@@ -29,7 +29,7 @@ class YamlQuery extends ActiveQuery
     protected function findByWhere($where, $one = true)
     {
         $findArr = [];
-        $data = Yaml::getData(Yaml::getDbResource(Connection::$config['DB_DIR'], $this->modelClass->name()));
+        $data = Yaml::getData(Yaml::getDbFile(Connection::$config['DB_DIR'], $this->modelClass->name()));
         if (empty($data)) return [];
         $beforeSelectData = $data;
         $itemArr = [];

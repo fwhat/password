@@ -9,7 +9,7 @@
 ```
 Usage:
   password [options]
-  p (sort command)
+  p
 
 Options:
   -k, --keyword[=KEYWORD]  The keyword for password
@@ -18,6 +18,7 @@ Options:
   -g, --generate           Generate a random string for new password(level 3 length 12)
   -l, --length[=LENGTH]    How length random string you want generate.(max 100) [default: 12]
   -L, --level[=LEVEL]      Which random string level to generate [default: 3]
+      --all                Delete all passwords when user --exec=delete command
 ```
 #### Params info
 
@@ -32,6 +33,7 @@ Options:
     2: numbers and lower characters
     3: numbers, lower characters and upper characters
     4: numbers, lower characters, upper characters and special characters
+--all                Delete all passwords when user --exec=delete command
 ```
 
 ##### Other

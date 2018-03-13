@@ -58,6 +58,7 @@ class CleanCommand extends Command
 
     protected function checkCleanDb()
     {
+        //todo group by
         $passwords = PasswordForm::pass()->findModels(['*']);
         $users = [];
         foreach ($passwords as $password) {

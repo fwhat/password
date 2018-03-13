@@ -14,9 +14,11 @@ use Symfony\Component\Yaml\Yaml as Syaml;
 
 class Yaml
 {
-    public static function getData($dbResource)
+    public static $resources = [];
+
+    public static function getData($file)
     {
-        return Syaml::parseFile($dbResource);
+        return Syaml::parseFile($file);
     }
 
     public static function getFromFile($tableName)
@@ -24,7 +26,7 @@ class Yaml
         return '.' . strtolower($tableName) . '.yaml';
     }
 
-    public static function getDbResource($dbDir, $tableName)
+    public static function getDbFile($dbDir, $tableName)
     {
         $resource = rtrim($dbDir, '/') . '/' . self::getFromFile($tableName);
         if (! file_exists($resource)) {
@@ -35,19 +37,34 @@ class Yaml
         return $resource;
     }
 
-    public static function dumpInsertNote($data, $dbResource)
+    public static function dumpInsertNote($data, $file)
     {
-        //todo use fopen xxx
-        file_put_contents($dbResource, '#' . Syaml::dump($data, 0) . PHP_EOL, FILE_APPEND);
+        file_put_contents($file, '#' . Syaml::dump($data, 0) . PHP_EOL, FILE_APPEND);
     }
 
-    public function dumpInsertData($data, $dbResource)
+    public function dumpInsertData($data, $file)
     {
-        file_put_contents($dbResource, Syaml::dump([$data]), FILE_APPEND);
+        $fp = $this->getResource($file);
+        fwrite($fp, Syaml::dump([$data]));
+//        file_put_contents($file, Syaml::dump([$data]), FILE_APPEND);
     }
 
-    public function updateResource($data, $dbResource)
+    public function updateResource($data, $file)
     {
-        return file_put_contents($dbResource, empty($data) ? '' : Syaml::dump($data));
+        return file_put_contents($file, empty($data) ? '' : Syaml::dump($data));
+    }
+
+    /**
+     * @param $file
+     *
+     * @return resource $fp
+     */
+    protected function getResource($file)
+    {
+        if (!isset(self::$resources[$file])) {
+            self::$resources[$file] = fopen($file, 'a+');
+        }
+
+        return self::$resources[$file];
     }
 }
