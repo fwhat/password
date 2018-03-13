@@ -122,7 +122,7 @@ class InitCommand extends Command
     {
         return [
             'mysql' => [
-                'DB_HOST' => 'mysql:host=127.0.0.1;dbname=password',
+                'DB_DSN' => 'mysql:host=127.0.0.1;dbname=password',
                 'DB_USER' => 'root',
                 'DB_PASS' => ''
             ],

@@ -9,7 +9,7 @@
 
 namespace Dowte\Password\pass\db\yamlFile;
 
-
+use Dowte\Password\pass\components\FileUtil;
 use Symfony\Component\Yaml\Yaml as Syaml;
 
 class Yaml
@@ -28,6 +28,7 @@ class Yaml
     {
         $resource = rtrim($dbDir, '/') . '/' . self::getFromFile($tableName);
         if (! file_exists($resource)) {
+            FileUtil::createFile($resource);
             file_put_contents($resource, '');
             chmod($resource, 0600);
         }
@@ -36,6 +37,7 @@ class Yaml
 
     public static function dumpInsertNote($data, $dbResource)
     {
+        //todo use fopen xxx
         file_put_contents($dbResource, '#' . Syaml::dump($data, 0) . PHP_EOL, FILE_APPEND);
     }
 
