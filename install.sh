@@ -47,7 +47,7 @@ installPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # echo ${installPath}
 # exit
 cd ${installPath}
-composer update --no-dev
+php ./vendor/bin/composer.phar install --no-dev
 #set into env command
 ln -s ${installPath}"/bin/pass" /usr/local/bin/pass
 #pass init
