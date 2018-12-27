@@ -82,7 +82,7 @@ class PasswordDb
 CREATE TABLE IF NOT EXISTS user (
                     id INTEGER AUTO_INCREMENT PRIMARY KEY, 
                     username VARCHAR(255) NOT NULL, 
-                    password VARCHAR(255) NOT NULL);
+                    password TEXT NOT NULL);
 EOF;
         ActiveRecord::execSql($sql);
         $sql = <<<EOF
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS password (
                     id INTEGER AUTO_INCREMENT PRIMARY KEY, 
                     user_id INTEGER NOT NULL, 
                     keyword VARCHAR(255) NOT NULL,
-                    password VARCHAR(255) NOT NULL,
+                    password TEXT NOT NULL,
                     description VARCHAR(255) NOT NULL,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     );

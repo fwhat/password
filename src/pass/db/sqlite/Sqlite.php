@@ -37,7 +37,7 @@ class Sqlite extends \SQLite3
         if (self::$db === null) {
             $resource = self::getDbResource(Connection::$config['DB_DIR'], Connection::$config['DB_NAME']);
             if (! file_exists($resource)) {
-                FileUtil::createDir($resource);
+                FileUtil::createDir(Connection::$config['DB_DIR']);
                 file_put_contents($resource, '');
                 chmod($resource, 0600);
             }
