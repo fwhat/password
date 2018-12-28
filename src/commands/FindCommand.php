@@ -42,7 +42,13 @@ class FindCommand extends Command
         }
 
         $key = $input->getArgument('keyword');
-        $user = $this->validPassword();
+        if ($loadPassword = $this->loadPassword()) {
+            $user = $this->validPassword($loadPassword);
+        } else {
+            $user = $this->validPassword();
+            $this->setPassword($user['password']);
+        }
+
         while (empty($key)) {
             $helper = $this->getHelper('question');
             $question = new Question('Which password is you want to get:' . PHP_EOL);
@@ -66,5 +72,29 @@ class FindCommand extends Command
         $keys = PasswordForm::pass()->getDecryptedKey();
 
         return $keys;
+    }
+
+    /**
+     * create a readonly password file
+     * @param $password
+     */
+    private function setPassword($password)
+    {
+        file_put_contents(TEMP_PASSWORD_FILE, $password);
+        chmod(TEMP_PASSWORD_FILE, '0400');
+    }
+
+    private function loadPassword()
+    {
+        if (file_exists(TEMP_PASSWORD_FILE)) {
+            if (time() - filectime(TEMP_PASSWORD_FILE) > PASSWORD_IGNORE_TIME) {
+                return false;
+            }
+            $password = file_get_contents(TEMP_PASSWORD_FILE);
+            if ($this->validPassword($password)) {
+                return $password;
+            }
+        }
+        return false;
     }
 }

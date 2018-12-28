@@ -35,7 +35,7 @@ class Password
 
     public function __construct($options = [])
     {
-        foreach ($options as $name => $value){
+        foreach ($options as $name => $value) {
             if ($name === 'components') {
                 $this->loadComponents($value);
                 continue;
@@ -80,7 +80,7 @@ class Password
     public static function getUser()
     {
         $user = @file_get_contents(self::getUserConfFile());
-        if (! $user) {
+        if (!$user) {
             self::error('Please create user at first! ');
         }
         return $user;
@@ -115,7 +115,7 @@ class Password
      */
     public static function underline2hump($property)
     {
-        return lcfirst(str_replace(' ', '',ucwords(str_replace(['_', '-'], ' ', $property))));
+        return lcfirst(str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $property))));
     }
 
     /**
@@ -144,9 +144,9 @@ class Password
     {
         $status = self::copy($messages);
         if ($status) {
-            ! $successMessage or $io->success($successMessage);
+            !$successMessage or $io->success($successMessage);
         } else {
-            ! $successMessage or $io->error($errorMessage);
+            !$successMessage or $io->error($errorMessage);
         }
     }
 
@@ -155,7 +155,7 @@ class Password
      */
     protected function loadParams(array $value)
     {
-        foreach ((array) $value as $name => $item) {
+        foreach ((array)$value as $name => $item) {
             $this->getPd()->params[$name] = $item;
         }
     }
@@ -166,7 +166,7 @@ class Password
     protected function loadComponents(array $configs)
     {
         $configs = array_merge($this->defaultComponents(), $configs);
-        foreach ((array) $configs as $name => $config) {
+        foreach ((array)$configs as $name => $config) {
             if (isset($config['class']) && class_exists(self::BASE_NAMESPACE . $config['class'])) {
                 $this->getPd()->$name = self::newObject(self::BASE_NAMESPACE . $config['class'], $config);
             } else {
@@ -182,8 +182,13 @@ class Password
      */
     protected static function copy($messages)
     {
-        //todo more os
-        system("printf '%s' {$messages} | pbcopy", $code);
+        switch (PHP_OS) {
+            case 'Linux' :
+                system("printf '%s' {$messages} | xclip -selection c > /dev/null 2>&1 &", $code);
+                break;
+            default :
+                system("printf '%s' {$messages} | pbcopy", $code);
+        }
         return $code === 0;
     }
 
@@ -296,7 +301,7 @@ class Password
      */
     public static function processOutput($i, $total)
     {
-        printf("progress: [%-50s] %s Done\r", str_repeat('#',$i/$total*50), $i . '/' . $total);
+        printf("progress: [%-50s] %s Done\r", str_repeat('#', $i / $total * 50), $i . '/' . $total);
     }
 
     /**
