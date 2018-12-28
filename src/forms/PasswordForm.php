@@ -32,10 +32,10 @@ class PasswordForm extends BaseForm
     public function findPassword($userId, $name)
     {
         $model = new PasswordModel();
-        $passwords = $model::find()->select('password, keyword')->where(['user_id' => $userId])->all();
+        $passwords = $model::find()->select('password, keyword, description')->where(['user_id' => $userId])->all();
         foreach ($passwords as $password) {
             if (Password::decryptedPasswordKey($password['keyword']) == $name) {
-                return $password['password'];
+                return $password;
             }
         }
         return false;

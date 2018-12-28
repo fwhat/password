@@ -56,7 +56,8 @@ class FindCommand extends Command
         }
         $pass = PasswordForm::pass()->findPassword($user['id'], $key);
         if ($pass) {
-            Password::toPasteDecode($user['password'], $pass, $this->_io);
+            Password::toPasteDecode($user['password'], $pass['password'], $this->_io);
+            $this->_io->comment('description : '.$pass['description']);
         } else {
             $this->_io->error('You provide password is wrong or keyword is not exist!');
         }
@@ -80,6 +81,7 @@ class FindCommand extends Command
      */
     private function setPassword($password)
     {
+        @unlink(TEMP_PASSWORD_FILE);
         file_put_contents(TEMP_PASSWORD_FILE, $password);
         chmod(TEMP_PASSWORD_FILE, '0400');
     }
