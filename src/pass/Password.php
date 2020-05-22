@@ -83,7 +83,7 @@ class Password
         if (!$user) {
             self::error('Please create user at first! ');
         }
-        return $user;
+        return trim($user);
     }
 
     /**
@@ -184,12 +184,20 @@ class Password
     {
         switch (PHP_OS) {
             case 'Linux' :
+                if (!self::commandExist('xclip')) {
+                    self::error("xclip not found, please install xclip at first.");
+                }
                 system("printf '%s' {$messages} | xclip -selection c > /dev/null 2>&1 &", $code);
                 break;
             default :
                 system("printf '%s' {$messages} | pbcopy", $code);
         }
         return $code === 0;
+    }
+
+    public static function commandExist($cmd) {
+        $return = shell_exec(sprintf("which %s", escapeshellarg($cmd)));
+        return !empty($return);
     }
 
     /**
